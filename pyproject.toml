@@ -1,0 +1,30 @@
+[project]
+name = "agentweaver"
+version = "0.1.0"
+description = "Trace-driven evaluation framework for fork-join LLM agents on H100-calibrated wafer-scale simulators."
+requires-python = ">=3.10"
+dependencies = [
+  "networkx>=3.0",
+  "matplotlib>=3.7",
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "pyyaml>=6.0",
+  "requests>=2.31",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+profiling = ["openai>=1.0", "transformers>=4.40", "torch", "prometheus-client"]
+swebench = ["datasets>=2.18"]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["agentweaver*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

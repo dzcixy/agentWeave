@@ -1,0 +1,32 @@
+model: Qwen/Qwen2.5-Coder-7B-Instruct
+served_model_name: qwen-coder-7b
+model_params:
+  num_layers: 28
+  num_kv_heads: 4
+  head_dim: 128
+  bytes_per_element: 2
+latency_model:
+  prefill_a: 0.00009
+  prefill_b: 0.0
+  prefill_c: 0.010
+  decode_d: 0.0015
+  decode_e: 0.00000008
+wafer:
+  mesh_rows: 6
+  mesh_cols: 6
+  die_memory_capacity_gb: 80
+  kv_budget_ratio: 0.3
+  link_bandwidth_TBps: 1.0
+  link_latency_ns: 500
+  routing: xy
+  region_granularity: die
+  enable_replication: true
+  enable_noc_slack: true
+scheduler:
+  alpha: 1.0e-12
+  beta: 1.0e-12
+  gamma: 0.01
+nisp:
+  ttl_candidates: [1, 2, 5, 10, 30, 60, 120, 300]
+  chunk_mb: 4
+  pressure_weight: 1.0e-12
