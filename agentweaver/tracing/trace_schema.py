@@ -90,6 +90,8 @@ class Event:
     patch_hash: Optional[str] = None
     is_first_success: bool = False
     success: Optional[bool] = None
+    timing_missing: bool = False
+    rollout_id: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.timestamp_end and self.timestamp_start and not self.latency:
@@ -145,6 +147,10 @@ def validate_trace(trace: Trace) -> list[str]:
         if ev.event_id in ids:
             errors.append(f"duplicate event_id {ev.event_id}")
         ids.add(ev.event_id)
+        if ev.timing_missing:
+            prev = last_by_branch.get(ev.branch_id)
+            last_by_branch[ev.branch_id] = (ev.step_id, prev[1] if prev else ev.timestamp_end)
+            continue
         if ev.timestamp_start < ev.timestamp_ready:
             errors.append(f"{ev.event_id}: start before ready")
         if ev.timestamp_end < ev.timestamp_start:

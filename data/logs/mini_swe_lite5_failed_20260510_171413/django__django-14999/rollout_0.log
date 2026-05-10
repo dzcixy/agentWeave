@@ -1,0 +1,81 @@
+$ /home/duzc/data/agent_trace/AgentWeaver/.venv/bin/mini-extra swebench-single --config swebench --config configs/miniswe_swebench_vllm.yaml --config agent.step_limit=10 --config agent.cost_limit=0 --config model.model_kwargs.temperature=0.2 --subset lite --split test --instance django__django-14999 --model hosted_vllm/qwen-coder-7b --output data/raw_trajs/mini_swe_lite5/django__django-14999/_mini_extra_rollout_0/trajectory.traj.json --environment-class docker --yolo --cost-limit 0 --exit-immediately
+
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+minisweagent: INFO: Loading dataset from princeton-nlp/SWE-Bench_Lite, split    
+test...                                                                         
+minisweagent: INFO: Building agent config from specs: ['swebench',              
+'configs/miniswe_swebench_vllm.yaml', 'agent.step_limit=10',                    
+'agent.cost_limit=0', 'model.model_kwargs.temperature=0.2']                     
+minisweagent.environment: DEBUG: Starting container with command: docker run -d 
+--name minisweagent-24ce996f -w /testbed --rm                                   
+docker.io/swebench/sweb.eval.x86_64.django_1776_django-14999:latest sleep 2h    
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/run/benchmarks/swebench_single.py:89 in main                     │
+│                                                                              │
+│    86 │   })                                                                 │
+│    87 │   config = recursive_merge(*configs)                                 │
+│    88 │                                                                      │
+│ ❱  89 │   env = get_sb_environment(config, instance)                         │
+│    90 │   agent = get_agent(                                                 │
+│    91 │   │   get_model(config=config.get("model", {})),                     │
+│    92 │   │   env,                                                           │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/run/benchmarks/swebench.py:102 in get_sb_environment             │
+│                                                                              │
+│    99 │   elif env_config["environment_class"] in ["singularity", "contree"] │
+│   100 │   │   env_config["image"] = "docker://" + image_name                 │
+│   101 │                                                                      │
+│ ❱ 102 │   env = get_environment(env_config)                                  │
+│   103 │   if startup_command := config.get("run", {}).get("env_startup_comma │
+│   104 │   │   startup_command = Template(startup_command, undefined=StrictUn │
+│   105 │   │   out = env.execute(startup_command)                             │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/environments/__init__.py:33 in get_environment                   │
+│                                                                              │
+│   30 def get_environment(config: dict, *, default_type: str = "") -> Environ │
+│   31 │   config = copy.deepcopy(config)                                      │
+│   32 │   environment_class = config.pop("environment_class", default_type)   │
+│ ❱ 33 │   return get_environment_class(environment_class)(**config)           │
+│   34                                                                         │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/environments/docker.py:59 in __init__                            │
+│                                                                              │
+│    56 │   │   self.logger = logger or logging.getLogger("minisweagent.enviro │
+│    57 │   │   self.container_id: str | None = None                           │
+│    58 │   │   self.config = config_class(**kwargs)                           │
+│ ❱  59 │   │   self._start_container()                                        │
+│    60 │                                                                      │
+│    61 │   def get_template_vars(self, **kwargs) -> dict[str, Any]:           │
+│    62 │   │   return recursive_merge(self.config.model_dump(), platform.unam │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/environments/docker.py:91 in _start_container                    │
+│                                                                              │
+│    88 │   │   │   self.config.container_timeout,                             │
+│    89 │   │   ]                                                              │
+│    90 │   │   self.logger.debug(f"Starting container with command: {shlex.jo │
+│ ❱  91 │   │   result = subprocess.run(                                       │
+│    92 │   │   │   cmd,                                                       │
+│    93 │   │   │   capture_output=True,                                       │
+│    94 │   │   │   text=True,                                                 │
+│                                                                              │
+│ /home/duzc/miniconda3/lib/python3.12/subprocess.py:573 in run                │
+│                                                                              │
+│    570 │   │   │   raise                                                     │
+│    571 │   │   retcode = process.poll()                                      │
+│    572 │   │   if check and retcode:                                         │
+│ ❱  573 │   │   │   raise CalledProcessError(retcode, process.args,           │
+│    574 │   │   │   │   │   │   │   │   │    output=stdout, stderr=stderr)    │
+│    575 │   return CompletedProcess(process.args, retcode, stdout, stderr)    │
+│    576                                                                       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CalledProcessError: Command '['docker', 'run', '-d', '--name', 
+'minisweagent-24ce996f', '-w', '/testbed', '--rm', 
+'docker.io/swebench/sweb.eval.x86_64.django_1776_django-14999:latest', 'sleep', 
+'2h']' returned non-zero exit status 143.

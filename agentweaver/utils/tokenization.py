@@ -19,6 +19,8 @@ class SimpleTokenizer:
 @lru_cache(maxsize=8)
 def get_tokenizer(model: str | None = None) -> Any:
     model = model or "Qwen/Qwen2.5-Coder-7B-Instruct"
+    if model in {"simple-regex-tokenizer", "adapter-test-tokenizer"} or model.startswith("test-"):
+        return SimpleTokenizer()
     try:
         from transformers import AutoTokenizer  # type: ignore
 

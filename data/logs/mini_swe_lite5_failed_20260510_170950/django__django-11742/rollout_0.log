@@ -1,0 +1,13 @@
+$ /home/duzc/data/agent_trace/AgentWeaver/.venv/bin/mini-extra swebench-single --config swebench --config configs/miniswe_swebench_vllm.yaml --config agent.step_limit=10 --config agent.cost_limit=0 --config model.model_kwargs.temperature=0.2 --subset lite --split test --instance django__django-11742 --model hosted_vllm/qwen-coder-7b --output data/raw_trajs/mini_swe_lite5/django__django-11742/_mini_extra_rollout_0/trajectory.traj.json --environment-class docker --yolo --cost-limit 0 --exit-immediately
+
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+minisweagent: INFO: Loading dataset from princeton-nlp/SWE-Bench_Lite, split    
+test...                                                                         
+minisweagent: INFO: Building agent config from specs: ['swebench',              
+'configs/miniswe_swebench_vllm.yaml', 'agent.step_limit=10',                    
+'agent.cost_limit=0', 'model.model_kwargs.temperature=0.2']                     
+minisweagent.environment: DEBUG: Starting container with command: docker run -d 
+--name minisweagent-59d8019d -w /testbed --rm                                   
+docker.io/swebench/sweb.eval.x86_64.django_1776_django-11742:latest sleep 2h    

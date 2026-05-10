@@ -1,0 +1,561 @@
+$ /home/duzc/data/agent_trace/AgentWeaver/.venv/bin/mini-extra swebench-single --config swebench_backticks --config configs/miniswe_swebench_vllm.yaml --config agent.step_limit=10 --config agent.cost_limit=0 --config model.model_kwargs.temperature=0.2 --subset lite --split test --instance django__django-12308 --model hosted_vllm/qwen-coder-7b --output data/raw_trajs/mini_swe_lite5/django__django-12308/_mini_extra_rollout_0/trajectory.traj.json --environment-class docker --yolo --cost-limit 0 --exit-immediately
+
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+minisweagent: INFO: Loading dataset from princeton-nlp/SWE-Bench_Lite, split    
+test...                                                                         
+minisweagent: INFO: Building agent config from specs: ['swebench_backticks',    
+'configs/miniswe_swebench_vllm.yaml', 'agent.step_limit=10',                    
+'agent.cost_limit=0', 'model.model_kwargs.temperature=0.2']                     
+minisweagent.environment: DEBUG: Starting container with command: docker run -d 
+--name minisweagent-71451639 -w /testbed --rm                                   
+docker.io/swebench/sweb.eval.x86_64.django_1776_django-12308:latest sleep 2h    
+minisweagent.environment: INFO: Started container minisweagent-71451639 with ID 
+61b1b889633a7c000dc4d7854cb87d079029a6b83da3d786f7555442f068cf78                
+Warning: Input is not a terminal (fd=0).
+
+[1;31mProvider List: https://docs.litellm.ai/docs/providers[0m
+
+
+[1;31mProvider List: https://docs.litellm.ai/docs/providers[0m
+
+
+System:
+You are a helpful assistant that can interact multiple times with a computer 
+shell to solve programming tasks.
+Your response must contain exactly ONE bash code block with ONE command (or 
+commands connected with && or ||).
+
+Include a THOUGHT section before your command where you explain your reasoning 
+process.
+Format your response as shown in <format_example>.
+
+<format_example>
+THOUGHT: Your reasoning and analysis here
+
+```mswea_bash_command
+your_command_here
+```
+</format_example>
+
+Failure to follow these rules will cause your response to be rejected.
+
+User:
+<pr_description>
+Consider the following PR description:
+JSONField are not properly displayed in admin when they are readonly.
+Description
+        
+JSONField values are displayed as dict when readonly in the admin.
+For example, {"foo": "bar"} would be displayed as {'foo': 'bar'}, which is not 
+valid JSON.
+I believe the fix would be to add a special case in 
+django.contrib.admin.utils.display_for_field to call the prepare_value of the 
+JSONField (not calling json.dumps directly to take care of the InvalidJSONInput 
+case).
+
+</pr_description>
+
+<instructions>
+# Task Instructions
+
+## Overview
+
+You're a software engineer interacting continuously with a computer by 
+submitting commands.
+You'll be helping implement necessary changes to meet requirements in the PR 
+description.
+Your task is specifically to make changes to non-test files in the current 
+directory in order to fix the issue described in the PR description in a way 
+that is general and consistent with the codebase.
+
+<IMPORTANT>This is an interactive process where you will think and issue ONE 
+command, see its result, then think and issue your next command.</IMPORTANT>
+
+For each response:
+
+1. Include a THOUGHT section explaining your reasoning and what you're trying to
+accomplish
+2. Provide exactly ONE bash command to execute
+
+## Important Boundaries
+
+- MODIFY: Regular source code files in /testbed (this is the working directory 
+for all your subsequent commands)
+- DO NOT MODIFY: Tests, configuration files (pyproject.toml, setup.cfg, etc.)
+
+## Recommended Workflow
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You write a single command
+2. The system executes that command in a subshell
+3. You see the result
+4. You write your next command
+
+Each response should include:
+
+1. A **THOUGHT** section where you explain your reasoning and plan
+2. A single bash code block with your command
+
+Format your responses like demonstrated within the <format_example> block:
+
+<format_example>
+THOUGHT: Here I explain my reasoning process, analysis of the current situation,
+and what I'm trying to accomplish with the command below.
+
+```mswea_bash_command
+your_command_here
+```
+</format_example>
+
+Commands must be specified in a single bash code block:
+
+```mswea_bash_command
+your_command_here
+```
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include a THOUGHT section explaining your reasoning
+- Your response MUST include EXACTLY ONE bash code block
+- This bash block MUST contain EXACTLY ONE command (or a set of commands 
+connected with && or ||)
+- If you include zero or multiple bash blocks, or no command at all, YOUR 
+RESPONSE WILL FAIL
+- Do NOT try to run multiple independent commands in separate blocks in one 
+response
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+
+Example of a CORRECT response:
+<example_response>
+THOUGHT: I need to understand the structure of the repository first. Let me 
+check what files are in the current directory to get a better understanding of 
+the codebase.
+
+```mswea_bash_command
+ls -la
+```
+</example_response>
+
+Example of an INCORRECT response:
+
+<example_response>
+THOUGHT: I need to examine the codebase and then look at a specific file. I'll 
+run multiple commands to do this.
+
+```mswea_bash_command
+ls -la
+```
+
+Now I'll read the file:
+
+```mswea_bash_command
+cat file.txt
+```
+</example_response>
+
+If you need to run multiple commands, either:
+
+1. Combine them in one block using && or ||
+```mswea_bash_command
+command1 && command2 || echo "Error occurred"
+```
+
+2. Wait for the first command to complete, see its output, then issue the next 
+command in your following response.
+
+## Environment Details
+
+- You have a full Linux shell environment
+- Always use non-interactive flags (-y, -f) for commands
+- Avoid interactive tools like vi, nano, or any that require user input
+- You can use bash commands or invoke any tool that is available in the 
+environment
+- You can also create new tools or scripts to help you with the task
+- If a tool isn't available, you can also install it
+
+## Submission
+
+When you've completed your work, you MUST submit your changes as a git patch.
+Follow these steps IN ORDER, with SEPARATE commands:
+
+Step 1: Create the patch file
+Run `git diff -- path/to/file1 path/to/file2 > patch.txt` listing only the 
+source files you modified.
+Do NOT commit your changes.
+
+<IMPORTANT>
+The patch must only contain changes to the specific source files you modified to
+fix the issue.
+Do not submit file creations or changes to any of the following files:
+
+- test and reproduction files
+- helper scripts, tests, or tools that you created
+- installation, build, packaging, configuration, or setup scripts unless they 
+are directly part of the issue you were fixing (you can assume that the 
+environment is already set up for your client)
+- binary or compiled files
+</IMPORTANT>
+
+Step 2: Verify your patch
+Inspect patch.txt to confirm it only contains your intended changes and headers 
+show `--- a/` and `+++ b/` paths.
+
+Step 3: Submit (EXACT command required)
+You MUST use this EXACT command to submit:
+
+```mswea_bash_command
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt
+```
+
+If the command fails (nonzero exit status), it will not submit.
+
+<CRITICAL>
+- Creating/viewing the patch and submitting it MUST be separate commands (not 
+combined with &&).
+- If you modify patch.txt after verifying, you SHOULD verify again before 
+submitting.
+- You CANNOT continue working (reading, editing, testing) in any way on this 
+task after submitting.
+</CRITICAL>
+</instructions>
+────────────────────────────────────────────────────────────────────────────────
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Exit:
+litellm.ContextWindowExceededError: litellm.BadRequestError: 
+ContextWindowExceededError: Hosted_vllmException - {"error":{"message":"This 
+model's maximum context length is 32768 tokens. However, you requested 32768 
+output tokens and your prompt contains 6597 characters (more than 0 characters, 
+which is the upper bound for 0 input tokens). Please reduce the length of the 
+input prompt or the number of requested output tokens. (parameter=input_text, 
+value=6597)","type":"BadRequestError","param":"input_text","code":400}}
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/llm_http_handler.py:240 in _make_common_sync_call   │
+│                                                                              │
+│     237 │   │                                                                │
+│     238 │   │   for i in range(max(max_retry_on_unprocessable_entity_error,  │
+│     239 │   │   │   try:                                                     │
+│ ❱   240 │   │   │   │   response = sync_httpx_client.post(                   │
+│     241 │   │   │   │   │   url=api_base,                                    │
+│     242 │   │   │   │   │   headers=headers,                                 │
+│     243 │   │   │   │   │   data=(                                           │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/http_handler.py:1085 in post                        │
+│                                                                              │
+│   1082 │   │   │   │   llm_provider="litellm-httpx-handler",                 │
+│   1083 │   │   │   )                                                         │
+│   1084 │   │   except httpx.HTTPStatusError as e:                            │
+│ ❱ 1085 │   │   │   _raise_masked_sync_error(e, stream)                       │
+│   1086 │   │   except Exception as e:                                        │
+│   1087 │   │   │   raise e                                                   │
+│   1088                                                                       │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/http_handler.py:354 in _raise_masked_sync_error     │
+│                                                                              │
+│    351 │   │   _body = mask_sensitive_info(_safe_read_response(e.response))  │
+│    352 │   │   raise MaskedHTTPStatusError(e, message=_body, text=_body) fro │
+│    353 │   _text = mask_sensitive_info(_safe_get_response_text(e.response))  │
+│ ❱  354 │   raise MaskedHTTPStatusError(e, message=_text, text=_text) from No │
+│    355                                                                       │
+│    356                                                                       │
+│    357 async def _raise_masked_async_error(e: httpx.HTTPStatusError, stream: │
+╰──────────────────────────────────────────────────────────────────────────────╯
+MaskedHTTPStatusError: Client error '400 Bad Request' for url 
+'http://localhost:8001/v1/chat/completions'
+For more information check: 
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+
+During handling of the above exception, another exception occurred:
+
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/main.py:2550 in completion                                            │
+│                                                                              │
+│   2547 │   │   │   │   api_base or litellm.api_base or get_secret_str("HOSTE │
+│   2548 │   │   │   )                                                         │
+│   2549 │   │   │                                                             │
+│ ❱ 2550 │   │   │   response = base_llm_http_handler.completion(              │
+│   2551 │   │   │   │   model=model,                                          │
+│   2552 │   │   │   │   messages=messages,                                    │
+│   2553 │   │   │   │   api_base=api_base,                                    │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/llm_http_handler.py:564 in completion               │
+│                                                                              │
+│     561 │   │   else:                                                        │
+│     562 │   │   │   sync_httpx_client = client                               │
+│     563 │   │                                                                │
+│ ❱   564 │   │   response = self._make_common_sync_call(                      │
+│     565 │   │   │   sync_httpx_client=sync_httpx_client,                     │
+│     566 │   │   │   provider_config=provider_config,                         │
+│     567 │   │   │   api_base=api_base,                                       │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/llm_http_handler.py:265 in _make_common_sync_call   │
+│                                                                              │
+│     262 │   │   │   │   │   )                                                │
+│     263 │   │   │   │   │   continue                                         │
+│     264 │   │   │   │   else:                                                │
+│ ❱   265 │   │   │   │   │   raise self._handle_error(e=e, provider_config=pr │
+│     266 │   │   │   except Exception as e:                                   │
+│     267 │   │   │   │   raise self._handle_error(e=e, provider_config=provid │
+│     268 │   │   │   break                                                    │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/llms/custom_httpx/llm_http_handler.py:5091 in _handle_error           │
+│                                                                              │
+│    5088 │   │   │   │   headers=error_headers,                               │
+│    5089 │   │   │   )                                                        │
+│    5090 │   │                                                                │
+│ ❱  5091 │   │   raise provider_config.get_error_class(                       │
+│    5092 │   │   │   error_message=error_text,                                │
+│    5093 │   │   │   status_code=status_code,                                 │
+│    5094 │   │   │   headers=error_headers,                                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+OpenAIError: {"error":{"message":"This model's maximum context length is 32768 
+tokens. However, you requested 32768 output tokens and your prompt contains 6597
+characters (more than 0 characters, which is the upper bound for 0 input 
+tokens). Please reduce the length of the input prompt or the number of requested
+output tokens. (parameter=input_text, 
+value=6597)","type":"BadRequestError","param":"input_text","code":400}}
+
+During handling of the above exception, another exception occurred:
+
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/run/benchmarks/swebench_single.py:96 in main                     │
+│                                                                              │
+│    93 │   │   config.get("agent", {}),                                       │
+│    94 │   │   default_type="interactive",                                    │
+│    95 │   )                                                                  │
+│ ❱  96 │   agent.run(instance["problem_statement"])                           │
+│    97                                                                        │
+│    98                                                                        │
+│    99 if __name__ == "__main__":                                             │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/agents/default.py:87 in run                                      │
+│                                                                              │
+│    84 │   │   )                                                              │
+│    85 │   │   while True:                                                    │
+│    86 │   │   │   try:                                                       │
+│ ❱  87 │   │   │   │   self.step()                                            │
+│    88 │   │   │   except InterruptAgentFlow as e:                            │
+│    89 │   │   │   │   self.add_messages(*e.messages)                         │
+│    90 │   │   │   except Exception as e:                                     │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/agents/interactive.py:87 in step                                 │
+│                                                                              │
+│    84 │   │   # Override the step method to handle user interruption         │
+│    85 │   │   try:                                                           │
+│    86 │   │   │   console.print(Rule())                                      │
+│ ❱  87 │   │   │   return super().step()                                      │
+│    88 │   │   except KeyboardInterrupt:                                      │
+│    89 │   │   │   interruption_message = self._prompt_and_handle_slash_comma │
+│    90 │   │   │   │   "\n\n[bold yellow]Interrupted.[/bold yellow] "         │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/agents/default.py:101 in step                                    │
+│                                                                              │
+│    98 │                                                                      │
+│    99 │   def step(self) -> list[dict]:                                      │
+│   100 │   │   """Query the LM, execute actions."""                           │
+│ ❱ 101 │   │   return self.execute_actions(self.query())                      │
+│   102 │                                                                      │
+│   103 │   def query(self) -> dict:                                           │
+│   104 │   │   """Query the model and return model messages. Override to add  │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/agents/interactive.py:73 in query                                │
+│                                                                              │
+│    70 │   │   │   │   │   return msg                                         │
+│    71 │   │   try:                                                           │
+│    72 │   │   │   with console.status("Waiting for the LM to respond..."):   │
+│ ❱  73 │   │   │   │   return super().query()                                 │
+│    74 │   │   except LimitsExceeded:                                         │
+│    75 │   │   │   console.print(                                             │
+│    76 │   │   │   │   f"Limits exceeded. Limits: {self.config.step_limit} st │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/agents/default.py:114 in query                                   │
+│                                                                              │
+│   111 │   │   │   │   }                                                      │
+│   112 │   │   │   )                                                          │
+│   113 │   │   self.n_calls += 1                                              │
+│ ❱ 114 │   │   message = self.model.query(self.messages)                      │
+│   115 │   │   self.cost += message.get("extra", {}).get("cost", 0.0)         │
+│   116 │   │   self.add_messages(message)                                     │
+│   117 │   │   return message                                                 │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/models/litellm_model.py:81 in query                              │
+│                                                                              │
+│    78 │   │   return set_cache_control(prepared, mode=self.config.set_cache_ │
+│    79 │                                                                      │
+│    80 │   def query(self, messages: list[dict[str, str]], **kwargs) -> dict: │
+│ ❱  81 │   │   for attempt in retry(logger=logger, abort_exceptions=self.abor │
+│    82 │   │   │   with attempt:                                              │
+│    83 │   │   │   │   response = self._query(self._prepare_messages_for_api( │
+│    84 │   │   cost_output = self._calculate_cost(response)                   │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/t │
+│ enacity/__init__.py:438 in __iter__                                          │
+│                                                                              │
+│   435 │   │                                                                  │
+│   436 │   │   retry_state = RetryCallState(self, fn=None, args=(), kwargs={} │
+│   437 │   │   while True:                                                    │
+│ ❱ 438 │   │   │   do = self.iter(retry_state=retry_state)                    │
+│   439 │   │   │   if isinstance(do, DoAttempt):                              │
+│   440 │   │   │   │   yield AttemptManager(retry_state=retry_state)          │
+│   441 │   │   │   elif isinstance(do, DoSleep):                              │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/t │
+│ enacity/__init__.py:371 in iter                                              │
+│                                                                              │
+│   368 │   │   self._begin_iter(retry_state)                                  │
+│   369 │   │   result = None                                                  │
+│   370 │   │   for action in self.iter_state.actions:                         │
+│ ❱ 371 │   │   │   result = action(retry_state)                               │
+│   372 │   │   return result                                                  │
+│   373 │                                                                      │
+│   374 │   def _begin_iter(self, retry_state: "RetryCallState") -> None:  # n │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/t │
+│ enacity/__init__.py:393 in <lambda>                                          │
+│                                                                              │
+│   390 │                                                                      │
+│   391 │   def _post_retry_check_actions(self, retry_state: "RetryCallState") │
+│   392 │   │   if not (self.iter_state.is_explicit_retry or self.iter_state.r │
+│ ❱ 393 │   │   │   self._add_action_func(lambda rs: rs.outcome.result())      │
+│   394 │   │   │   return                                                     │
+│   395 │   │                                                                  │
+│   396 │   │   if self.after is not None:                                     │
+│                                                                              │
+│ /home/duzc/miniconda3/lib/python3.12/concurrent/futures/_base.py:449 in      │
+│ result                                                                       │
+│                                                                              │
+│   446 │   │   │   │   if self._state in [CANCELLED, CANCELLED_AND_NOTIFIED]: │
+│   447 │   │   │   │   │   raise CancelledError()                             │
+│   448 │   │   │   │   elif self._state == FINISHED:                          │
+│ ❱ 449 │   │   │   │   │   return self.__get_result()                         │
+│   450 │   │   │   │                                                          │
+│   451 │   │   │   │   self._condition.wait(timeout)                          │
+│   452                                                                        │
+│                                                                              │
+│ /home/duzc/miniconda3/lib/python3.12/concurrent/futures/_base.py:401 in      │
+│ __get_result                                                                 │
+│                                                                              │
+│   398 │   def __get_result(self):                                            │
+│   399 │   │   if self._exception:                                            │
+│   400 │   │   │   try:                                                       │
+│ ❱ 401 │   │   │   │   raise self._exception                                  │
+│   402 │   │   │   finally:                                                   │
+│   403 │   │   │   │   # Break a reference cycle with the exception in self._ │
+│   404 │   │   │   │   self = None                                            │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/models/litellm_model.py:83 in query                              │
+│                                                                              │
+│    80 │   def query(self, messages: list[dict[str, str]], **kwargs) -> dict: │
+│    81 │   │   for attempt in retry(logger=logger, abort_exceptions=self.abor │
+│    82 │   │   │   with attempt:                                              │
+│ ❱  83 │   │   │   │   response = self._query(self._prepare_messages_for_api( │
+│    84 │   │   cost_output = self._calculate_cost(response)                   │
+│    85 │   │   GLOBAL_MODEL_STATS.add(cost_output["cost"])                    │
+│    86 │   │   message = response.choices[0].message.model_dump()             │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/m │
+│ inisweagent/models/litellm_textbased_model.py:22 in _query                   │
+│                                                                              │
+│   19 │                                                                       │
+│   20 │   def _query(self, messages: list[dict[str, str]], **kwargs):         │
+│   21 │   │   try:                                                            │
+│ ❱ 22 │   │   │   return litellm.completion(                                  │
+│   23 │   │   │   │   model=self.config.model_name, messages=messages, **(sel │
+│   24 │   │   │   )                                                           │
+│   25 │   │   except litellm.exceptions.AuthenticationError as e:             │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/utils.py:1772 in wrapper                                              │
+│                                                                              │
+│   1769 │   │   │   │   logging_obj.failure_handler(                          │
+│   1770 │   │   │   │   │   e, traceback_exception, start_time, end_time      │
+│   1771 │   │   │   │   )  # DO NOT MAKE THREADED - router retry fallback rel │
+│ ❱ 1772 │   │   │   raise e                                                   │
+│   1773 │                                                                     │
+│   1774 │   @wraps(original_function)                                         │
+│   1775 │   async def wrapper_async(*args, **kwargs):  # noqa: PLR0915        │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/utils.py:1593 in wrapper                                              │
+│                                                                              │
+│   1590 │   │   │   │   except Exception as e:                                │
+│   1591 │   │   │   │   │   print_verbose(f"Error while checking max token li │
+│   1592 │   │   │   # MODEL CALL                                              │
+│ ❱ 1593 │   │   │   result = original_function(*args, **kwargs)               │
+│   1594 │   │   │   end_time = datetime.datetime.now()                        │
+│   1595 │   │   │   if _is_streaming_request(                                 │
+│   1596 │   │   │   │   kwargs=kwargs,                                        │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/main.py:4420 in completion                                            │
+│                                                                              │
+│   4417 │   │   return response                                               │
+│   4418 │   except Exception as e:                                            │
+│   4419 │   │   ## Map to OpenAI Exception                                    │
+│ ❱ 4420 │   │   raise exception_type(                                         │
+│   4421 │   │   │   model=model,                                              │
+│   4422 │   │   │   custom_llm_provider=custom_llm_provider,                  │
+│   4423 │   │   │   original_exception=e,                                     │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/litellm_core_utils/exception_mapping_utils.py:2456 in exception_type  │
+│                                                                              │
+│   2453 │   │   # don't let an error with mapping interrupt the user from rec │
+│   2454 │   │   if exception_mapping_worked:                                  │
+│   2455 │   │   │   setattr(e, "litellm_response_headers", litellm_response_h │
+│ ❱ 2456 │   │   │   raise e                                                   │
+│   2457 │   │   else:                                                         │
+│   2458 │   │   │   for error_type in litellm.LITELLM_EXCEPTION_TYPES:        │
+│   2459 │   │   │   │   if isinstance(e, error_type):                         │
+│                                                                              │
+│ /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/python3.12/site-packages/l │
+│ itellm/litellm_core_utils/exception_mapping_utils.py:400 in exception_type   │
+│                                                                              │
+│    397 │   │   │   │   │   )                                                 │
+│    398 │   │   │   │   elif ExceptionCheckers.is_error_str_context_window_ex │
+│    399 │   │   │   │   │   exception_mapping_worked = True                   │
+│ ❱  400 │   │   │   │   │   raise ContextWindowExceededError(                 │
+│    401 │   │   │   │   │   │   message=f"ContextWindowExceededError: {except │
+│    402 │   │   │   │   │   │   llm_provider=custom_llm_provider,             │
+│    403 │   │   │   │   │   │   model=model,                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ContextWindowExceededError: litellm.ContextWindowExceededError: 
+litellm.BadRequestError: ContextWindowExceededError: Hosted_vllmException - 
+{"error":{"message":"This model's maximum context length is 32768 tokens. 
+However, you requested 32768 output tokens and your prompt contains 6597 
+characters (more than 0 characters, which is the upper bound for 0 input 
+tokens). Please reduce the length of the input prompt or the number of requested
+output tokens. (parameter=input_text, 
+value=6597)","type":"BadRequestError","param":"input_text","code":400}}

@@ -1,0 +1,34 @@
+{
+  "sample_fixture": true,
+  "sample_fixture_note": "sample fixture for adapter unit tests only; not experimental data",
+  "framework": "mini-swe-agent-fixture",
+  "run_id": "fixture-run",
+  "instance_id": "fixture__mini_swe__0001",
+  "problem_statement": "Issue: fix the failing add_one behavior in repo code.",
+  "repo": "def add_one(x):\n    return x\n",
+  "tool_schema": "shell(command: str) -> stdout/stderr/exit_code",
+  "trajectory": [
+    {
+      "messages": [
+        {"role": "system", "content": "You are a coding agent."},
+        {"role": "user", "content": "Problem statement: fix add_one."}
+      ],
+      "response": "I will inspect the repository and run tests.",
+      "timestamp_start": 10.0,
+      "timestamp_end": 12.5
+    },
+    {
+      "action": "pytest -q",
+      "observation": "FAILED tests/test_math.py::test_add_one - assert 1 == 2",
+      "exit_code": 1,
+      "timestamp_start": 13.0,
+      "timestamp_end": 14.25
+    },
+    {
+      "prompt": "Observation:\nFAILED tests/test_math.py::test_add_one - assert 1 == 2\nPatch the implementation.",
+      "response": "The function returns x. I will change it to return x + 1.",
+      "latency": 1.7
+    }
+  ],
+  "patch": "diff --git a/math.py b/math.py\n--- a/math.py\n+++ b/math.py\n@@\n-    return x\n+    return x + 1\n"
+}

@@ -1,0 +1,1034 @@
+$ /home/duzc/data/agent_trace/AgentWeaver/.venv/bin/mini-extra swebench-single --config swebench_backticks --config configs/miniswe_swebench_vllm.yaml --config agent.step_limit=10 --config agent.cost_limit=0 --config model.model_kwargs.temperature=0.2 --subset lite --split test --instance django__django-12308 --model hosted_vllm/qwen-coder-7b --output data/raw_trajs/mini_swe_lite10_r4/django__django-12308/_mini_extra_rollout_0/trajectory.traj.json --environment-class docker --yolo --cost-limit 0 --exit-immediately
+
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+minisweagent: INFO: Loading dataset from princeton-nlp/SWE-Bench_Lite, split    
+test...                                                                         
+minisweagent: INFO: Building agent config from specs: ['swebench_backticks',    
+'configs/miniswe_swebench_vllm.yaml', 'agent.step_limit=10',                    
+'agent.cost_limit=0', 'model.model_kwargs.temperature=0.2']                     
+minisweagent.environment: DEBUG: Starting container with command: docker run -d 
+--name minisweagent-66a93f24 -w /testbed --rm                                   
+docker.io/swebench/sweb.eval.x86_64.django_1776_django-12308:latest sleep 2h    
+minisweagent.environment: INFO: Started container minisweagent-66a93f24 with ID 
+75f6cdbe795c6b44cef184922549b947ce24a86fc1332600512ec951b0fd630f                
+Warning: Input is not a terminal (fd=0).
+
+[1;31mProvider List: https://docs.litellm.ai/docs/providers[0m
+
+
+[1;31mProvider List: https://docs.litellm.ai/docs/providers[0m
+
+
+System:
+You are a helpful assistant that can interact multiple times with a computer 
+shell to solve programming tasks.
+Your response must contain exactly ONE bash code block with ONE command (or 
+commands connected with && or ||).
+
+Include a THOUGHT section before your command where you explain your reasoning 
+process.
+Format your response as shown in <format_example>.
+
+<format_example>
+THOUGHT: Your reasoning and analysis here
+
+```mswea_bash_command
+your_command_here
+```
+</format_example>
+
+Failure to follow these rules will cause your response to be rejected.
+
+User:
+<pr_description>
+Consider the following PR description:
+JSONField are not properly displayed in admin when they are readonly.
+Description
+        
+JSONField values are displayed as dict when readonly in the admin.
+For example, {"foo": "bar"} would be displayed as {'foo': 'bar'}, which is not 
+valid JSON.
+I believe the fix would be to add a special case in 
+django.contrib.admin.utils.display_for_field to call the prepare_value of the 
+JSONField (not calling json.dumps directly to take care of the InvalidJSONInput 
+case).
+
+</pr_description>
+
+<instructions>
+# Task Instructions
+
+## Overview
+
+You're a software engineer interacting continuously with a computer by 
+submitting commands.
+You'll be helping implement necessary changes to meet requirements in the PR 
+description.
+Your task is specifically to make changes to non-test files in the current 
+directory in order to fix the issue described in the PR description in a way 
+that is general and consistent with the codebase.
+
+<IMPORTANT>This is an interactive process where you will think and issue ONE 
+command, see its result, then think and issue your next command.</IMPORTANT>
+
+For each response:
+
+1. Include a THOUGHT section explaining your reasoning and what you're trying to
+accomplish
+2. Provide exactly ONE bash command to execute
+
+## Important Boundaries
+
+- MODIFY: Regular source code files in /testbed (this is the working directory 
+for all your subsequent commands)
+- DO NOT MODIFY: Tests, configuration files (pyproject.toml, setup.cfg, etc.)
+
+## Recommended Workflow
+
+1. Analyze the codebase by finding and reading relevant files
+2. Create a script to reproduce the issue
+3. Edit the source code to resolve the issue
+4. Verify your fix works by running your script again
+5. Test edge cases to ensure your fix is robust
+
+## Command Execution Rules
+
+You are operating in an environment where
+
+1. You write a single command
+2. The system executes that command in a subshell
+3. You see the result
+4. You write your next command
+
+Each response should include:
+
+1. A **THOUGHT** section where you explain your reasoning and plan
+2. A single bash code block with your command
+
+Format your responses like demonstrated within the <format_example> block:
+
+<format_example>
+THOUGHT: Here I explain my reasoning process, analysis of the current situation,
+and what I'm trying to accomplish with the command below.
+
+```mswea_bash_command
+your_command_here
+```
+</format_example>
+
+Commands must be specified in a single bash code block:
+
+```mswea_bash_command
+your_command_here
+```
+
+**CRITICAL REQUIREMENTS:**
+
+- Your response SHOULD include a THOUGHT section explaining your reasoning
+- Your response MUST include EXACTLY ONE bash code block
+- This bash block MUST contain EXACTLY ONE command (or a set of commands 
+connected with && or ||)
+- If you include zero or multiple bash blocks, or no command at all, YOUR 
+RESPONSE WILL FAIL
+- Do NOT try to run multiple independent commands in separate blocks in one 
+response
+- Directory or environment variable changes are not persistent. Every action is 
+executed in a new subshell.
+- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd 
+/path/to/working/dir && ...` or write/load environment variables from files
+
+Example of a CORRECT response:
+<example_response>
+THOUGHT: I need to understand the structure of the repository first. Let me 
+check what files are in the current directory to get a better understanding of 
+the codebase.
+
+```mswea_bash_command
+ls -la
+```
+</example_response>
+
+Example of an INCORRECT response:
+
+<example_response>
+THOUGHT: I need to examine the codebase and then look at a specific file. I'll 
+run multiple commands to do this.
+
+```mswea_bash_command
+ls -la
+```
+
+Now I'll read the file:
+
+```mswea_bash_command
+cat file.txt
+```
+</example_response>
+
+If you need to run multiple commands, either:
+
+1. Combine them in one block using && or ||
+```mswea_bash_command
+command1 && command2 || echo "Error occurred"
+```
+
+2. Wait for the first command to complete, see its output, then issue the next 
+command in your following response.
+
+## Environment Details
+
+- You have a full Linux shell environment
+- Always use non-interactive flags (-y, -f) for commands
+- Avoid interactive tools like vi, nano, or any that require user input
+- You can use bash commands or invoke any tool that is available in the 
+environment
+- You can also create new tools or scripts to help you with the task
+- If a tool isn't available, you can also install it
+
+## Submission
+
+When you've completed your work, you MUST submit your changes as a git patch.
+Follow these steps IN ORDER, with SEPARATE commands:
+
+Step 1: Create the patch file
+Run `git diff -- path/to/file1 path/to/file2 > patch.txt` listing only the 
+source files you modified.
+Do NOT commit your changes.
+
+<IMPORTANT>
+The patch must only contain changes to the specific source files you modified to
+fix the issue.
+Do not submit file creations or changes to any of the following files:
+
+- test and reproduction files
+- helper scripts, tests, or tools that you created
+- installation, build, packaging, configuration, or setup scripts unless they 
+are directly part of the issue you were fixing (you can assume that the 
+environment is already set up for your client)
+- binary or compiled files
+</IMPORTANT>
+
+Step 2: Verify your patch
+Inspect patch.txt to confirm it only contains your intended changes and headers 
+show `--- a/` and `+++ b/` paths.
+
+Step 3: Submit (EXACT command required)
+You MUST use this EXACT command to submit:
+
+```mswea_bash_command
+echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt
+```
+
+If the command fails (nonzero exit status), it will not submit.
+
+<CRITICAL>
+- Creating/viewing the patch and submitting it MUST be separate commands (not 
+combined with &&).
+- If you modify patch.txt after verifying, you SHOULD verify again before 
+submitting.
+- You CANNOT continue working (reading, editing, testing) in any way on this 
+task after submitting.
+</CRITICAL>
+</instructions>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 1, $0.00):
+THOUGHT: To address the issue of JSONField values being displayed incorrectly in
+the Django admin when they are readonly, we need to modify the 
+`display_for_field` function in `django/contrib/admin/utils.py`. Specifically, 
+we should call the `prepare_value` method of the field instead of directly using
+`json.dumps` to handle potential `InvalidJSONInput` exceptions gracefully.
+
+```mswea_bash_command
+nano django/contrib/admin/utils.py
+```
+
+User:
+<returncode>127</returncode>
+<output>
+bash: line 1: nano: command not found
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 2, $0.00):
+THOUGHT: It appears that the `nano` text editor is not installed on the system. 
+We can use `vim` as an alternative text editor since it is typically 
+pre-installed on most Linux systems.
+
+```mswea_bash_command
+vim django/contrib/admin/utils.py
+```
+
+User:
+<returncode>127</returncode>
+<output>
+bash: line 1: vim: command not found
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 3, $0.00):
+THOUGHT: Since neither `nano` nor `vim` is available, let's use `vi` as another 
+common text editor. Although `vi` might not be as user-friendly as `nano` or 
+`vim`, it is usually installed by default.
+
+```mswea_bash_command
+vi django/contrib/admin/utils.py
+```
+
+User:
+<returncode>127</returncode>
+<output>
+bash: line 1: vi: command not found
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 4, $0.00):
+THOUGHT: Given that none of the commonly used text editors (`nano`, `vim`, `vi`)
+are available, we can use `sed` to make the necessary changes directly in the 
+file. This approach requires us to know the exact lines and patterns to replace.
+
+Let's find the location of the `display_for_field` function and apply the 
+necessary change using `sed`.
+
+First, let's locate the file:
+
+```mswea_bash_command
+find . -name utils.py
+```
+
+User:
+<returncode>0</returncode>
+<output>
+./tests/template_tests/utils.py
+./tests/i18n/utils.py
+./tests/utils_tests/utils.py
+./tests/urlpatterns_reverse/utils.py
+./tests/gis_tests/utils.py
+./django/test/utils.py
+./django/contrib/postgres/utils.py
+./django/contrib/postgres/fields/utils.py
+./django/contrib/admin/utils.py
+./django/contrib/admindocs/utils.py
+./django/contrib/gis/db/backends/utils.py
+./django/contrib/messages/utils.py
+./django/contrib/staticfiles/utils.py
+./django/urls/utils.py
+./django/db/utils.py
+./django/db/models/utils.py
+./django/db/backends/utils.py
+./django/db/backends/oracle/utils.py
+./django/db/migrations/utils.py
+./django/db/migrations/operations/utils.py
+./django/core/cache/utils.py
+./django/core/files/utils.py
+./django/core/management/utils.py
+./django/core/mail/utils.py
+./django/forms/utils.py
+./django/template/utils.py
+./django/template/backends/utils.py
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 5, $0.00):
+THOUGHT: There are multiple instances of `utils.py` across different 
+directories. We need to identify the correct one that contains the 
+`display_for_field` function. Based on the typical structure of Django projects,
+the most likely candidate is `django/contrib/admin/utils.py`.
+
+Let's open that file using `sed` to make the necessary changes:
+
+```mswea_bash_command
+sed -i '/def 
+display_for_field/,+1s/json.dumps(value)/field.prepare_value(value)/' 
+django/contrib/admin/utils.py
+```
+
+User:
+<returncode>0</returncode>
+<output>
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 6, $0.00):
+THOUGHT: The `sed` command has been executed successfully. Now, we need to 
+verify if the changes have been made correctly. Let's open the file to inspect 
+the changes.
+
+```mswea_bash_command
+nano django/contrib/admin/utils.py
+```
+
+User:
+<returncode>127</returncode>
+<output>
+bash: line 1: nano: command not found
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 7, $0.00):
+THOUGHT: Since `nano` is still not available, let's use `vim` to open the file 
+and verify the changes.
+
+```mswea_bash_command
+vim django/contrib/admin/utils.py
+```
+
+User:
+<returncode>127</returncode>
+<output>
+bash: line 1: vim: command not found
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 8, $0.00):
+THOUGHT: Given that neither `nano` nor `vim` is available, let's use `cat` to 
+view the contents of the file and manually verify the changes.
+
+```mswea_bash_command
+cat django/contrib/admin/utils.py | grep -A 1 'def display_for_field'
+```
+
+User:
+<returncode>0</returncode>
+<output>
+def display_for_field(value, field, empty_value_display):
+    from django.contrib.admin.templatetags.admin_list import _boolean_icon
+</output>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 9, $0.00):
+THOUGHT: The `grep` command did not return the expected results. Let's try using
+`less` to paginate through the file and search for the `display_for_field` 
+function manually.
+
+```mswea_bash_command
+less django/contrib/admin/utils.py
+```
+
+User:
+<returncode>0</returncode>
+<warning>
+The output of your last command was too long.
+Please try a different command that produces less output.
+If you're looking at a file you can try use head, tail or sed to view a smaller 
+number of lines selectively.
+If you're using grep or find and it produced too much output, you can use a more
+selective search pattern.
+If you really need to see something from the full command's output, you can 
+redirect output to a file and then search in that file.
+</warning><output_head>
+import datetime
+import decimal
+from collections import defaultdict
+
+from django.core.exceptions import FieldDoesNotExist
+from django.db import models, router
+from django.db.models.constants import LOOKUP_SEP
+from django.db.models.deletion import Collector
+from django.forms.utils import pretty_name
+from django.urls import NoReverseMatch, reverse
+from django.utils import formats, timezone
+from django.utils.html import format_html
+from django.utils.regex_helper import _lazy_re_compile
+from django.utils.text import capfirst
+from django.utils.translation import ngettext, override as translation_override
+
+QUOTE_MAP = {i: '_%02X' % i for i in b'":/_#?;@&=+$,"[]<>%\n\\'}
+UNQUOTE_MAP = {v: chr(k) for k, v in QUOTE_MAP.items()}
+UNQUOTE_RE = _lazy_re_compile('_(?:%s)' % '|'.join([x[1:] for x in 
+UNQUOTE_MAP]))
+
+
+class FieldIsAForeignKeyColumnName(Exception):
+    """A field is a foreign key attname, i.e. <FK>_id."""
+    pass
+
+
+def lookup_needs_distinct(opts, lookup_path):
+    """
+    Return True if 'distinct()' should be used to query the given lookup path.
+    """
+    lookup_fields = lookup_path.split(LOOKUP_SEP)
+    # Go through the fields (following all relations) and look for an m2m.
+    for field_name in lookup_fields:
+        if field_name == 'pk':
+            field_name = opts.pk.name
+        try:
+            field = opts.get_field(field_name)
+        except FieldDoesNotExist:
+            # Ignore query lookups.
+            continue
+        else:
+            if hasattr(field, 'get_path_info'):
+                # This field is a relation; update opts to follow the relation.
+                path_info = field.get_path_info()
+                opts = path_info[-1].to_opts
+                if any(path.m2m for path in path_info):
+                    # This field is a m2m relation so distinct must be called.
+                    return True
+    return False
+
+
+def prepare_lookup_value(key, value):
+    """
+    Return a lookup value prepared to be used in queryset filtering.
+    """
+    # if key ends with __in, split parameter into separate values
+    if key.endswith('__in'):
+        value = value.split(',')
+    # if key ends with __isnull, special case '' and the string literals 'false'
+and '0'
+    elif key.endswith('__isnull'):
+        value = value.lower() not in ('', 'false', '0')
+    return value
+
+
+def quote(s):
+    """
+    Ensure that primary key values do not confuse the admin URLs by escaping
+    any '/', '_' and ':' and similarly problematic characters.
+    Similar to urllib.parse.quote(), except that the quoting is slightly
+    different so that it doesn't get automatically unquoted by the Web browser.
+    """
+    return s.translate(QUOTE_MAP) if isinstance(s, str) else s
+
+
+def unquote(s):
+    """Undo the effects of quote()."""
+    return UNQUOTE_RE.sub(lambda m: UNQUOTE_MAP[m.group(0)], s)
+
+
+def flatten(fields):
+    """
+    Return a list which is a single level of flattening of the original list.
+    """
+    flat = []
+    for field in fields:
+        if isinstance(field, (list, tuple)):
+            flat.extend(field)
+        else:
+            flat.append(field)
+    return flat
+
+
+def flatten_fieldsets(fieldsets):
+    """Return a list of field names from an admin fieldsets structure."""
+    field_names = []
+    for name, opts in fieldsets:
+        field_names.extend(
+            flatten(opts['fields'])
+        )
+    return field_names
+
+
+def get_deleted_objects(objs, request, admin_site):
+    """
+    Find all objects related to ``objs`` that should also be deleted. ``objs``
+    must be a homogeneous iterable of objects (e.g. a QuerySet).
+
+    Return a nested list of strings suitable for display in the
+    template with the ``unordered_list`` filter.
+    """
+    try:
+        obj = objs[0]
+    except IndexError:
+        return [], {}, set(), []
+    else:
+        using = router.db_for_write(obj._meta.model)
+    collector = NestedObjects(using=using)
+    collector.collect(objs)
+    perms_needed = set()
+
+    def format_callback(obj):
+        model = obj.__class__
+        has_admin = model in admin_site._registry
+        opts = obj._meta
+
+        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), obj)
+
+        if has_admin:
+            if not admin_site._registry[model].has_delete_permission(request, 
+obj):
+                perms_needed.add(opts.verbose_name)
+            try:
+                admin_url = reverse('%s:%s_%s_change'
+                                    % (admin_site.name,
+                                       opts.app_label,
+                                       opts.model_name),
+                                    None, (quote(obj.pk),))
+            except NoReverseMatch:
+                # Change url doesn't exist -- don't display link to edit
+                return no_edit_link
+
+            # Display a link to the admin page.
+            return format_html('{}: <a href="{}">{}</a>',
+                               capfirst(opts.verbose_name),
+                               admin_url,
+                        
+</output_head>
+<elided_chars>
+9546 characters elided
+</elided_chars>
+<output_tail>
+n str(value)
+    elif isinstance(value, datetime.datetime):
+        return formats.localize(timezone.template_localtime(value))
+    elif isinstance(value, (datetime.date, datetime.time)):
+        return formats.localize(value)
+    elif isinstance(value, (int, decimal.Decimal, float)):
+        return formats.number_format(value)
+    elif isinstance(value, (list, tuple)):
+        return ', '.join(str(v) for v in value)
+    else:
+        return str(value)
+
+
+class NotRelationField(Exception):
+    pass
+
+
+def get_model_from_relation(field):
+    if hasattr(field, 'get_path_info'):
+        return field.get_path_info()[-1].to_opts.model
+    else:
+        raise NotRelationField
+
+
+def reverse_field_path(model, path):
+    """ Create a reversed field path.
+
+    E.g. Given (Order, "user__groups"),
+    return (Group, "user__order").
+
+    Final field must be a related model, not a data field.
+    """
+    reversed_path = []
+    parent = model
+    pieces = path.split(LOOKUP_SEP)
+    for piece in pieces:
+        field = parent._meta.get_field(piece)
+        # skip trailing data field if extant:
+        if len(reversed_path) == len(pieces) - 1:  # final iteration
+            try:
+                get_model_from_relation(field)
+            except NotRelationField:
+                break
+
+        # Field should point to another model
+        if field.is_relation and not (field.auto_created and not 
+field.concrete):
+            related_name = field.related_query_name()
+            parent = field.remote_field.model
+        else:
+            related_name = field.field.name
+            parent = field.related_model
+        reversed_path.insert(0, related_name)
+    return (parent, LOOKUP_SEP.join(reversed_path))
+
+
+def get_fields_from_path(model, path):
+    """ Return list of Fields given path relative to model.
+
+    e.g. (ModelX, "user__groups__name") -> [
+        <django.db.models.fields.related.ForeignKey object at 0x...>,
+        <django.db.models.fields.related.ManyToManyField object at 0x...>,
+        <django.db.models.fields.CharField object at 0x...>,
+    ]
+    """
+    pieces = path.split(LOOKUP_SEP)
+    fields = []
+    for piece in pieces:
+        if fields:
+            parent = get_model_from_relation(fields[-1])
+        else:
+            parent = model
+        fields.append(parent._meta.get_field(piece))
+    return fields
+
+
+def construct_change_message(form, formsets, add):
+    """
+    Construct a JSON structure describing changes from a changed object.
+    Translations are deactivated so that strings are stored untranslated.
+    Translation happens later on LogEntry access.
+    """
+    # Evaluating `form.changed_data` prior to disabling translations is required
+    # to avoid fields affected by localization from being included incorrectly,
+    # e.g. where date formats differ such as MM/DD/YYYY vs DD/MM/YYYY.
+    changed_data = form.changed_data
+    with translation_override(None):
+        # Deactivate translations while fetching verbose_name for form
+        # field labels and using `field_name`, if verbose_name is not provided.
+        # Translations will happen later on LogEntry access.
+        changed_field_labels = _get_changed_field_labels_from_form(form, 
+changed_data)
+
+    change_message = []
+    if add:
+        change_message.append({'added': {}})
+    elif form.changed_data:
+        change_message.append({'changed': {'fields': changed_field_labels}})
+    if formsets:
+        with translation_override(None):
+            for formset in formsets:
+                for added_object in formset.new_objects:
+                    change_message.append({
+                        'added': {
+                            'name': str(added_object._meta.verbose_name),
+                            'object': str(added_object),
+                        }
+                    })
+                for changed_object, changed_fields in formset.changed_objects:
+                    change_message.append({
+                        'changed': {
+                            'name': str(changed_object._meta.verbose_name),
+                            'object': str(changed_object),
+                            'fields': 
+_get_changed_field_labels_from_form(formset.forms[0], changed_fields),
+                        }
+                    })
+                for deleted_object in formset.deleted_objects:
+                    change_message.append({
+                        'deleted': {
+                            'name': str(deleted_object._meta.verbose_name),
+                            'object': str(deleted_object),
+                        }
+                    })
+    return change_message
+
+
+def _get_changed_field_labels_from_form(form, changed_data):
+    changed_field_labels = []
+    for field_name in changed_data:
+        try:
+            verbose_field_name = form.fields[field_name].label or field_name
+        except KeyError:
+            verbose_field_name = field_name
+        changed_field_labels.append(str(verbose_field_name))
+    return changed_field_labels
+
+</output_tail>
+────────────────────────────────────────────────────────────────────────────────
+
+mini-swe-agent (step 10, $0.00):
+THOUGHT: The `grep` command did not return the expected results. Let's try using
+`less` to paginate through the file and search for the `display_for_field` 
+function manually.
+
+```mswea_bash_command
+less django/contrib/admin/utils.py
+```
+
+User:
+<returncode>0</returncode>
+<warning>
+The output of your last command was too long.
+Please try a different command that produces less output.
+If you're looking at a file you can try use head, tail or sed to view a smaller 
+number of lines selectively.
+If you're using grep or find and it produced too much output, you can use a more
+selective search pattern.
+If you really need to see something from the full command's output, you can 
+redirect output to a file and then search in that file.
+</warning><output_head>
+import datetime
+import decimal
+from collections import defaultdict
+
+from django.core.exceptions import FieldDoesNotExist
+from django.db import models, router
+from django.db.models.constants import LOOKUP_SEP
+from django.db.models.deletion import Collector
+from django.forms.utils import pretty_name
+from django.urls import NoReverseMatch, reverse
+from django.utils import formats, timezone
+from django.utils.html import format_html
+from django.utils.regex_helper import _lazy_re_compile
+from django.utils.text import capfirst
+from django.utils.translation import ngettext, override as translation_override
+
+QUOTE_MAP = {i: '_%02X' % i for i in b'":/_#?;@&=+$,"[]<>%\n\\'}
+UNQUOTE_MAP = {v: chr(k) for k, v in QUOTE_MAP.items()}
+UNQUOTE_RE = _lazy_re_compile('_(?:%s)' % '|'.join([x[1:] for x in 
+UNQUOTE_MAP]))
+
+
+class FieldIsAForeignKeyColumnName(Exception):
+    """A field is a foreign key attname, i.e. <FK>_id."""
+    pass
+
+
+def lookup_needs_distinct(opts, lookup_path):
+    """
+    Return True if 'distinct()' should be used to query the given lookup path.
+    """
+    lookup_fields = lookup_path.split(LOOKUP_SEP)
+    # Go through the fields (following all relations) and look for an m2m.
+    for field_name in lookup_fields:
+        if field_name == 'pk':
+            field_name = opts.pk.name
+        try:
+            field = opts.get_field(field_name)
+        except FieldDoesNotExist:
+            # Ignore query lookups.
+            continue
+        else:
+            if hasattr(field, 'get_path_info'):
+                # This field is a relation; update opts to follow the relation.
+                path_info = field.get_path_info()
+                opts = path_info[-1].to_opts
+                if any(path.m2m for path in path_info):
+                    # This field is a m2m relation so distinct must be called.
+                    return True
+    return False
+
+
+def prepare_lookup_value(key, value):
+    """
+    Return a lookup value prepared to be used in queryset filtering.
+    """
+    # if key ends with __in, split parameter into separate values
+    if key.endswith('__in'):
+        value = value.split(',')
+    # if key ends with __isnull, special case '' and the string literals 'false'
+and '0'
+    elif key.endswith('__isnull'):
+        value = value.lower() not in ('', 'false', '0')
+    return value
+
+
+def quote(s):
+    """
+    Ensure that primary key values do not confuse the admin URLs by escaping
+    any '/', '_' and ':' and similarly problematic characters.
+    Similar to urllib.parse.quote(), except that the quoting is slightly
+    different so that it doesn't get automatically unquoted by the Web browser.
+    """
+    return s.translate(QUOTE_MAP) if isinstance(s, str) else s
+
+
+def unquote(s):
+    """Undo the effects of quote()."""
+    return UNQUOTE_RE.sub(lambda m: UNQUOTE_MAP[m.group(0)], s)
+
+
+def flatten(fields):
+    """
+    Return a list which is a single level of flattening of the original list.
+    """
+    flat = []
+    for field in fields:
+        if isinstance(field, (list, tuple)):
+            flat.extend(field)
+        else:
+            flat.append(field)
+    return flat
+
+
+def flatten_fieldsets(fieldsets):
+    """Return a list of field names from an admin fieldsets structure."""
+    field_names = []
+    for name, opts in fieldsets:
+        field_names.extend(
+            flatten(opts['fields'])
+        )
+    return field_names
+
+
+def get_deleted_objects(objs, request, admin_site):
+    """
+    Find all objects related to ``objs`` that should also be deleted. ``objs``
+    must be a homogeneous iterable of objects (e.g. a QuerySet).
+
+    Return a nested list of strings suitable for display in the
+    template with the ``unordered_list`` filter.
+    """
+    try:
+        obj = objs[0]
+    except IndexError:
+        return [], {}, set(), []
+    else:
+        using = router.db_for_write(obj._meta.model)
+    collector = NestedObjects(using=using)
+    collector.collect(objs)
+    perms_needed = set()
+
+    def format_callback(obj):
+        model = obj.__class__
+        has_admin = model in admin_site._registry
+        opts = obj._meta
+
+        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), obj)
+
+        if has_admin:
+            if not admin_site._registry[model].has_delete_permission(request, 
+obj):
+                perms_needed.add(opts.verbose_name)
+            try:
+                admin_url = reverse('%s:%s_%s_change'
+                                    % (admin_site.name,
+                                       opts.app_label,
+                                       opts.model_name),
+                                    None, (quote(obj.pk),))
+            except NoReverseMatch:
+                # Change url doesn't exist -- don't display link to edit
+                return no_edit_link
+
+            # Display a link to the admin page.
+            return format_html('{}: <a href="{}">{}</a>',
+                               capfirst(opts.verbose_name),
+                               admin_url,
+                        
+</output_head>
+<elided_chars>
+9546 characters elided
+</elided_chars>
+<output_tail>
+n str(value)
+    elif isinstance(value, datetime.datetime):
+        return formats.localize(timezone.template_localtime(value))
+    elif isinstance(value, (datetime.date, datetime.time)):
+        return formats.localize(value)
+    elif isinstance(value, (int, decimal.Decimal, float)):
+        return formats.number_format(value)
+    elif isinstance(value, (list, tuple)):
+        return ', '.join(str(v) for v in value)
+    else:
+        return str(value)
+
+
+class NotRelationField(Exception):
+    pass
+
+
+def get_model_from_relation(field):
+    if hasattr(field, 'get_path_info'):
+        return field.get_path_info()[-1].to_opts.model
+    else:
+        raise NotRelationField
+
+
+def reverse_field_path(model, path):
+    """ Create a reversed field path.
+
+    E.g. Given (Order, "user__groups"),
+    return (Group, "user__order").
+
+    Final field must be a related model, not a data field.
+    """
+    reversed_path = []
+    parent = model
+    pieces = path.split(LOOKUP_SEP)
+    for piece in pieces:
+        field = parent._meta.get_field(piece)
+        # skip trailing data field if extant:
+        if len(reversed_path) == len(pieces) - 1:  # final iteration
+            try:
+                get_model_from_relation(field)
+            except NotRelationField:
+                break
+
+        # Field should point to another model
+        if field.is_relation and not (field.auto_created and not 
+field.concrete):
+            related_name = field.related_query_name()
+            parent = field.remote_field.model
+        else:
+            related_name = field.field.name
+            parent = field.related_model
+        reversed_path.insert(0, related_name)
+    return (parent, LOOKUP_SEP.join(reversed_path))
+
+
+def get_fields_from_path(model, path):
+    """ Return list of Fields given path relative to model.
+
+    e.g. (ModelX, "user__groups__name") -> [
+        <django.db.models.fields.related.ForeignKey object at 0x...>,
+        <django.db.models.fields.related.ManyToManyField object at 0x...>,
+        <django.db.models.fields.CharField object at 0x...>,
+    ]
+    """
+    pieces = path.split(LOOKUP_SEP)
+    fields = []
+    for piece in pieces:
+        if fields:
+            parent = get_model_from_relation(fields[-1])
+        else:
+            parent = model
+        fields.append(parent._meta.get_field(piece))
+    return fields
+
+
+def construct_change_message(form, formsets, add):
+    """
+    Construct a JSON structure describing changes from a changed object.
+    Translations are deactivated so that strings are stored untranslated.
+    Translation happens later on LogEntry access.
+    """
+    # Evaluating `form.changed_data` prior to disabling translations is required
+    # to avoid fields affected by localization from being included incorrectly,
+    # e.g. where date formats differ such as MM/DD/YYYY vs DD/MM/YYYY.
+    changed_data = form.changed_data
+    with translation_override(None):
+        # Deactivate translations while fetching verbose_name for form
+        # field labels and using `field_name`, if verbose_name is not provided.
+        # Translations will happen later on LogEntry access.
+        changed_field_labels = _get_changed_field_labels_from_form(form, 
+changed_data)
+
+    change_message = []
+    if add:
+        change_message.append({'added': {}})
+    elif form.changed_data:
+        change_message.append({'changed': {'fields': changed_field_labels}})
+    if formsets:
+        with translation_override(None):
+            for formset in formsets:
+                for added_object in formset.new_objects:
+                    change_message.append({
+                        'added': {
+                            'name': str(added_object._meta.verbose_name),
+                            'object': str(added_object),
+                        }
+                    })
+                for changed_object, changed_fields in formset.changed_objects:
+                    change_message.append({
+                        'changed': {
+                            'name': str(changed_object._meta.verbose_name),
+                            'object': str(changed_object),
+                            'fields': 
+_get_changed_field_labels_from_form(formset.forms[0], changed_fields),
+                        }
+                    })
+                for deleted_object in formset.deleted_objects:
+                    change_message.append({
+                        'deleted': {
+                            'name': str(deleted_object._meta.verbose_name),
+                            'object': str(deleted_object),
+                        }
+                    })
+    return change_message
+
+
+def _get_changed_field_labels_from_form(form, changed_data):
+    changed_field_labels = []
+    for field_name in changed_data:
+        try:
+            verbose_field_name = form.fields[field_name].label or field_name
+        except KeyError:
+            verbose_field_name = field_name
+        changed_field_labels.append(str(verbose_field_name))
+    return changed_field_labels
+
+</output_tail>
+────────────────────────────────────────────────────────────────────────────────
+Limits exceeded. Limits: 10 steps, $0.0.
+Current spend: 10 steps, $0.00.
+New step limit: 
+Exit:
+EOF when reading a line
+
+Aborted.

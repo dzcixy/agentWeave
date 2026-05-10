@@ -1,0 +1,22 @@
+# PR3 local mini-SWE-agent/SWE-bench override.
+# Runner scripts merge this after the built-in swebench config:
+#   mini-extra swebench-single -c swebench_backticks -c configs/miniswe_swebench_vllm.yaml ...
+agent:
+  step_limit: 10
+  cost_limit: 0
+environment:
+  environment_class: docker
+  pull_timeout: 1200
+  container_timeout: 2h
+  timeout: 60
+model:
+  model_name: hosted_vllm/qwen-coder-7b
+  model_class: litellm_textbased
+  litellm_model_registry: configs/miniswe_litellm_registry.json
+  cost_tracking: ignore_errors
+  model_kwargs:
+    api_base: http://localhost:8001/v1
+    api_key: dummy
+    temperature: 0.2
+    max_tokens: 1024
+    drop_params: true

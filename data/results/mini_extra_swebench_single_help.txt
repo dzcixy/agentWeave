@@ -1,0 +1,50 @@
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+                                                                                
+ Usage: mini-extra swebench-single [OPTIONS]                                    
+                                                                                
+ Run on a single SWE-Bench instance.                                            
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --yolo        -y             Run without confirmation                        │
+│ --cost-limit  -l      FLOAT  Cost limit. Set to 0 to disable.                │
+│ --help                       Show this message and exit.                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Data selection ─────────────────────────────────────────────────────────────╮
+│ --subset            TEXT  SWEBench subset to use or path to a dataset        │
+│                           [default: lite]                                    │
+│ --split             TEXT  Dataset split [default: dev]                       │
+│ --instance  -i      TEXT  SWE-Bench instance ID or index [default: 0]        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Basic ──────────────────────────────────────────────────────────────────────╮
+│ --model   -m      TEXT  Model to use                                         │
+│ --config  -c      TEXT  Path to config files, filenames, or key-value pairs. │
+│                         IMPORTANT: If you set this option, the default       │
+│                         config file will not be used. So you need to         │
+│                         explicitly set it e.g., with -c swebench.yaml <other │
+│                         options>                                             │
+│                         Multiple configs will be recursively merged.         │
+│                         Examples:                                            │
+│                         -c model.model_kwargs.temperature=0 You forgot to    │
+│                         add the default config file! See above.              │
+│                         -c swebench.yaml -c                                  │
+│                         model.model_kwargs.temperature=0.5                   │
+│                         -c swebench.yaml -c agent.mode=yolo                  │
+│                         [default:                                            │
+│                         /home/duzc/data/agent_trace/AgentWeaver/.venv/lib/p… │
+│ --output  -o      PATH  Output trajectory file                               │
+│                         [default:                                            │
+│                         /home/duzc/.config/mini-swe-agent/last_swebench_sin… │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Advanced ───────────────────────────────────────────────────────────────────╮
+│ --model-class              TEXT  Model class to use (e.g., 'anthropic' or    │
+│                                  'minisweagent.models.anthropic.AnthropicMo… │
+│ --agent-class              TEXT  Agent class to use (e.g., 'interactive' or  │
+│                                  'minisweagent.agents.interactive.Interacti… │
+│ --environment-class        TEXT  Environment class to use (e.g., 'docker' or │
+│                                  'minisweagent.environments.docker.DockerEn… │
+│ --exit-immediately               Exit immediately when the agent wants to    │
+│                                  finish instead of prompting.                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

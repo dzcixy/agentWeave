@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import time
 from pathlib import Path
 from typing import Any
@@ -13,101 +14,475 @@ from agentweaver.utils.hashing import prompt_hash, stable_hash
 from agentweaver.utils.tokenization import count_tokens
 
 
+TIMING_START_KEYS = ("timestamp_start", "start_time", "started_at", "start", "created_at")
+TIMING_END_KEYS = ("timestamp_end", "end_time", "ended_at", "end", "completed_at")
+LATENCY_KEYS = ("latency", "duration", "elapsed", "elapsed_seconds", "tool_latency")
+
+
 def _load(path: str | Path) -> Any:
-    with Path(path).open("r", encoding="utf-8") as f:
-        return json.load(f)
+    p = Path(path)
+    text = p.read_text(encoding="utf-8", errors="replace")
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        rows = []
+        for line in text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                rows.append({"text": line})
+        return {"trajectory": rows, "source_format": "jsonl_or_text"}
 
 
-def convert_swe_traj(path: str | Path, out: str | Path | None = None, model: str = "Qwen/Qwen2.5-Coder-7B-Instruct") -> Trace:
-    obj = _load(path)
-    steps = obj.get("trajectory") or obj.get("steps") or obj.get("history") or []
-    instance_id = obj.get("instance_id") or Path(path).stem.replace(".traj", "")
-    session_id = obj.get("run_id") or stable_hash(str(path))
+def _as_list(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
+def _text(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, sort_keys=True, ensure_ascii=False)
+    return str(value)
+
+
+def _first_text(obj: dict[str, Any], keys: tuple[str, ...]) -> str:
+    for key in keys:
+        if key in obj and obj[key] not in (None, ""):
+            return _text(obj[key])
+    return ""
+
+
+def _num(value: Any) -> float | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        s = value.strip()
+        if not s:
+            return None
+        try:
+            return float(s)
+        except ValueError:
+            return None
+    return None
+
+
+def _first_num(obj: dict[str, Any], keys: tuple[str, ...]) -> float | None:
+    for key in keys:
+        val = _num(obj.get(key))
+        if val is not None:
+            return val
+    return None
+
+
+def _timing(obj: dict[str, Any]) -> tuple[float, float, float, bool]:
+    start = _first_num(obj, TIMING_START_KEYS)
+    end = _first_num(obj, TIMING_END_KEYS)
+    latency = _first_num(obj, LATENCY_KEYS)
+    if start is not None and end is not None:
+        return start, end, max(0.0, end - start), False
+    if latency is not None:
+        return 0.0, 0.0, max(0.0, latency), True
+    return 0.0, 0.0, 0.0, True
+
+
+def _steps(obj: Any) -> list[dict[str, Any]]:
+    if isinstance(obj, list):
+        return [x if isinstance(x, dict) else {"text": x} for x in obj]
+    if not isinstance(obj, dict):
+        return [{"text": obj}]
+    if isinstance(obj.get("messages"), list) and str(obj.get("trajectory_format", "")).startswith("mini-swe-agent"):
+        return _mini_swe_message_steps(obj["messages"])
+    for key in ("trajectory", "steps", "history", "turns", "messages_log", "events"):
+        if isinstance(obj.get(key), list):
+            return [x if isinstance(x, dict) else {"text": x} for x in obj[key]]
+    if isinstance(obj.get("messages"), list):
+        return [{"messages": obj["messages"], "response": obj.get("response") or obj.get("completion")}]
+    return []
+
+
+def _extract_text_command(content: str) -> str:
+    patterns = [
+        r"```mswea_bash_command\s*\n(.*?)\n```",
+        r"<mswea_bash_command>(.*?)</mswea_bash_command>",
+        r"```bash\s*\n(.*?)\n```",
+    ]
+    for pat in patterns:
+        m = re.search(pat, content, flags=re.DOTALL | re.IGNORECASE)
+        if m:
+            return m.group(1).strip()
+    return ""
+
+
+def _parse_observation_content(content: str) -> tuple[str, int | None]:
+    rc: int | None = None
+    m_rc = re.search(r"<returncode>(.*?)</returncode>", content, flags=re.DOTALL | re.IGNORECASE)
+    if m_rc:
+        try:
+            rc = int(m_rc.group(1).strip())
+        except Exception:
+            rc = None
+    outputs: list[str] = []
+    for tag in ("exception", "output", "output_head", "output_tail", "warning"):
+        for m in re.finditer(fr"<{tag}>(.*?)</{tag}>", content, flags=re.DOTALL | re.IGNORECASE):
+            txt = m.group(1).strip()
+            if txt:
+                outputs.append(txt)
+    if outputs:
+        return "\n".join(outputs), rc
+    return content.strip(), rc
+
+
+def _mini_swe_message_steps(messages: list[Any]) -> list[dict[str, Any]]:
+    normalized = _messages(messages)
+    steps: list[dict[str, Any]] = []
+    for i, msg in enumerate(normalized):
+        if msg.get("role") != "assistant":
+            continue
+        assistant = msg.get("content", "")
+        command = _extract_text_command(assistant)
+        obs = ""
+        rc: int | None = None
+        if i + 1 < len(normalized) and normalized[i + 1].get("role") == "user":
+            obs, rc = _parse_observation_content(normalized[i + 1].get("content", ""))
+        step: dict[str, Any] = {
+            "messages": normalized[:i],
+            "assistant": assistant,
+            "command": command,
+            "observation": obs,
+        }
+        if rc is not None:
+            step["returncode"] = rc
+        steps.append(step)
+    return steps
+
+
+def _messages(value: Any) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    for msg in _as_list(value):
+        if isinstance(msg, dict):
+            role = msg.get("role") or msg.get("type") or msg.get("speaker")
+            content = msg.get("content")
+            if content is None:
+                content = msg.get("message") or msg.get("text") or msg.get("value")
+            if content is not None:
+                out.append({"role": str(role or "user"), "content": _text(content)})
+        elif msg is not None:
+            out.append({"role": "user", "content": _text(msg)})
+    return out
+
+
+def _context_prefix(obj: dict[str, Any], model: str) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = []
+    system = _first_text(obj, ("system_prompt", "system", "instructions"))
+    if system:
+        messages.append({"role": "system", "content": system})
+    tools = _first_text(obj, ("tool_schema", "tools", "available_tools"))
+    if tools:
+        messages.append({"role": "system", "content": f"Available tools:\n{tools}"})
+    task = _first_text(obj, ("problem_statement", "problem", "issue", "task", "prompt"))
+    if task:
+        messages.append({"role": "user", "content": f"Problem statement:\n{task}"})
+    repo = _first_text(obj, ("repo", "repository", "repo_context", "file_context"))
+    if repo:
+        messages.append({"role": "user", "content": f"Repository context:\n{repo}"})
+    return messages
+
+
+def _llm_messages(step: dict[str, Any], prefix: list[dict[str, str]], history: list[dict[str, str]]) -> list[dict[str, str]]:
+    if _command(step) and not any(
+        key in step
+        for key in (
+            "messages",
+            "model_messages",
+            "prompt_messages",
+            "prompt",
+            "model_query",
+            "query",
+            "llm_input",
+            "input",
+            "thought",
+            "reasoning",
+            "response",
+            "completion",
+            "model_response",
+            "assistant",
+            "assistant_message",
+        )
+    ):
+        return []
+    explicit = _messages(step.get("messages") or step.get("model_messages") or step.get("prompt_messages"))
+    if explicit:
+        return prefix + explicit
+    prompt = _first_text(step, ("prompt", "model_query", "query", "llm_input", "input"))
+    if prompt:
+        return prefix + history + [{"role": "user", "content": prompt}]
+    thought = _first_text(step, ("thought", "reasoning"))
+    action = _first_text(step, ("action", "assistant", "response", "completion", "model_response"))
+    if thought or action:
+        content = "\n".join(x for x in (thought, action) if x)
+        return prefix + history + [{"role": "assistant", "content": content}]
+    return []
+
+
+def _assistant_output(step: dict[str, Any]) -> str:
+    out = _first_text(step, ("response", "completion", "model_response", "assistant", "assistant_message"))
+    if out:
+        return out
+    thought = _first_text(step, ("thought", "reasoning"))
+    action = _first_text(step, ("action",))
+    return "\n".join(x for x in (thought, action) if x)
+
+
+def _command_from_tool_call(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        for key in ("command", "cmd", "code", "arguments", "input"):
+            if key in value and value[key] not in (None, ""):
+                return _text(value[key])
+        return _text(value)
+    return _text(value)
+
+
+def _looks_like_shell(action: str) -> bool:
+    s = action.strip()
+    if not s:
+        return False
+    if s.startswith(("pytest", "python", "uv ", "pip ", "git ", "grep", "rg ", "sed ", "cat ", "ls ", "find ")):
+        return True
+    if any(tok in s for tok in ("apply_patch", "bash ", "sh ", "make ", "npm ", "tox ", "mvn ", "cargo ")):
+        return True
+    return False
+
+
+def _command(step: dict[str, Any]) -> str:
+    for key in ("command", "cmd", "shell_command"):
+        if step.get(key):
+            return _text(step[key])
+    tool_call = _command_from_tool_call(step.get("tool_call") or step.get("tool_calls"))
+    if tool_call:
+        return tool_call
+    action = _first_text(step, ("action",))
+    return action if _looks_like_shell(action) else ""
+
+
+def _observation(step: dict[str, Any]) -> str:
+    return _first_text(step, ("observation", "tool_output", "output", "stdout", "stderr", "result"))
+
+
+def _exit_code(step: dict[str, Any]) -> int | None:
+    for key in ("exit_code", "returncode", "return_code", "status_code"):
+        value = step.get(key)
+        if value in (None, ""):
+            continue
+        try:
+            return int(value)
+        except Exception:
+            return None
+    return None
+
+
+def _success(obj: dict[str, Any]) -> tuple[str, bool | None]:
+    for key in ("success", "resolved", "passed", "is_resolved"):
+        if key in obj and obj[key] is not None:
+            val = obj[key]
+            if isinstance(val, bool):
+                return ("pass" if val else "fail"), val
+            if isinstance(val, str):
+                low = val.lower()
+                if low in {"true", "pass", "passed", "resolved", "success", "successfully_resolved"}:
+                    return "pass", True
+                if low in {"false", "fail", "failed", "unresolved", "error"}:
+                    return "fail", False
+    status = _first_text(obj, ("status", "final_status", "verifier_result"))
+    if status:
+        low = status.lower()
+        if low in {"pass", "passed", "resolved", "success", "successfully_resolved"}:
+            return "pass", True
+        if low in {"fail", "failed", "unresolved", "error"}:
+            return "fail", False
+    return "unknown", None
+
+
+def _patch(obj: dict[str, Any], steps: list[dict[str, Any]]) -> str:
+    patch = _first_text(obj, ("patch", "diff", "final_patch"))
+    if patch:
+        return patch
+    info = obj.get("info")
+    if isinstance(info, dict):
+        patch = _first_text(info, ("submission", "patch", "diff", "final_patch"))
+        if patch:
+            return patch
+    for step in reversed(steps):
+        patch = _first_text(step, ("patch", "diff"))
+        if patch:
+            return patch
+    return ""
+
+
+def _add_history(history: list[dict[str, str]], role: str, content: str) -> None:
+    if content:
+        history.append({"role": role, "content": content})
+
+
+def _node_id(instance_id: str, branch_id: str, kind: str, index: int) -> str:
+    return f"{instance_id}:{branch_id}:{kind}{index}"
+
+
+def convert_swe_traj(
+    path: str | Path,
+    out: str | Path | None = None,
+    model: str = "Qwen/Qwen2.5-Coder-7B-Instruct",
+    branch_id: str | None = None,
+    parent_branch_id: str | None = None,
+    rollout_id: str | None = None,
+    instance_id: str | None = None,
+) -> Trace:
+    loaded = _load(path)
+    obj = loaded if isinstance(loaded, dict) else {"trajectory": loaded}
+    steps = _steps(loaded)
+    instance_id = instance_id or obj.get("instance_id") or obj.get("task_id") or Path(path).stem.replace(".traj", "")
+    session_id = obj.get("run_id") or obj.get("session_id") or stable_hash(str(path))
+    branch_id = branch_id or obj.get("branch_id") or "b0"
+    parent_branch_id = parent_branch_id if parent_branch_id is not None else obj.get("parent_branch_id")
+    rollout_id = rollout_id or obj.get("rollout_id")
+    prefix = _context_prefix(obj, model)
+    history: list[dict[str, str]] = []
     events: list[Event] = []
-    now = float(obj.get("start_time", time.time()))
-    branch_id = obj.get("branch_id", "b0")
+    step_id = 0
     for i, step in enumerate(steps):
-        action = step.get("action") or step.get("thought") or step.get("prompt") or ""
-        obs = step.get("observation") or step.get("output") or ""
-        start = float(step.get("timestamp_start", step.get("start_time", now + i)))
-        end = float(step.get("timestamp_end", step.get("end_time", start + float(step.get("latency", 0.1)))))
-        if step.get("messages") or step.get("prompt"):
-            msgs = step.get("messages") or [{"role": "user", "content": step.get("prompt", action)}]
-            rendered = "\n".join(str(m.get("content", "")) for m in msgs)
-            segs = segment_prompt(msgs, metadata={"model": model, "instance_id": instance_id, "branch_id": branch_id})
+        messages = _llm_messages(step, prefix, history)
+        assistant_output = _assistant_output(step)
+        if messages:
+            rendered = "\n".join(str(m.get("content", "")) for m in messages)
+            start, end, latency, timing_missing = _timing(step)
+            segs = segment_prompt(messages, metadata={"model": model, "instance_id": instance_id, "branch_id": branch_id})
             events.append(
                 Event(
                     event_id=f"{instance_id}:{branch_id}:llm{i}",
-                    session_id=session_id,
-                    instance_id=instance_id,
-                    branch_id=branch_id,
-                    parent_branch_id=None,
-                    step_id=2 * i,
-                    node_id=f"{branch_id}:llm{i}",
+                    session_id=str(session_id),
+                    instance_id=str(instance_id),
+                    branch_id=str(branch_id),
+                    parent_branch_id=parent_branch_id,
+                    step_id=step_id,
+                    node_id=_node_id(str(instance_id), str(branch_id), "llm", i),
                     node_type="llm",
                     role="worker",
                     model=model,
                     timestamp_ready=start,
                     timestamp_start=start,
                     timestamp_end=end,
-                    latency=end - start,
+                    latency=latency,
                     input_tokens=count_tokens(rendered, model),
-                    output_tokens=count_tokens(str(step.get("response", "")), model),
+                    output_tokens=count_tokens(assistant_output, model),
                     context_length=count_tokens(rendered, model),
                     prompt_hash=prompt_hash(rendered),
                     shared_prefix_id=segs[0].segment_id if segs else None,
                     context_segments=[ContextSegmentRef(s.segment_id, s.segment_type, s.start_pos, s.length) for s in segs],
                     context_segment_defs=segs,
+                    timing_missing=timing_missing,
+                    rollout_id=rollout_id,
                 )
             )
-        cmd = step.get("command") or step.get("tool_call") or (action if isinstance(action, str) and action.startswith(("pytest", "grep", "sed", "cat")) else None)
+            step_id += 1
+            _add_history(history, "assistant", assistant_output)
+        cmd = _command(step)
         if cmd:
-            t0 = end
-            t1 = float(step.get("tool_end_time", t0 + float(step.get("tool_latency", 0.1))))
+            start, end, latency, timing_missing = _timing(step)
+            obs = _observation(step)
             events.append(
                 Event(
                     event_id=f"{instance_id}:{branch_id}:tool{i}",
-                    session_id=session_id,
-                    instance_id=instance_id,
-                    branch_id=branch_id,
-                    parent_branch_id=None,
-                    step_id=2 * i + 1,
-                    node_id=f"{branch_id}:tool{i}",
+                    session_id=str(session_id),
+                    instance_id=str(instance_id),
+                    branch_id=str(branch_id),
+                    parent_branch_id=parent_branch_id,
+                    step_id=step_id,
+                    node_id=_node_id(str(instance_id), str(branch_id), "tool", i),
                     node_type="tool",
-                    timestamp_ready=t0,
-                    timestamp_start=t0,
-                    timestamp_end=t1,
-                    latency=t1 - t0,
-                    tool_type=classify_command(str(cmd)),
-                    command=str(cmd),
-                    tool_latency=t1 - t0,
-                    observation_tokens=count_tokens(str(obs)),
-                    exit_code=step.get("exit_code"),
+                    timestamp_ready=start,
+                    timestamp_start=start,
+                    timestamp_end=end,
+                    latency=latency,
+                    tool_type=classify_command(cmd),
+                    command=cmd,
+                    tool_latency=latency if not timing_missing or latency else None,
+                    observation_tokens=count_tokens(obs, model),
+                    exit_code=_exit_code(step),
+                    timing_missing=timing_missing,
+                    rollout_id=rollout_id,
                 )
             )
-    success = bool(obj.get("success", obj.get("resolved", False)))
-    if events:
-        t = max(e.timestamp_end for e in events)
+            step_id += 1
+            if obs:
+                label = "Test log" if "pytest" in cmd.lower() or "traceback" in obs.lower() else "Observation"
+                _add_history(history, "tool", f"{label}:\n{obs}")
+    verifier_result, success = _success(obj)
+    patch = _patch(obj, steps)
+    if events or verifier_result != "unknown" or patch:
+        start, end, latency, timing_missing = _timing(obj)
+        if start == 0.0 and end == 0.0 and events and not all(e.timing_missing for e in events):
+            observed_ends = [e.timestamp_end for e in events if e.timestamp_end > 0]
+            if observed_ends:
+                start = end = max(observed_ends)
+                latency = 0.0
+                timing_missing = False
+        patch_segments = (
+            segment_prompt(rendered_prompt=patch, metadata={"model": model, "instance_id": instance_id, "branch_id": branch_id})
+            if patch
+            else []
+        )
         events.append(
             Event(
                 event_id=f"{instance_id}:{branch_id}:verify",
-                session_id=session_id,
-                instance_id=instance_id,
-                branch_id=branch_id,
-                parent_branch_id=None,
+                session_id=str(session_id),
+                instance_id=str(instance_id),
+                branch_id=str(branch_id),
+                parent_branch_id=parent_branch_id,
                 step_id=9999,
-                node_id=f"{branch_id}:verify",
+                node_id=_node_id(str(instance_id), str(branch_id), "verify", 0),
                 node_type="verifier",
-                timestamp_ready=t,
-                timestamp_start=t,
-                timestamp_end=t + 0.001,
-                latency=0.001,
-                verifier_result="pass" if success else "fail",
+                timestamp_ready=start,
+                timestamp_start=start,
+                timestamp_end=end,
+                latency=latency,
+                verifier_result=verifier_result,  # type: ignore[arg-type]
                 success=success,
-                patch_hash=stable_hash(obj.get("patch", "")),
+                context_segments=[
+                    ContextSegmentRef(s.segment_id, s.segment_type, s.start_pos, s.length) for s in patch_segments
+                ],
+                context_segment_defs=patch_segments,
+                patch_hash=stable_hash(patch) if patch else None,
+                timing_missing=timing_missing,
+                rollout_id=rollout_id,
             )
         )
-    tr = Trace({"framework": "swe-agent-adapter", "source": str(path), "timestamp": time.time()}, events)
+    metadata = {
+        "framework": obj.get("framework") or "swe-agent-adapter",
+        "source": str(path),
+        "timestamp": time.time(),
+        "instance_id": str(instance_id),
+        "branch_id": str(branch_id),
+        "parent_branch_id": parent_branch_id,
+        "rollout_id": rollout_id,
+        "sample_fixture": bool(obj.get("sample_fixture", False)),
+        "sample_fixture_note": obj.get("sample_fixture_note", ""),
+    }
+    tr = Trace(metadata, sorted(events, key=lambda e: (e.branch_id, e.step_id, e.node_id)))
     if out:
         tr.to_jsonl(out)
     return tr
@@ -117,8 +492,21 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--traj", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--model", default="Qwen/Qwen2.5-Coder-7B-Instruct")
+    ap.add_argument("--branch-id")
+    ap.add_argument("--parent-branch-id")
+    ap.add_argument("--rollout-id")
+    ap.add_argument("--instance-id")
     args = ap.parse_args()
-    tr = convert_swe_traj(args.traj, args.out)
+    tr = convert_swe_traj(
+        args.traj,
+        args.out,
+        model=args.model,
+        branch_id=args.branch_id,
+        parent_branch_id=args.parent_branch_id,
+        rollout_id=args.rollout_id,
+        instance_id=args.instance_id,
+    )
     print(f"wrote {len(tr.events)} events to {args.out}")
 
 

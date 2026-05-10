@@ -221,37 +221,158 @@ python -m agentweaver.tracing.tool_wrapper --out-trace data/traces/manual/tool.j
 
 The official SWE-bench harness can be attached by running the agent externally, preserving generated patches/test results in `.traj`, then converting with the adapters.
 
-## PR3: mini-SWE-agent / SWE-agent trace collection plan
+## PR3: mini-SWE-agent / SWE-agent real trace collection
 
-PR3 starts with mini-SWE-agent trace collection against a local OpenAI-compatible vLLM server. It does not treat the PR2 controlled `real_agentlike_h100` workload as SWE-bench, and it should not generate synthetic mini-SWE trajectories.
+PR3 collects small-scale real coding-agent traces from mini-SWE-agent/SWE-agent on SWE-bench Lite. The goal is workload characterization, not solved rate: shared context reuse, branch skew, and tool-stall/resume behavior. The PR2 controlled `real_agentlike_h100` workload is not SWE-bench and is not used for PR3 gates. The scripts never generate fake SWE traces, timestamps, patches, or verifier pass/fail labels.
 
-Single-rollout trace conversion or environment check:
+Prerequisites:
+
+- local OpenAI-compatible vLLM prefix server, normally `http://localhost:8001/v1`;
+- mini-SWE-agent and LiteLLM;
+- SWE-bench and HuggingFace `datasets`;
+- Docker only for optional official SWE-bench harness evaluation;
+- enough storage for SWE-bench images/repos. Start small before scaling.
+
+Environment audit:
+
+```bash
+bash scripts/check_pr3_env.sh \
+  --server http://localhost:8001/v1 \
+  --metrics-url http://localhost:8001/metrics \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct
+```
+
+Install/connect mini-SWE-agent, SWE-bench, datasets, and LiteLLM, and generate the local vLLM registry/config:
+
+```bash
+bash scripts/setup_pr3_miniswe_swebench.sh
+```
+
+The setup captures `mini-extra swebench --help` in `data/results/mini_extra_swebench_help.txt`. If the local mini-SWE-agent CLI changes, runner scripts fail clearly instead of fabricating trajectories. Advanced users can set `MINI_SWE_AGENT_RUN_CMD` with placeholders such as `{instance_id}`, `{run_out}`, `{server}`, `{hosted_model}`, `{max_steps}`, `{seed}`, and `{temperature}`.
+
+The generated mini-SWE config uses the official `swebench_backticks` prompt format plus `litellm_textbased` for local vLLM. This keeps a real LLM-to-shell loop without requiring the vLLM server to be launched with OpenAI auto tool-call parsing.
+
+Start the vLLM prefix server:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 \
+MODEL_PATH=/data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+PORT=8001 \
+MAX_MODEL_LEN=32768 \
+bash scripts/launch_vllm_prefix.sh
+```
+
+Select SWE-bench Lite instances:
+
+```bash
+python -m agentweaver.workloads.select_swebench_instances \
+  --dataset princeton-nlp/SWE-bench_Lite \
+  --split test \
+  --num-instances 5 \
+  --out data/results/mini_swe_lite5_instances.txt
+
+python -m agentweaver.workloads.select_swebench_instances \
+  --dataset princeton-nlp/SWE-bench_Lite \
+  --split test \
+  --num-instances 10 \
+  --out data/results/mini_swe_lite10_instances.txt
+```
+
+Run Lite-5 single rollout:
 
 ```bash
 bash scripts/run_mini_swe_trace_pr3.sh \
   --server http://localhost:8001/v1 \
   --model qwen-coder-7b \
   --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --instance-list data/results/mini_swe_lite5_instances.txt \
   --num-instances 5 \
-  --rollouts 1 \
-  --max-steps 20 \
-  --run-id mini_swe_pr3
+  --max-steps 10 \
+  --run-id mini_swe_lite5 \
+  --run-real
 ```
 
-Multi-branch rollout conversion:
+Run Lite-10 with four independent rollouts per instance:
 
 ```bash
 bash scripts/run_mini_swe_multibranch_pr3.sh \
   --server http://localhost:8001/v1 \
   --model qwen-coder-7b \
   --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
-  --num-instances 5 \
+  --instance-list data/results/mini_swe_lite10_instances.txt \
+  --num-instances 10 \
   --rollouts 4 \
-  --max-steps 20 \
-  --run-id mini_swe_multibranch_pr3
+  --max-steps 10 \
+  --run-id mini_swe_lite10_r4 \
+  --run-real
 ```
 
-If mini-SWE-agent is not installed, the scripts fail with installation guidance and do not create fake traces. After real `.traj` or `.traj.json` files exist, pass `--traj-dir` or `--traj-root` to convert them into `data/traces/mini_swe_*`.
+Adapter-only mode for externally collected real trajectories:
+
+```bash
+bash scripts/run_mini_swe_trace_pr3.sh \
+  --traj-dir data/raw_trajs/mini_swe_lite5 \
+  --run-id mini_swe_lite5 \
+  --server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct
+```
+
+The script converts `.traj`, `.traj.json`, or JSON trajectory files into `data/traces/mini_swe_lite5/`, validates the trace schema, builds context reuse summaries, and runs all AgentWeaver replay policies with the PR2 H100 latency model.
+
+For multi-rollout branch analysis, preserve this trajectory layout:
+
+```text
+data/raw_trajs/mini_swe_lite10_r4/<instance_id>/rollout_0.traj.json
+data/raw_trajs/mini_swe_lite10_r4/<instance_id>/rollout_1.traj.json
+data/raw_trajs/mini_swe_lite10_r4/<instance_id>/rollout_2.traj.json
+data/raw_trajs/mini_swe_lite10_r4/<instance_id>/rollout_3.traj.json
+```
+
+Convert and replay:
+
+```bash
+bash scripts/run_mini_swe_multibranch_pr3.sh \
+  --traj-root data/raw_trajs/mini_swe_lite10_r4 \
+  --out-dir data/traces/mini_swe_lite10_r4 \
+  --server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --rollouts 4 \
+  --max-steps 10
+```
+
+Optional official SWE-bench harness evaluation uses only real generated patches:
+
+```bash
+bash scripts/run_swebench_eval_pr3.sh \
+  --predictions data/results/mini_swe_lite5_predictions.jsonl \
+  --run-id mini_swe_lite5_agentweaver \
+  --max-workers 2
+```
+
+Expected PR3 outputs include:
+
+- `data/results/pr3_env_report.md`
+- `data/results/pr3_setup_report.md`
+- `data/results/mini_swe_lite5_predictions.jsonl`
+- `data/results/mini_swe_lite5_trace_summary.csv`
+- `data/results/mini_swe_lite5_replay_all_policies.csv`
+- `data/results/mini_swe_lite5_policy_comparison.csv`
+- `data/results/mini_swe_lite10_r4_branch_summary.csv`
+- `data/results/mini_swe_lite10_r4_replay_all_policies.csv`
+- `data/results/pr3_report.md`
+
+Unknown verifier results mean the trajectory did not contain an official pass/fail result. They are tracked separately and must not be reported as solved rate. Only official harness verifier output may be used for solved-rate claims.
+
+PR3 limitations:
+
+- no full SWE-bench Lite 300 run is launched by these scripts;
+- missing timestamps are marked as `timing_missing=true` and are not fabricated;
+- unknown verifier results stay unknown; they are not converted into pass/fail;
+- replay uses the H100 latency model from token counts when measured agent timing is unavailable;
+- solved rate is not reported unless the official SWE-bench harness actually runs;
+- sample fixtures under `tests/fixtures/` are unit-test fixtures, not experimental data.
 
 ## Build Context Graph
 

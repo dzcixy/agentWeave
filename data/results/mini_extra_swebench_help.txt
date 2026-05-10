@@ -1,0 +1,54 @@
+👋 This is mini-swe-agent version 2.2.8.
+Check the v2 migration guide at https://klieret.short.gy/mini-v2-migration
+Loading global config from '/home/duzc/.config/mini-swe-agent/.env'
+                                                                                
+ Usage: mini-extra swebench [OPTIONS]                                           
+                                                                                
+ Run mini-SWE-agent on SWEBench instances.                                      
+                                                                                
+                                                                                
+ More information about the usage:                                              
+ https://mini-swe-agent.com/latest/usage/swebench/                              
+                                                                                
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Data selection ─────────────────────────────────────────────────────────────╮
+│ --subset               TEXT  SWEBench subset to use or path to a dataset     │
+│                              [default: lite]                                 │
+│ --split                TEXT  Dataset split [default: dev]                    │
+│ --slice                TEXT  Slice specification (e.g., '0:5' for first 5    │
+│                              instances)                                      │
+│ --filter               TEXT  Filter instance IDs by regex                    │
+│ --shuffle                    Shuffle instances                               │
+│ --redo-existing              Redo existing instances                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Basic ──────────────────────────────────────────────────────────────────────╮
+│ --output   -o      TEXT     Output directory                                 │
+│ --workers  -w      INTEGER  Number of worker threads for parallel processing │
+│                             [default: 1]                                     │
+│ --model    -m      TEXT     Model to use                                     │
+│ --config   -c      TEXT     Path to config files, filenames, or key-value    │
+│                             pairs.                                           │
+│                             IMPORTANT: If you set this option, the default   │
+│                             config file will not be used. So you need to     │
+│                             explicitly set it e.g., with -c swebench.yaml    │
+│                             <other options>                                  │
+│                             Multiple configs will be recursively merged.     │
+│                             Examples:                                        │
+│                             -c model.model_kwargs.temperature=0 You forgot   │
+│                             to add the default config file! See above.       │
+│                             -c swebench.yaml -c                              │
+│                             model.model_kwargs.temperature=0.5               │
+│                             -c swebench.yaml -c agent.max_iterations=50      │
+│                             [default:                                        │
+│                             /home/duzc/data/agent_trace/AgentWeaver/.venv/l… │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Advanced ───────────────────────────────────────────────────────────────────╮
+│ --model-class              TEXT  Model class to use (e.g., 'anthropic' or    │
+│                                  'minisweagent.models.anthropic.AnthropicMo… │
+│ --environment-class        TEXT  Environment type to use. Recommended are    │
+│                                  docker or singularity                       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
