@@ -232,6 +232,8 @@ def run_real(args: argparse.Namespace) -> int:
         cli_name = "env-template"
     else:
         subcommand, help_text, cli_name = _choose_subcommand(results, timed=args.timed)
+    if args.patch_capture:
+        env["AGENTWEAVER_CAPTURE_PATCH"] = "1"
 
     failures: list[dict[str, str]] = []
     successes = 0
@@ -347,6 +349,7 @@ def main() -> None:
     ap.add_argument("--results-dir", default="data/results")
     ap.add_argument("--logs-dir", default="data/logs")
     ap.add_argument("--timed", action="store_true")
+    ap.add_argument("--patch-capture", action="store_true")
     args = ap.parse_args()
     raise SystemExit(run_real(args))
 

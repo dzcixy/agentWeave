@@ -1,0 +1,506 @@
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..0ce797b8b3 100644
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -378,67 +378,501 @@ def help_text_for_field(name, model):
+ 
+ 
+ def display_for_field(value, field, empty_value_display):
++        elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     from django.contrib.admin.templatetags.admin_list import _boolean_icon
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     if getattr(field, 'flatchoices', None):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return dict(field.flatchoices).get(value, empty_value_display)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     # BooleanField needs special-case null-handling, so it comes before the
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     # general null test.
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, models.BooleanField):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return _boolean_icon(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif value is None:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return empty_value_display
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, models.DateTimeField):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.localize(timezone.template_localtime(value))
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, (models.DateField, models.TimeField)):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.localize(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, models.DecimalField):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.number_format(value, field.decimal_places)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, (models.IntegerField, models.FloatField)):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.number_format(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(field, models.FileField) and value:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return format_html('<a href="{}">{}</a>', value.url, value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
+     else:
++        return json.dumps(value, indent=4)
++    else:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return display_for_value(value, empty_value_display)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ def display_for_value(value, empty_value_display, boolean=False):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     from django.contrib.admin.templatetags.admin_list import _boolean_icon
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     if boolean:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return _boolean_icon(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif value is None:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return empty_value_display
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(value, bool):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return str(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(value, datetime.datetime):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.localize(timezone.template_localtime(value))
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(value, (datetime.date, datetime.time)):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.localize(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(value, (int, decimal.Decimal, float)):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return formats.number_format(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     elif isinstance(value, (list, tuple)):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return ', '.join(str(v) for v in value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
++    else:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
+     else:
++        return json.dumps(value, indent=4)
+         return str(value)
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ class NotRelationField(Exception):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     pass
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ def get_model_from_relation(field):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     if hasattr(field, 'get_path_info'):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         return field.get_path_info()[-1].to_opts.model
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     else:
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+         raise NotRelationField
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ def reverse_field_path(model, path):
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     """ Create a reversed field path.
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     E.g. Given (Order, "user__groups"),
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+     return (Group, "user__order").
++elif isinstance(field, models.JSONField):
++    if value is None:
++        return ""
++    elif field.readonly:
++        return json.dumps(value, indent=None, separators=(",", ":"))
++    else:
++        return json.dumps(value, indent=4)
+ 
+     Final field must be a related model, not a data field.
+     """

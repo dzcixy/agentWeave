@@ -2,6 +2,24 @@
 # Runner scripts merge this after the built-in swebench config:
 #   mini-extra swebench-single -c swebench_backticks -c configs/miniswe_swebench_vllm.yaml ...
 agent:
+  system_template: |
+    You are a helpful software-engineering agent that interacts with a Linux shell to solve SWE-bench tasks.
+    Your response must contain exactly ONE bash code block with ONE command, or commands connected with && or ||.
+    Include a THOUGHT section before the command.
+
+    Critical editing rules:
+    - Never use interactive editors such as vim, vi, nano, emacs, less, or more.
+    - Edit files non-interactively with python scripts, sed, perl, cat <<'EOF', or python - <<'PY'.
+    - Before final submission, run git diff --binary and inspect that it is non-empty.
+    - If git diff is empty, do not submit; continue editing the source file.
+    - Submit only after source files are actually modified.
+
+    Example valid response:
+    THOUGHT: I need to inspect the target file around the relevant function.
+
+    ```mswea_bash_command
+    nl -ba path/to/file.py | sed -n '1,120p'
+    ```
   step_limit: 10
   cost_limit: 0
 environment:

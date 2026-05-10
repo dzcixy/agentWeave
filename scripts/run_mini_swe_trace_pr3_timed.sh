@@ -17,6 +17,7 @@ RESULTS_DIR=data/results
 PROCESSED_DIR=""
 RAW_ROOT=""
 TIMING_SIDECAR=""
+PATCH_CAPTURE=0
 RUN_ID_EXPLICIT=0
 PROXY_PID=""
 
@@ -35,6 +36,7 @@ while [[ $# -gt 0 ]]; do
     --traj-dir) TRAJ_DIR="$2"; shift 2 ;;
     --raw-root) RAW_ROOT="$2"; shift 2 ;;
     --timing-sidecar) TIMING_SIDECAR="$2"; shift 2 ;;
+    --patch-capture) PATCH_CAPTURE=1; shift ;;
     --results-dir) RESULTS_DIR="$2"; shift 2 ;;
     --processed-dir) PROCESSED_DIR="$2"; shift 2 ;;
     --run-real) RUN_REAL=1; shift ;;
@@ -207,16 +209,21 @@ fi
 
 ensure_proxy
 
-"${PYTHON[@]}" -m agentweaver.tracing.miniswe_runner \
-  --instance-list "$INSTANCE_LIST" \
-  --num-instances "$NUM_INSTANCES" \
-  --rollouts 1 \
-  --max-steps "$MAX_STEPS" \
-  --run-id "$RUN_ID" \
-  --raw-root "$RAW_ROOT" \
-  --server "$SERVER" \
-  --model "$MODEL" \
-  --results-dir "$RESULTS_DIR" \
+runner_args=(
+  --instance-list "$INSTANCE_LIST"
+  --num-instances "$NUM_INSTANCES"
+  --rollouts 1
+  --max-steps "$MAX_STEPS"
+  --run-id "$RUN_ID"
+  --raw-root "$RAW_ROOT"
+  --server "$SERVER"
+  --model "$MODEL"
+  --results-dir "$RESULTS_DIR"
   --timed
+)
+if [ "$PATCH_CAPTURE" = "1" ]; then
+  runner_args+=(--patch-capture)
+fi
+"${PYTHON[@]}" -m agentweaver.tracing.miniswe_runner "${runner_args[@]}"
 
 convert_and_replay "$RAW_ROOT"

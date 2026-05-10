@@ -424,6 +424,23 @@ python -m agentweaver.tracing.pr3_v3_report \
 
 BES stress replays the same real timed traces with constrained `effective_regions`; a speedup is reported only if replay produces one. The model/tool breakdown keeps measured wall-clock LLM/tool/orchestration time separate from simulated H100 model-side prefill/decode/reuse time.
 
+PR3-v4 captures real patches at rollout end by running `git diff --binary` inside the mini-SWE Docker workspace before the trajectory is saved. Empty diffs are recorded as empty and are not written to SWE-bench predictions.
+
+```bash
+bash scripts/run_mini_swe_lite5_patchcap_pr3_v4.sh \
+  --server http://localhost:8010/v1 \
+  --backend-server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --instance-list data/results/mini_swe_lite5_instances.txt \
+  --num-instances 5 \
+  --max-steps 15 \
+  --run-id mini_swe_lite5_patchcap \
+  --run-real
+```
+
+The PR3-v4 script writes `data/results/patch_capture_debug_pr3_v4.csv`, extracts only valid unified diffs into `data/results/mini_swe_lite5_patchcap_predictions.jsonl`, runs the official SWE-bench harness on non-empty predictions with `max_workers=1`, and merges official verifier results back into `data/traces/mini_swe_lite5_patchcap_verified/`. Unevaluated instances remain `unknown`.
+
 Expected PR3 outputs include:
 
 - `data/results/pr3_env_report.md`
@@ -440,6 +457,11 @@ Expected PR3 outputs include:
 - `data/results/mini_swe_lite5_timed_patch_extraction_report.csv`
 - `data/results/bes_stress_mini_swe_pr3_v3.csv`
 - `data/results/mini_swe_lite10_r4_timed_latency_breakdown_detailed.csv`
+- `data/results/pr3_v4_report.md`
+- `data/results/patch_capture_debug_pr3_v4.csv`
+- `data/results/mini_swe_lite5_patchcap_predictions.jsonl`
+- `data/results/mini_swe_lite5_patchcap_official_eval_summary.csv`
+- `data/results/mini_swe_lite5_patchcap_verified_policy_comparison.csv`
 
 Unknown verifier results mean the trajectory did not contain an official pass/fail result. They are tracked separately and must not be reported as solved rate. Only official harness verifier output may be used for solved-rate claims.
 

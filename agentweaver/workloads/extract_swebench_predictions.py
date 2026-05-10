@@ -89,7 +89,8 @@ def _is_unified_diff(text: str) -> bool:
     return bool(
         text
         and (
-            "diff --git " in text
+            text.lstrip().startswith("diff --git ")
+            or "diff --git " in text
             or (re.search(r"(?m)^---\s+(?:a/|\S)", text) and re.search(r"(?m)^\+\+\+\s+(?:b/|\S)", text) and re.search(r"(?m)^@@", text))
         )
     )
@@ -116,37 +117,57 @@ def _extract_diff_blocks(text: str) -> list[str]:
     return blocks
 
 
-def _patch(obj: Any) -> tuple[str, str, str]:
+def _patch_candidates(obj: Any) -> list[tuple[str, str, str]]:
+    candidates: list[tuple[str, str, str]] = []
     if isinstance(obj, dict):
         info = obj.get("info") if isinstance(obj.get("info"), dict) else {}
         submission = info.get("submission") if isinstance(info, dict) else ""
         if isinstance(submission, str) and submission.strip():
-            return submission.strip(), "info.submission", "top_level_submission"
+            candidates.append((submission.strip(), "info.submission", "top_level_submission"))
+        agentweaver_patch = info.get("agentweaver_patch") if isinstance(info, dict) else ""
+        if isinstance(agentweaver_patch, str) and agentweaver_patch.strip():
+            source_type = "agentweaver_git_diff" if info.get("agentweaver_patch_source") == "git_diff_at_rollout_end" else "agentweaver_patch"
+            candidates.append((agentweaver_patch.strip(), "info.agentweaver_patch", source_type))
     for key in ("final_patch", "model_patch", "patch", "diff"):
         if isinstance(obj, dict) and isinstance(obj.get(key), str) and obj[key].strip():
-            return obj[key].strip(), key, "top_level_patch_field"
+            candidates.append((obj[key].strip(), key, "top_level_patch_field"))
     for path, text in _candidate_texts(obj, ("final_patch", "model_patch", "patch", "diff")):
         if text.strip():
-            return text.strip(), path, "nested_patch_field"
+            candidates.append((text.strip(), path, "nested_patch_field"))
     for msg in reversed(_messages(obj)):
         if msg.get("role") != "assistant":
             continue
         for block in _extract_diff_blocks(str(msg.get("content") or "")):
-            return block, "messages.assistant.diff_block", "assistant_unified_diff"
+            candidates.append((block, "messages.assistant.diff_block", "assistant_unified_diff"))
         extra = msg.get("extra")
         if isinstance(extra, dict):
             response = extra.get("response")
             if isinstance(response, dict):
                 for block in _extract_diff_blocks(json.dumps(response, ensure_ascii=False)):
-                    return block, "messages.assistant.extra.response", "assistant_response_unified_diff"
+                    candidates.append((block, "messages.assistant.extra.response", "assistant_response_unified_diff"))
     for step in _steps(obj):
         for path, text in _candidate_texts(step, ("patch_file", "patch_path", "diff_file", "diff_path")):
             p = Path(text)
             if p.exists() and p.is_file():
                 content = p.read_text(encoding="utf-8", errors="replace")
                 if content.strip():
-                    return content.strip(), path, "tool_recorded_patch_file"
-    return "", "", "no_patch_found"
+                    candidates.append((content.strip(), path, "tool_recorded_patch_file"))
+    return candidates
+
+
+def _patch(obj: Any) -> tuple[str, str, str, str]:
+    saw_non_unified = False
+    first_non_unified: tuple[str, str, str] | None = None
+    for patch, source, source_type in _patch_candidates(obj):
+        if _is_unified_diff(patch):
+            return patch, source, source_type, ""
+        saw_non_unified = True
+        if first_non_unified is None:
+            first_non_unified = (patch, source, source_type)
+    if saw_non_unified and first_non_unified is not None:
+        patch, source, source_type = first_non_unified
+        return "", source, source_type, "non_unified_diff"
+    return "", "", "no_patch_found", "no_patch_found"
 
 
 def _instance_id(path: Path, obj: Any, root: Path) -> str:
@@ -179,7 +200,7 @@ def main() -> None:
             continue
         obj = _load_json(path)
         instance_id = _instance_id(path, obj, root)
-        patch, source, source_type = _patch(obj)
+        patch, source, source_type, reason = _patch(obj)
         if not patch:
             report_rows.append(
                 {
@@ -188,8 +209,9 @@ def main() -> None:
                     "patch_extracted": "false",
                     "patch_source": source,
                     "patch_source_type": source_type,
+                    "patch_valid_unified_diff": "false",
                     "patch_bytes": "0",
-                    "reason": "no non-empty submission/final_patch/patch/diff/unified-diff block found",
+                    "reason": "non_unified_diff" if reason == "non_unified_diff" else "no non-empty submission/agentweaver_patch/final_patch/patch/diff/unified-diff block found",
                 }
             )
             continue
@@ -207,6 +229,7 @@ def main() -> None:
                 "patch_extracted": "true",
                 "patch_source": source,
                 "patch_source_type": source_type,
+                "patch_valid_unified_diff": "true",
                 "patch_bytes": str(len(patch.encode("utf-8"))),
                 "reason": "",
             }
@@ -217,7 +240,7 @@ def main() -> None:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     report.parent.mkdir(parents=True, exist_ok=True)
     with report.open("w", encoding="utf-8", newline="") as f:
-        fields = ["instance_id", "trajectory", "patch_extracted", "patch_source", "patch_source_type", "patch_bytes", "reason"]
+        fields = ["instance_id", "trajectory", "patch_extracted", "patch_source", "patch_source_type", "patch_valid_unified_diff", "patch_bytes", "reason"]
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         writer.writerows(report_rows)
