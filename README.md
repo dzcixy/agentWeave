@@ -36,9 +36,9 @@ No semantic KV reuse or speculative correctness-changing pruning is implemented.
 
 Default model path:
 
-- Local first: `/data2/model_zoo/Qwen/Qwen2.5-Coder-7B-Instruct`
+- Local first: `/data2/model_zoo/Qwen2.5-7B-Instruct`
+- Served model name: `qwen2.5-7b`
 - Fallback name: `Qwen/Qwen2.5-Coder-7B-Instruct`
-- Optional larger model: `Qwen/Qwen2.5-Coder-14B-Instruct`
 
 ## Installation
 
@@ -47,7 +47,7 @@ cd /home/duzc/data/agent_trace/AgentWeaver
 uv sync
 ```
 
-Optional profiling/SWE-bench dependencies:
+Optional profiling/SWE-bench dependencies. The profiling extra includes vLLM/Torch and should be installed with `uv` on the H100 host:
 
 ```bash
 uv sync --extra profiling --extra swebench --extra dev
@@ -58,7 +58,8 @@ uv sync --extra profiling --extra swebench --extra dev
 This path requires no GPU and no SWE-bench download.
 
 ```bash
-bash scripts/run_all_small.sh
+pytest -q
+bash scripts/run_all_small.sh --run-id pr1_final
 ```
 
 It runs:
@@ -66,7 +67,7 @@ It runs:
 1. Synthetic fork-join trace generation.
 2. Context Segment Graph and DAG export.
 3. GPU cache baselines.
-4. Wafer replay for `naive_wafer`, `acd_only`, `acd_bes`, `acd_nisp`, and `full_agentweaver`.
+4. Wafer replay for `naive_wafer`, `static_branch_pinning`, `wafer_fcfs`, `acd_only`, `acd_bes`, `acd_nisp`, and `full_agentweaver`.
 5. Plot generation.
 
 Outputs:
@@ -76,38 +77,120 @@ Outputs:
 - `data/processed/<run_id>/context_graph.json`
 - `data/results/*.csv`
 - `data/plots/*.pdf` and `.png`
+- `data/results/pr1_final_report.md`
 
-## H100 Profiling
+## Launch vLLM Prefix Server
 
-Start vLLM manually, then profile through the OpenAI-compatible endpoint:
-
-```bash
-bash scripts/launch_vllm_noprefix.sh
-bash scripts/run_h100_profile.sh --server http://localhost:8000/v1 --model qwen-coder-7b
-```
-
-The profiler writes:
-
-- `data/profiles/h100_profile_raw.csv`
-- `data/profiles/h100_latency_model.json`
-- `data/plots/profile_fit_prefill.pdf`
-- `data/plots/profile_fit_decode.pdf`
-
-If a vLLM version changes server flags, keep the model/port/max-len settings and remove the incompatible flag. Prefix caching is launched with:
+In a separate terminal:
 
 ```bash
+CUDA_VISIBLE_DEVICES=1 \
+TENSOR_PARALLEL_SIZE=1 \
+MODEL_PATH=/data2/model_zoo/Qwen2.5-7B-Instruct \
+PORT=8000 \
+MAX_MODEL_LEN=32768 \
+GPU_MEMORY_UTILIZATION=0.90 \
 bash scripts/launch_vllm_prefix.sh
 ```
+
+The launch script uses `/data2/model_zoo/Qwen2.5-7B-Instruct` first and falls back to `Qwen/Qwen2.5-Coder-7B-Instruct` if the local directory is missing. The default PR2 profiling launch uses only GPU 1 with `CUDA_VISIBLE_DEVICES=1` and `TENSOR_PARALLEL_SIZE=1`. If your installed vLLM version rejects `--enable-prefix-caching`, remove that flag manually and record the version limitation in the profile report.
+
+For a no-prefix baseline:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 TENSOR_PARALLEL_SIZE=1 PORT=8000 bash scripts/launch_vllm_noprefix.sh
+```
+
+## PR2 H100 Profiling
+
+Start vLLM manually, then run:
+
+```bash
+bash scripts/run_h100_profile.sh \
+  --server http://localhost:8000/v1 \
+  --metrics-url http://localhost:8000/metrics \
+  --model qwen2.5-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-7B-Instruct \
+  --out-dir data/profiles \
+  --run-id h100_qwen7b_prefix
+```
+
+The profile pipeline runs:
+
+1. server health check
+2. tokenizer-controlled sanity requests
+3. length sweep
+4. true async concurrency sweep
+5. exact shared-prefix sweep
+6. raw CSV merge
+7. latency model fitting
+8. profile report generation
+
+Outputs:
+
+- `data/profiles/vllm_sanity_raw.csv`
+- `data/profiles/h100_profile_raw.csv`
+- `data/profiles/h100_profile_length_raw.csv`
+- `data/profiles/h100_profile_concurrency_raw.csv`
+- `data/profiles/h100_profile_prefix_raw.csv`
+- `data/profiles/h100_latency_model.json`
+- `data/results/pr2_h100_profile_report.md`
+- `data/results/h100_latency_fit_report.md`
+- `data/plots/profile_fit_prefill.pdf`
+- `data/plots/profile_fit_decode.pdf`
+- `data/plots/profile_fit_prefix_reuse.pdf`
+- `data/plots/profile_fit_concurrency.pdf`
+
+If the server is unavailable, the script writes `H100_PROFILE = FAIL_SERVER_UNAVAILABLE` and does not create fake H100 measurements.
 
 ## vLLM Metrics
 
 ```bash
 python -m agentweaver.profiling.collect_vllm_metrics \
   --metrics-url http://localhost:8000/metrics \
-  --out data/profiles/vllm_metrics.csv
+  --out data/profiles/vllm_metrics_profile.csv \
+  --missing-out data/profiles/vllm_metrics_missing.json \
+  --duration 10
 ```
 
-Metric names vary by vLLM version. Missing expected metrics are logged as warnings and do not stop collection.
+Metric names vary by vLLM version. The collector uses fuzzy matching, writes raw rows to CSV, and records missing metric groups in JSON instead of treating missing metrics as zero.
+
+## Real Agent-Like vLLM Trace
+
+Before connecting a full SWE-agent harness, PR2 provides a controlled real local vLLM trace:
+
+```bash
+python -m agentweaver.workloads.real_agentlike_trace \
+  --server http://localhost:8000/v1 \
+  --model qwen2.5-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-7B-Instruct \
+  --instances 5 \
+  --branch-fanout 4 \
+  --out data/traces/real_agentlike_h100
+```
+
+This trace uses real vLLM latency for LLM0/LLM1 and real local subprocess timing for tools. The verifier is pseudo pass/fail for controlled replay only; it is not SWE-bench correctness.
+
+Build the graph and replay:
+
+```bash
+python -m agentweaver.analysis.context_segment_graph \
+  --trace-dir data/traces/real_agentlike_h100 \
+  --out data/processed/real_agentlike_h100
+
+python -m agentweaver.simulator.replay \
+  --processed data/processed/real_agentlike_h100 \
+  --wafer-config configs/wafer_6x6.yaml \
+  --policy full_agentweaver \
+  --out data/results/real_agentlike_full_agentweaver.csv
+```
+
+Outputs:
+
+- `data/results/real_agentlike_trace_summary.csv`
+- `data/results/real_agentlike_replay_summary.csv`
+- `data/plots/real_agentlike_latency_breakdown.pdf`
+- `data/plots/real_agentlike_context_reuse.pdf`
 
 ## SGLang Baseline
 
@@ -136,7 +219,7 @@ For direct LLM timing against an OpenAI-compatible local endpoint:
 ```bash
 python -m agentweaver.tracing.llm_client_wrapper \
   --base-url http://localhost:8000/v1 \
-  --model qwen-coder-7b \
+  --model qwen2.5-7b \
   --prompt "Fix this SWE-bench issue" \
   --out-trace data/traces/manual/llm.jsonl
 ```
@@ -187,6 +270,8 @@ python -m agentweaver.simulator.replay \
 Policies:
 
 - `naive_wafer`
+- `static_branch_pinning`
+- `wafer_fcfs`
 - `acd_only`
 - `acd_bes`
 - `acd_nisp`
@@ -214,10 +299,20 @@ The plotting code uses matplotlib only. It writes both PDF and PNG.
 ## What Is Real vs Simulated
 
 - SWE-agent / mini-SWE-agent trajectories: real if converted from actual runs; synthetic if generated by `synthetic_fork_join.py`.
-- Tool latency and pass/fail: real when present in trajectories; synthetic only in small sanity traces.
-- H100 latency model: measured after `run_h100_profile.sh`; default analytic fallback otherwise.
+- Real agent-like trace: measured local vLLM LLM latency and measured local tool latency, but pseudo verifier correctness.
+- Synthetic controlled trace: deterministic fork-join workload for mechanism sanity and negative controls.
+- H100 latency model: measured only after successful `run_h100_profile.sh`; default analytic fallback otherwise.
 - GPU vLLM/SGLang baselines: measured only when servers and real workloads are run.
-- GPU cache policies and wafer policies: trace-driven simulation.
+- GPU cache policies and wafer policies: trace-driven simulation, not real wafer execution.
+
+## Interpret Result Files
+
+- `h100_profile_raw.csv`: measured vLLM profile rows; failed requests are retained.
+- `h100_latency_model.json`: fitted H100 latency model used by replay; check `measured=true`.
+- `pr2_h100_profile_report.md`: fixed-field gate report for H100 profile and latency fit quality.
+- `real_agentlike_trace_summary.csv`: measured local vLLM/tool trace summary; not SWE-bench.
+- `wafer_replay_summary.csv`: simulated wafer replay on traces.
+- `ablation.csv`: real policy runs from the simulator, not copied full-policy output.
 
 ## Limitations
 
@@ -227,6 +322,9 @@ The plotting code uses matplotlib only. It writes both PDF and PNG.
 - Main scheduler does not alter agent policy or success probability; sibling cancellation occurs only after recorded verifier/test pass.
 - The current multi-branch SWE script provides loader/adaptation scaffolding; full official harness orchestration should be attached externally for long runs.
 - Default latency parameters are placeholders until H100 profiling data is collected.
+- The artifact does not yet claim a complete real SWE-bench evaluation.
+- The artifact does not execute on real wafer hardware.
+- The mesh model is H100-calibrated trace-driven simulation, not exact Cerebras simulation.
 
 ## Artifact Checklist
 

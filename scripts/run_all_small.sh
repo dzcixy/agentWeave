@@ -19,8 +19,10 @@ RESULTS="$OUT_DIR/results"
 PLOTS="$OUT_DIR/plots"
 TMP="$OUT_DIR/results/.tmp_${RUN_ID}"
 export RUN_TMP="$TMP"
+export RUN_ID OUT_DIR RESULTS PROCESSED TRACE_DIR
 rm -rf "$TRACE_DIR" "$PROCESSED" "$TMP"
 mkdir -p "$TRACE_DIR" "$PROCESSED" "$RESULTS" "$PLOTS" "$TMP"
+trap 'rm -rf "$TMP"' EXIT
 
 python -m agentweaver.workloads.synthetic_fork_join --fixed-scenarios --out-dir "$TRACE_DIR"
 python -m agentweaver.analysis.context_segment_graph --trace-dir "$TRACE_DIR" --out "$PROCESSED" --config configs/default.yaml
@@ -145,48 +147,135 @@ PY
 python -m agentweaver.plotting.plot_all --results-dir "$RESULTS" --out-dir "$PLOTS"
 
 python - <<'PY'
+import csv
+import os
 from pathlib import Path
-report = Path("data/results/pr1_report.md")
-report.write_text("""# PR-1 Report: Synthetic Correctness and Simulator Core Fix
 
-## Modified files
+results = Path(os.environ["RESULTS"])
+run_id = os.environ["RUN_ID"]
 
-- `agentweaver/workloads/synthetic_fork_join.py`
-- `agentweaver/simulator/replay.py`
-- `agentweaver/simulator/acd_mapping.py`
-- `agentweaver/simulator/bes_scheduler.py`
-- `agentweaver/simulator/nisp.py`
-- `scripts/run_all_small.sh`
-- `tests/test_synthetic_expected_properties.py`
+def rows(path):
+    with open(path, newline="") as f:
+        return list(csv.DictReader(f))
+
+replay = rows(results / "wafer_replay_summary.csv")
+acd = rows(results / "acd_mapping.csv")
+trace_summary = rows(results / "synthetic_trace_summary.csv")
+
+def r(scenario, policy):
+    for row in replay:
+        if row.get("scenario") == scenario and row.get("policy") == policy:
+            return row
+    raise KeyError((scenario, policy))
+
+def f(row, key):
+    return float(row.get(key, 0) or 0)
+
+def i(row, key):
+    return int(float(row.get(key, 0) or 0))
+
+policies = {row.get("policy") for row in replay}
+required = {"naive_wafer","static_branch_pinning","wafer_fcfs","acd_only","acd_bes","acd_nisp","full_agentweaver"}
+policy_ok = required.issubset(policies)
+trace_ok = all(int(row["llm_events"]) == 2 * int(row["branch_fanout"]) and int(row["tool_events"]) == int(row["branch_fanout"]) for row in trace_summary)
+acd_before = sum(float(x["avg_hops_before"]) for x in acd) / max(1, len(acd))
+acd_after = sum(float(x["avg_hops_after"]) for x in acd) / max(1, len(acd))
+noc_before = sum(float(x["noc_bytes_before"]) for x in acd)
+noc_after = sum(float(x["noc_bytes_after"]) for x in acd)
+hotspot_before = float(acd[0]["hotspot_before"]) if acd else 0
+hotspot_after = float(acd[0]["hotspot_after"]) if acd else 0
+s1_acd_ok = acd_after < acd_before or noc_after < noc_before
+s1_hotspot_ok = hotspot_after <= hotspot_before or noc_after < noc_before
+
+s2_naive = r("S2_branch_heavy", "naive_wafer")
+s2_full = r("S2_branch_heavy", "full_agentweaver")
+s2_bes = r("S2_branch_heavy", "acd_bes")
+s2_ok = i(s2_full, "branch_wasted_tokens") < i(s2_naive, "branch_wasted_tokens") or i(s2_bes, "branch_wasted_tokens") < i(s2_naive, "branch_wasted_tokens")
+s2_block_ok = f(s2_full, "blocked_compute_time_avoided") > 0 or f(s2_bes, "blocked_compute_time_avoided") > 0
+
+s3_naive = r("S3_tool_stall_heavy", "naive_wafer")
+s3_nisp = r("S3_tool_stall_heavy", "acd_nisp")
+s3_full = r("S3_tool_stall_heavy", "full_agentweaver")
+s3_resume_ok = i(s3_nisp, "resume_prefill_tokens") < i(s3_naive, "resume_prefill_tokens") or i(s3_full, "resume_prefill_tokens") < i(s3_naive, "resume_prefill_tokens")
+parking_states = sum(1 for key in ["hot_count","warm_count","cold_count"] if i(s3_nisp, key) + i(s3_full, key) > 0)
+s3_parking_ok = parking_states >= 2
+
+def benefit(scenario):
+    naive = r(scenario, "naive_wafer")
+    full = r(scenario, "full_agentweaver")
+    return (f(naive, "jct") - f(full, "jct")) / max(1e-9, f(naive, "jct"))
+
+s1_benefit = benefit("S1_context_heavy")
+s2_benefit = benefit("S2_branch_heavy")
+s4_benefit = benefit("S4_low_reuse_negative")
+s5_benefit = benefit("S5_tool_dominated_negative")
+s4_ok = s4_benefit < max(s1_benefit, s2_benefit)
+s5_ok = s5_benefit < max(s1_benefit, s2_benefit)
+
+gate = all([policy_ok, trace_ok, s1_acd_ok, s1_hotspot_ok, s2_ok, s2_block_ok, s3_resume_ok, s3_parking_ok, s4_ok, s5_ok])
+body = f"""# PR-1 Final Gate Report
 
 ## Validation
 
-- `pytest -q`: run separately in this PR workflow.
-- `bash scripts/run_all_small.sh`: completed and generated the required CSV/PDF/PNG artifacts.
+- `bash scripts/run_all_small.sh --run-id {run_id}`: completed.
+- `pytest -q`: must be run by the caller before this script; PR2 phase 0 records the actual result separately.
+- Required policies present: {policy_ok}
+- Synthetic branch shape LLM0 -> TOOL -> LLM1 -> VERIFIER: {trace_ok}
 
-## Mechanism checks
+## Mechanism Checks
 
-- ACD is exercised by exact-prefix shared context in S1/S2/S3 and reports lower post-mapping hop/traffic metrics than naive shared-bank placement.
-- BES is exercised by comparing branch-elastic policies against `static_branch_pinning`, where tool-blocked branches retain regions in the baseline.
-- NISP is exercised by the mandatory LLM_1 after each tool, with HOT/WARM/COLD restore changing resume prefill tokens.
+### S1_context_heavy
 
-## Negative controls
+- avg_hops_before = {acd_before:.6f}
+- avg_hops_after = {acd_after:.6f}
+- noc_bytes_before = {noc_before:.0f}
+- noc_bytes_after = {noc_after:.0f}
+- hotspot_before = {hotspot_before:.6f}
+- hotspot_after = {hotspot_after:.6f}
+- ACD locality check = {s1_acd_ok}
+- hotspot/NoC check = {s1_hotspot_ok}
 
-- S4 has low exact-prefix reuse, so AgentWeaver benefit is intentionally small.
-- S5 is tool dominated, so wafer-side LLM/context benefits drop relative to total JCT.
+### S2_branch_heavy
 
-## Remaining limitations
+- naive branch_wasted_tokens = {i(s2_naive, "branch_wasted_tokens")}
+- full branch_wasted_tokens = {i(s2_full, "branch_wasted_tokens")}
+- acd_bes branch_wasted_tokens = {i(s2_bes, "branch_wasted_tokens")}
+- full blocked_compute_time_avoided = {f(s2_full, "blocked_compute_time_avoided"):.6f}
+- acd_bes blocked_compute_time_avoided = {f(s2_bes, "blocked_compute_time_avoided"):.6f}
+- branch waste check = {s2_ok}
+- blocked compute release check = {s2_block_ok}
 
-- The default latency model remains a placeholder until H100 profiling is collected.
-- Real vLLM/SGLang/SWE-agent measurements are not fabricated by this script.
+### S3_tool_stall_heavy
 
-## H100 profiling blockers
+- naive resume_prefill_tokens = {i(s3_naive, "resume_prefill_tokens")}
+- acd_nisp resume_prefill_tokens = {i(s3_nisp, "resume_prefill_tokens")}
+- full resume_prefill_tokens = {i(s3_full, "resume_prefill_tokens")}
+- acd_nisp HOT/WARM/COLD = {i(s3_nisp, "hot_count")}/{i(s3_nisp, "warm_count")}/{i(s3_nisp, "cold_count")}
+- full HOT/WARM/COLD = {i(s3_full, "hot_count")}/{i(s3_full, "warm_count")}/{i(s3_full, "cold_count")}
+- resume prefill check = {s3_resume_ok}
+- parking diversity check = {s3_parking_ok}
 
-- Start vLLM/SGLang with the target local Qwen model under `/data2/model_zoo`.
-- Collect `data/profiles/h100_profile_raw.csv` and fit `data/profiles/h100_latency_model.json`.
-- Run real multi-rollout SWE traces and convert them through the adapters before full evaluation.
-""", encoding="utf-8")
-print(report)
+### Negative Controls
+
+- S1 benefit = {s1_benefit:.6f}
+- S2 benefit = {s2_benefit:.6f}
+- S4_low_reuse_negative benefit = {s4_benefit:.6f}
+- S5_tool_dominated_negative benefit = {s5_benefit:.6f}
+- S4 low-reuse reduced-benefit check = {s4_ok}
+- S5 tool-dominated reduced-benefit check = {s5_ok}
+
+## Remaining Limitations
+
+- Default latency model is still placeholder until PR2 H100 profiling succeeds.
+- Wafer results remain trace-driven simulation.
+
+PR1_GATE = {"PASS" if gate else "FAIL"}
+"""
+
+for name in ["pr1_report.md", f"{run_id}_report.md"]:
+    path = results / name
+    path.write_text(body, encoding="utf-8")
+    print(path)
 PY
 
 echo "PR-1 synthetic pipeline complete"
@@ -200,4 +289,5 @@ ls -1 data/results/synthetic_trace_summary.csv \
       data/results/sensitivity_mesh.csv \
       data/results/sensitivity_link_bw.csv \
       data/results/sensitivity_tool_latency.csv \
-      data/results/pr1_report.md
+      data/results/pr1_report.md \
+      "$RESULTS/${RUN_ID}_report.md"

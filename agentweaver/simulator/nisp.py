@@ -88,7 +88,8 @@ class NISP:
 
         shared_prefix_value = self.latency_model.predict_prefill(state.shared_prefix_tokens)
         private_value = self.latency_model.predict_prefill(max(1, state.private_suffix_tokens))
-        if best_utility > 0 and pressure < self.hot_pressure_threshold:
+        short_or_light_resume = best_ttl <= 30 or state.observation_tokens <= 320
+        if best_utility > 0 and pressure < self.hot_pressure_threshold and short_or_light_resume:
             parking = ParkingState.HOT
             cached = state.shared_prefix_tokens + state.private_suffix_tokens
             resume = state.observation_tokens

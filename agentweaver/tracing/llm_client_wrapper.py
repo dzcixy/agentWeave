@@ -15,7 +15,7 @@ from agentweaver.utils.tokenization import count_tokens
 
 
 class OpenAICompatibleTracer:
-    def __init__(self, base_url: str, api_key: str = "EMPTY", model: str = "qwen-coder-7b", trace_path: str | None = None):
+    def __init__(self, base_url: str, api_key: str = "EMPTY", model: str = "qwen2.5-7b", trace_path: str | None = None):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.model = model
@@ -70,7 +70,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base-url", default="http://localhost:8000/v1")
     ap.add_argument("--api-key", default="EMPTY")
-    ap.add_argument("--model", default="qwen-coder-7b")
+    ap.add_argument("--model", default="qwen2.5-7b")
     ap.add_argument("--prompt", required=True)
     ap.add_argument("--out-trace")
     args = ap.parse_args()

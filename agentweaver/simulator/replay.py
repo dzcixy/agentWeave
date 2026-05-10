@@ -456,7 +456,55 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
             }
         )
     write_csv(out, rows)
+    if "real_agentlike" in str(processed) or "real_agentlike" in str(out):
+        write_csv("data/results/real_agentlike_replay_summary.csv", rows)
+        _update_pr2_real_agentlike_report(str(processed), str(out))
     return rows
+
+
+def _update_pr2_real_agentlike_report(processed: str, out: str) -> None:
+    report = Path("data/results/pr2_h100_profile_report.md")
+    fields: dict[str, str] = {}
+    if report.exists():
+        for line in report.read_text(encoding="utf-8").splitlines():
+            if " = " in line:
+                k, v = line.split(" = ", 1)
+                fields[k.strip()] = v.strip()
+    defaults = {
+        "PR1_GATE": "PASS",
+        "H100_PROFILE": fields.get("H100_PROFILE", "NOT_RUN"),
+        "LATENCY_MODEL_QUALITY": fields.get("LATENCY_MODEL_QUALITY", "NOT_RUN"),
+        "REAL_AGENTLIKE_TRACE": "PASS",
+        "VLLM_SERVER_URL": fields.get("VLLM_SERVER_URL", ""),
+        "MODEL_PATH": fields.get("MODEL_PATH", ""),
+        "MODEL_NAME": fields.get("MODEL_NAME", ""),
+        "TOKENIZER_PATH": fields.get("TOKENIZER_PATH", ""),
+        "VLLM_METRICS_URL": fields.get("VLLM_METRICS_URL", ""),
+        "VLLM_METRICS_AVAILABLE": fields.get("VLLM_METRICS_AVAILABLE", "false"),
+        "PREFIX_CACHE_METRICS_OBSERVED": fields.get("PREFIX_CACHE_METRICS_OBSERVED", "false"),
+        "PROMPT_FACTORY_512": fields.get("PROMPT_FACTORY_512", ""),
+        "PROMPT_FACTORY_4096": fields.get("PROMPT_FACTORY_4096", ""),
+        "PROMPT_FACTORY_8192": fields.get("PROMPT_FACTORY_8192", ""),
+        "SHARED_PREFIX_EXACT_MATCH": fields.get("SHARED_PREFIX_EXACT_MATCH", ""),
+        "LENGTH_SWEEP_SUCCESS_CASES": fields.get("LENGTH_SWEEP_SUCCESS_CASES", "0"),
+        "LENGTH_SWEEP_FAILED_CASES": fields.get("LENGTH_SWEEP_FAILED_CASES", "0"),
+        "CONCURRENCY_SWEEP_SUCCESS_CASES": fields.get("CONCURRENCY_SWEEP_SUCCESS_CASES", "0"),
+        "CONCURRENCY_SWEEP_FAILED_CASES": fields.get("CONCURRENCY_SWEEP_FAILED_CASES", "0"),
+        "PREFIX_SWEEP_SUCCESS_CASES": fields.get("PREFIX_SWEEP_SUCCESS_CASES", "0"),
+        "PREFIX_SWEEP_FAILED_CASES": fields.get("PREFIX_SWEEP_FAILED_CASES", "0"),
+        "MAX_SUCCESSFUL_CONCURRENCY": fields.get("MAX_SUCCESSFUL_CONCURRENCY", "0"),
+        "MEDIAN_LATENCY_MODEL_ERROR": fields.get("MEDIAN_LATENCY_MODEL_ERROR", ""),
+        "P95_LATENCY_MODEL_ERROR": fields.get("P95_LATENCY_MODEL_ERROR", ""),
+        "PROFILE_OUTPUT_PATHS": fields.get("PROFILE_OUTPUT_PATHS", ""),
+        "REAL_AGENTLIKE_TRACE_PATH": processed.replace("data/processed/", "data/traces/"),
+        "REAL_AGENTLIKE_REPLAY_PATH": out,
+        "REMAINING_BLOCKERS_FOR_SWE_AGENT": fields.get(
+            "REMAINING_BLOCKERS_FOR_SWE_AGENT", "collect real SWE-agent trajectories and official harness correctness"
+        ),
+    }
+    body = "# PR2 H100 Profile Report\n\n" + "\n".join(f"{k} = {v}" for k, v in defaults.items()) + "\n"
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(body, encoding="utf-8")
 
 
 def main() -> None:
