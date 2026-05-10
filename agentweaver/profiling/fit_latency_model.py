@@ -225,6 +225,58 @@ def _summary(errs: list[dict[str, float | str]]) -> tuple[float, float, float]:
     return _pct(apes, 50), _pct(apes, 95), max(apes) if apes else float("nan")
 
 
+def length_training_from_rows(rows: list[dict[str, Any]]) -> list[dict[str, float]]:
+    """Return length-sweep training samples that have streaming TTFT."""
+    return _length_training(rows)
+
+
+def fit_latency_model_from_training(
+    train: list[dict[str, float]],
+    source: str,
+    all_rows: list[dict[str, Any]] | None = None,
+    force_mode: str = "auto",
+) -> tuple[LatencyModel, dict[str, float | str | bool]]:
+    """Fit a latency model from already-cleaned training rows.
+
+    force_mode may be "auto", "parametric", or "interpolation". Auto keeps the
+    PR2-v2 rule: use interpolation when the parametric in-sample p95 exceeds 25%.
+    """
+    if len(train) < 4:
+        raise RuntimeError(f"not enough training rows for latency model: {len(train)}")
+    if force_mode not in {"auto", "parametric", "interpolation"}:
+        raise ValueError(f"unknown force_mode {force_mode}")
+    parametric = _fit_parametric(train, source)
+    parametric.queue_factors = _concurrency_factors(all_rows or [], parametric)
+    parametric_errs = _errors(train, parametric)
+    param_median, param_p95, param_max = _summary(parametric_errs)
+
+    interpolation_used = force_mode == "interpolation"
+    if force_mode == "auto" and not (param_median < 0.15 and param_p95 < 0.25):
+        interpolation_used = True
+
+    lm = parametric
+    if interpolation_used:
+        lm = _make_interpolation_model(train, parametric, source)
+        lm.queue_factors = _concurrency_factors(all_rows or [], lm)
+
+    final_errs = _errors(train, lm)
+    median, p95, maxe = _summary(final_errs)
+    return lm, {
+        "parametric_median_absolute_percentage_error": param_median,
+        "parametric_p95_absolute_percentage_error": param_p95,
+        "parametric_max_error": param_max,
+        "interpolation_fallback_used": interpolation_used,
+        "median_absolute_percentage_error": median,
+        "p95_absolute_percentage_error": p95,
+        "max_error": maxe,
+        "latency_model_mode": lm.mode,
+    }
+
+
+def prediction_errors(rows: list[dict[str, float]], model: LatencyModel) -> list[dict[str, float | str]]:
+    return _errors(rows, model)
+
+
 def fit(
     raw: str | Path,
     out: str | Path,
@@ -241,19 +293,13 @@ def fit(
     if len(train) < 4:
         raise RuntimeError(f"not enough successful streaming-TTFT length samples to fit H100 latency model: {len(train)}")
 
-    parametric = _fit_parametric(train, str(raw))
-    parametric.queue_factors = _concurrency_factors(rows, parametric)
-    parametric_errs = _errors(train, parametric)
-    param_median, param_p95, param_max = _summary(parametric_errs)
+    lm, fit_stats = fit_latency_model_from_training(train, str(raw), rows)
+    param_median = float(fit_stats["parametric_median_absolute_percentage_error"])
+    param_p95 = float(fit_stats["parametric_p95_absolute_percentage_error"])
+    param_max = float(fit_stats["parametric_max_error"])
+    interpolation_used = bool(fit_stats["interpolation_fallback_used"])
 
-    lm = parametric
-    interpolation_used = False
-    if not (param_median < 0.15 and param_p95 < 0.25):
-        lm = _make_interpolation_model(train, parametric, str(raw))
-        lm.queue_factors = _concurrency_factors(rows, lm)
-        interpolation_used = True
-
-    final_errs = _errors(train, lm)
+    final_errs = prediction_errors(train, lm)
     median, p95, maxe = _summary(final_errs)
     quality = "PASS" if median < 0.15 and p95 < 0.25 and ttft_coverage >= 0.95 else "WARNING"
     lm.quality = quality

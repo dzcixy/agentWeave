@@ -82,6 +82,7 @@ def _case_key(row: dict[str, Any]) -> tuple[int, int, int]:
 def prefix_reuse_effect(noprefix_csv: str | Path, prefix_csv: str | Path, out: str | Path) -> list[dict[str, Any]]:
     noprefix_rows = [r for r in _read_csv(noprefix_csv) if _ok(r)]
     prefix_rows = [r for r in _read_csv(prefix_csv) if _ok(r)]
+    global_prefix_reliable, _, _ = _prefix_metrics_status(prefix_rows)
     by_np: dict[tuple[int, int, int], list[dict[str, str]]] = defaultdict(list)
     by_pf: dict[tuple[int, int, int], list[dict[str, str]]] = defaultdict(list)
     for row in noprefix_rows:
@@ -97,7 +98,9 @@ def prefix_reuse_effect(noprefix_csv: str | Path, prefix_csv: str | Path, out: s
         pf_lat = [x for x in pf_lat if not math.isnan(x) and x > 0]
         if not np_lat or not pf_lat:
             continue
-        prefix_reliable = any(str(r.get("prefix_cache_metrics_reliable", "")).lower() == "true" for r in by_pf[key])
+        prefix_reliable = global_prefix_reliable and any(
+            str(r.get("prefix_cache_metrics_reliable", "")).lower() == "true" for r in by_pf[key]
+        )
         reliable_cache_hit_tokens = ""
         if prefix_reliable:
             vals = [_num(r.get("cached_prompt_tokens_delta"), math.nan) for r in by_pf[key]]
@@ -119,6 +122,7 @@ def prefix_reuse_effect(noprefix_csv: str | Path, prefix_csv: str | Path, out: s
                 "client_repeated_prefix_tokens": int(client_repeated),
                 "reliable_cache_hit_tokens": reliable_cache_hit_tokens,
                 "prefix_metrics_reliable": str(prefix_reliable).lower(),
+                "prefix_cache_counters_used_as_evidence": str(prefix_reliable).lower(),
             }
         )
     write_csv(out, rows)

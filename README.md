@@ -221,6 +221,38 @@ python -m agentweaver.tracing.tool_wrapper --out-trace data/traces/manual/tool.j
 
 The official SWE-bench harness can be attached by running the agent externally, preserving generated patches/test results in `.traj`, then converting with the adapters.
 
+## PR3: mini-SWE-agent / SWE-agent trace collection plan
+
+PR3 starts with mini-SWE-agent trace collection against a local OpenAI-compatible vLLM server. It does not treat the PR2 controlled `real_agentlike_h100` workload as SWE-bench, and it should not generate synthetic mini-SWE trajectories.
+
+Single-rollout trace conversion or environment check:
+
+```bash
+bash scripts/run_mini_swe_trace_pr3.sh \
+  --server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --num-instances 5 \
+  --rollouts 1 \
+  --max-steps 20 \
+  --run-id mini_swe_pr3
+```
+
+Multi-branch rollout conversion:
+
+```bash
+bash scripts/run_mini_swe_multibranch_pr3.sh \
+  --server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --num-instances 5 \
+  --rollouts 4 \
+  --max-steps 20 \
+  --run-id mini_swe_multibranch_pr3
+```
+
+If mini-SWE-agent is not installed, the scripts fail with installation guidance and do not create fake traces. After real `.traj` or `.traj.json` files exist, pass `--traj-dir` or `--traj-root` to convert them into `data/traces/mini_swe_*`.
+
 ## Build Context Graph
 
 ```bash

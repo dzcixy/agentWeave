@@ -351,22 +351,36 @@ def _excluded_sources(rows: list[dict[str, Any]], spec: MetricSpec) -> list[dict
     return out
 
 
-def write_source_audit(rows: list[dict[str, Any]], out: str | Path) -> dict[str, Any]:
+def write_source_audit(
+    rows: list[dict[str, Any]],
+    out: str | Path,
+    prefix_reliable_override: bool | None = None,
+    prefix_reliability_note: str = "",
+) -> dict[str, Any]:
     values, sources, missing = summarize_metrics(rows)
-    reliable = prefix_cache_metrics_reliable(sources)
+    parser_reliable = prefix_cache_metrics_reliable(sources)
+    reliable = parser_reliable if prefix_reliable_override is None else prefix_reliable_override
+    title = "# vLLM Metrics Source Audit PR2-v2.1" if "v2_1" in str(out) else "# vLLM Metrics Source Audit PR2-v2"
     lines = [
-        "# vLLM Metrics Source Audit PR2-v2",
+        title,
         "",
         f"rows_parsed = {len(rows)}",
+        f"PREFIX_CACHE_METRICS_PARSER_RELIABLE = {str(parser_reliable).lower()}",
         f"PREFIX_CACHE_METRICS_RELIABLE = {str(reliable).lower()}",
+        f"PREFIX_CACHE_COUNTERS_USED_AS_EVIDENCE = {str(reliable).lower()}",
         "",
     ]
+    if prefix_reliability_note:
+        lines.insert(5, f"PREFIX_CACHE_RELIABILITY_NOTE = {prefix_reliability_note}")
     audit: dict[str, Any] = {
         "rows_parsed": len(rows),
         "values": values,
         "sources": sources,
         "missing": missing,
+        "prefix_cache_metrics_parser_reliable": parser_reliable,
         "prefix_cache_metrics_reliable": reliable,
+        "prefix_cache_counters_used_as_evidence": reliable,
+        "prefix_cache_reliability_note": prefix_reliability_note,
     }
     for logical, spec in LOGICAL_METRICS.items():
         src = sources.get(logical, [])
@@ -407,14 +421,19 @@ def write_source_audit(rows: list[dict[str, Any]], out: str | Path) -> dict[str,
     return audit
 
 
-def audit_raw_files(raw_paths: list[str | Path], out: str | Path) -> dict[str, Any]:
+def audit_raw_files(
+    raw_paths: list[str | Path],
+    out: str | Path,
+    prefix_reliable_override: bool | None = None,
+    prefix_reliability_note: str = "",
+) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     for path in raw_paths:
         p = Path(path)
         if not p.exists():
             continue
         rows.extend(parse_prometheus(p.read_text(encoding="utf-8", errors="replace")))
-    return write_source_audit(rows, out)
+    return write_source_audit(rows, out, prefix_reliable_override, prefix_reliability_note)
 
 
 def collect(
@@ -471,11 +490,21 @@ def main() -> None:
     ap.add_argument("--raw-out")
     ap.add_argument("--audit-out")
     ap.add_argument("--audit-raw", nargs="*")
+    ap.add_argument("--prefix-cache-metrics-reliable", choices=("auto", "true", "false"), default="auto")
+    ap.add_argument("--prefix-cache-reliability-note", default="")
     ap.add_argument("--interval", type=float, default=2)
     ap.add_argument("--duration", type=float, default=10)
     args = ap.parse_args()
     if args.audit_raw:
-        audit = audit_raw_files(args.audit_raw, args.audit_out or "data/results/vllm_metrics_source_audit_pr2_v2.md")
+        override = None
+        if args.prefix_cache_metrics_reliable != "auto":
+            override = args.prefix_cache_metrics_reliable == "true"
+        audit = audit_raw_files(
+            args.audit_raw,
+            args.audit_out or "data/results/vllm_metrics_source_audit_pr2_v2.md",
+            override,
+            args.prefix_cache_reliability_note,
+        )
         print(json.dumps({"rows": audit["rows_parsed"], "audit_out": args.audit_out}, indent=2))
         return
     rows = collect(args.metrics_url, args.out, args.missing_out, args.interval, args.duration, args.raw_out, args.audit_out)
