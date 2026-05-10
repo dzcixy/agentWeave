@@ -87,13 +87,16 @@ class EventDrivenReplay:
         self.run_id = run_id
         self.bpt = kv_bytes_per_token()
         self.regions = self.mesh.regions()
-        self.active_regions = self.regions
+        active_count = cfg.effective_regions if cfg.effective_regions is not None else len(self.regions)
+        active_count = max(1, min(int(active_count), len(self.regions)))
+        self.active_regions = self.regions[:active_count]
         self.free_regions: list[Coord] = list(self.active_regions)
         self.branch_region: dict[str, Coord] = {}
         self.arena = ContextArena(cfg.kv_capacity_bytes_per_die * cfg.num_regions)
         self.nisp = NISP(latency_model, mesh=self.mesh)
         self.scheduler = BESScheduler(latency_model, self.arena, free_regions=self.free_regions)
         self.ready_queue: deque[Event] = deque()
+        self.ready_since: dict[str, float] = {}
         self.eventq: list[QueueEvent] = []
         self.seq = 0
         self.running: dict[str, RunningLLM] = {}
@@ -141,10 +144,11 @@ class EventDrivenReplay:
         self.llm_busy_time = 0.0
         self.tool_blocked_region_time = 0.0
         self.blocked_compute_time_avoided = 0.0
+        self.branch_wait_time = 0.0
         self.branch_wasted_tokens = 0
         self.safe_cancellation_savings = 0
         self.resume_prefill_tokens = 0
-        self.region_last_free: dict[Coord, float] = {r: 0.0 for r in self.regions}
+        self.region_last_free: dict[Coord, float] = {r: 0.0 for r in self.active_regions}
 
     def push(self, time: float, kind: str, branch_id: str, node: Event | None = None) -> None:
         self.seq += 1
@@ -170,8 +174,8 @@ class EventDrivenReplay:
             return self.branch_to_region[bk]  # type: ignore[return-value]
         if branch_id in self.branch_region:
             return self.branch_region[branch_id]
-        idx = sorted(self.by_branch).index(branch_id) % len(self.regions)
-        return self.regions[idx]
+        idx = sorted(self.by_branch).index(branch_id) % len(self.active_regions)
+        return self.active_regions[idx]
 
     def _allocate_region(self, branch_id: str, now: float) -> Coord | None:
         if self.flags["static"] and branch_id in self.branch_region:
@@ -267,6 +271,7 @@ class EventDrivenReplay:
             if region is None:
                 self.ready_queue.appendleft(selected)
                 return
+            self.branch_wait_time += max(0.0, now - self.ready_since.pop(selected.event_id, now))
             self.push(now, "LLM_START", selected.branch_id, selected)
 
     def _cancel_siblings(self, winner: str, now: float) -> None:
@@ -298,7 +303,10 @@ class EventDrivenReplay:
             if qe.branch_id in self.cancelled and qe.kind not in {"BRANCH_CANCEL"}:
                 continue
             if qe.kind == "LLM_READY":
-                self.ready_queue.append(qe.node)  # type: ignore[arg-type]
+                node = qe.node  # type: ignore[assignment]
+                if node is not None:
+                    self.ready_since.setdefault(node.event_id, now)
+                    self.ready_queue.append(node)
                 self._try_schedule(now)
             elif qe.kind == "LLM_START":
                 self._start_llm(qe.node, now, self.branch_region[qe.branch_id])  # type: ignore[arg-type]
@@ -388,6 +396,7 @@ class EventDrivenReplay:
             "policy": self.policy,
             "mesh_rows": self.cfg.mesh_rows,
             "mesh_cols": self.cfg.mesh_cols,
+            "effective_regions": len(self.active_regions),
             "branch_fanout": len(self.by_branch),
             "jct": jct,
             "time_to_first_success": self.first_success_time if self.first_success_time is not None else jct,
@@ -402,6 +411,7 @@ class EventDrivenReplay:
             "region_utilization": self.llm_busy_time / max(1e-9, total_region_time),
             "tool_blocked_region_time": self.tool_blocked_region_time,
             "blocked_compute_time_avoided": self.blocked_compute_time_avoided,
+            "branch_wait_time": self.branch_wait_time,
             "state_migration_exposed_latency": nisp_metrics["state_migration_exposed_latency"],
             "branch_wasted_tokens": max(0, self.branch_wasted_tokens - self.safe_cancellation_savings),
             "safe_cancellation_savings": self.safe_cancellation_savings,
@@ -450,6 +460,7 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
                 "policy": policy,
                 "mesh_rows": cfg.mesh_rows,
                 "mesh_cols": cfg.mesh_cols,
+                "effective_regions": cfg.effective_regions if cfg.effective_regions is not None else cfg.num_regions,
                 "branch_fanout": sum(float(r["branch_fanout"]) for r in rows) / len(rows),
                 "jct": sum(float(r["jct"]) for r in rows) / len(rows),
                 "time_to_first_success": sum(float(r["time_to_first_success"]) for r in rows) / len(rows),
@@ -464,6 +475,7 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
                 "region_utilization": sum(float(r["region_utilization"]) for r in rows) / len(rows),
                 "tool_blocked_region_time": sum(float(r["tool_blocked_region_time"]) for r in rows),
                 "blocked_compute_time_avoided": sum(float(r["blocked_compute_time_avoided"]) for r in rows),
+                "branch_wait_time": sum(float(r.get("branch_wait_time", 0.0)) for r in rows),
                 "state_migration_exposed_latency": sum(float(r["state_migration_exposed_latency"]) for r in rows),
                 "branch_wasted_tokens": sum(int(r["branch_wasted_tokens"]) for r in rows),
                 "safe_cancellation_savings": sum(int(r["safe_cancellation_savings"]) for r in rows),

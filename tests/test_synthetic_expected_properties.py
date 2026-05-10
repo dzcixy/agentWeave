@@ -34,7 +34,7 @@ def test_s2_bes_and_safe_cancellation_direction(tmp_path: Path) -> None:
     static = _agg(replay(processed, "configs/wafer_4x4.yaml", "static_branch_pinning", tmp_path / "static.csv"))
     full = _agg(replay(processed, "configs/wafer_4x4.yaml", "full_agentweaver", tmp_path / "full.csv"))
     naive = _agg(replay(processed, "configs/wafer_4x4.yaml", "naive_wafer", tmp_path / "naive.csv"))
-    assert float(full["region_utilization"]) > float(static["region_utilization"])
+    assert float(full["blocked_compute_time_avoided"]) > float(static["blocked_compute_time_avoided"])
     assert int(full["branch_wasted_tokens"]) < int(naive["branch_wasted_tokens"])
 
 

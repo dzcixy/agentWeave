@@ -388,11 +388,41 @@ bash scripts/run_mini_swe_multibranch_pr3.sh \
 Optional official SWE-bench harness evaluation uses only real generated patches:
 
 ```bash
+python -m agentweaver.workloads.extract_swebench_predictions \
+  --traj-root data/raw_trajs/mini_swe_lite5_timed \
+  --out data/results/mini_swe_lite5_timed_predictions.jsonl \
+  --model-name-or-path agentweaver-mini-swe-qwen-coder-7b \
+  --report data/results/mini_swe_lite5_timed_patch_extraction_report.csv
+
 bash scripts/run_swebench_eval_pr3.sh \
   --predictions data/results/mini_swe_lite5_timed_predictions.jsonl \
   --run-id mini_swe_lite5_timed_agentweaver \
   --max-workers 2
 ```
+
+If no non-empty patch or submission is present, the predictions file remains empty and the harness is skipped with a reportable reason. Missing patches are not converted to verifier failures.
+
+PR3-v3 adds two post-processing analyses for timed traces:
+
+```bash
+python -m agentweaver.analysis.bes_stress_pr3_v3 \
+  --trace-dir data/traces/mini_swe_lite10_r4_timed \
+  --model-json data/profiles/h100_latency_model_pr2_v2.json \
+  --out data/results/bes_stress_mini_swe_pr3_v3.csv \
+  --plot-out data/plots/bes_stress_mini_swe_pr3_v3.pdf
+
+python -m agentweaver.analysis.model_tool_breakdown_pr3_v3 \
+  --trace-dir data/traces/mini_swe_lite10_r4_timed \
+  --model-json data/profiles/h100_latency_model_pr2_v2.json \
+  --out data/results/mini_swe_lite10_r4_timed_latency_breakdown_detailed.csv \
+  --plot-out data/plots/mini_swe_lite10_r4_timed_model_tool_breakdown_pr3_v3.pdf
+
+python -m agentweaver.tracing.pr3_v3_report \
+  --results-dir data/results \
+  --out data/results/pr3_v3_report.md
+```
+
+BES stress replays the same real timed traces with constrained `effective_regions`; a speedup is reported only if replay produces one. The model/tool breakdown keeps measured wall-clock LLM/tool/orchestration time separate from simulated H100 model-side prefill/decode/reuse time.
 
 Expected PR3 outputs include:
 
@@ -406,6 +436,10 @@ Expected PR3 outputs include:
 - `data/results/mini_swe_lite10_r4_replay_all_policies.csv`
 - `data/results/pr3_report.md`
 - `data/results/pr3_v2_report.md`
+- `data/results/pr3_v3_report.md`
+- `data/results/mini_swe_lite5_timed_patch_extraction_report.csv`
+- `data/results/bes_stress_mini_swe_pr3_v3.csv`
+- `data/results/mini_swe_lite10_r4_timed_latency_breakdown_detailed.csv`
 
 Unknown verifier results mean the trajectory did not contain an official pass/fail result. They are tracked separately and must not be reported as solved rate. Only official harness verifier output may be used for solved-rate claims.
 

@@ -23,6 +23,7 @@ class WaferConfig:
     intra_node_bw_TBps: float = 0.9
     inter_node_bw_TBps: float = 0.1
     inter_node_latency_ns: float = 3000.0
+    effective_regions: int | None = None
 
     @classmethod
     def from_yaml(cls, path: str | Path | None) -> "WaferConfig":
