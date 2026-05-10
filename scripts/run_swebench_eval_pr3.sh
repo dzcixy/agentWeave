@@ -17,11 +17,19 @@ while [[ $# -gt 0 ]]; do
     --dataset-name|--dataset) DATASET="$2"; shift 2 ;;
     --results-dir) RESULTS_DIR="$2"; shift 2 ;;
     --log-dir) LOG_DIR="$2"; shift 2 ;;
+    --summary) SUMMARY="$2"; shift 2 ;;
     *) echo "unknown arg $1" >&2; exit 2 ;;
   esac
 done
 
-SUMMARY=${SUMMARY:-$RESULTS_DIR/mini_swe_lite5_official_eval_summary.csv}
+if [ -z "$SUMMARY" ]; then
+  pred_base=$(basename "$PREDICTIONS")
+  if [[ "$pred_base" == *_predictions.jsonl ]]; then
+    SUMMARY="$RESULTS_DIR/${pred_base%_predictions.jsonl}_official_eval_summary.csv"
+  else
+    SUMMARY="$RESULTS_DIR/mini_swe_lite5_official_eval_summary.csv"
+  fi
+fi
 mkdir -p "$RESULTS_DIR" "$LOG_DIR"
 
 write_summary() {

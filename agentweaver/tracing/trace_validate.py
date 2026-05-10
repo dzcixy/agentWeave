@@ -36,6 +36,11 @@ def _row(name: str, traces: list[Trace]) -> dict[str, Any]:
     )
     missing_token_counts = sum(1 for e in llm if e.input_tokens <= 0 or e.output_tokens <= 0)
     missing_context_segments = sum(1 for e in llm if not e.context_segments)
+    llm_timing_missing = sum(1 for e in llm if e.timing_missing or not (e.timestamp_start and e.timestamp_end))
+    tool_timing_missing = sum(1 for e in tool if e.timing_missing or not (e.timestamp_start and e.timestamp_end))
+    measured_agent_jct_available = any(
+        (not e.timing_missing) and e.timestamp_start and e.timestamp_end for e in events if e.node_type in {"llm", "tool"}
+    )
     return {
         "trace": name,
         "num_sessions": len({e.session_id for e in events}),
@@ -51,6 +56,11 @@ def _row(name: str, traces: list[Trace]) -> dict[str, Any]:
         "branch_count": len({e.branch_id for e in events if e.branch_id != "root"}),
         "has_tool_after_llm": str(any(_has_pair(tr, "llm", "tool") for tr in traces)).lower(),
         "has_llm_after_tool": str(any(_has_pair(tr, "tool", "llm") for tr in traces)).lower(),
+        "llm_timing_matched": len(llm) - llm_timing_missing,
+        "llm_timing_missing": llm_timing_missing,
+        "tool_timing_available": len(tool) - tool_timing_missing,
+        "tool_timing_missing": tool_timing_missing,
+        "measured_agent_jct_available": str(measured_agent_jct_available).lower(),
     }
 
 

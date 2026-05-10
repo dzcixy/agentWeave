@@ -307,6 +307,49 @@ bash scripts/run_mini_swe_multibranch_pr3.sh \
   --run-real
 ```
 
+PR3-v2 timed collection records real wall-clock timing for mini-SWE-agent runs. The timed runner imports an AgentWeaver mini-SWE timing patch before invoking `mini-extra`; this writes LLM call timing, shell/tool timing when available, and rollout JCT into the raw trajectory. It also launches an OpenAI-compatible timing proxy at `http://localhost:8010/v1` when needed and stores the LLM timing sidecar under `data/logs/vllm_proxy_timing_<run_id>.jsonl`.
+
+Run timed Lite-5:
+
+```bash
+bash scripts/run_mini_swe_trace_pr3_timed.sh \
+  --server http://localhost:8010/v1 \
+  --backend-server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --instance-list data/results/mini_swe_lite5_instances.txt \
+  --num-instances 5 \
+  --max-steps 10 \
+  --run-id mini_swe_lite5_timed \
+  --run-real
+```
+
+Run timed Lite-10 R4:
+
+```bash
+bash scripts/run_mini_swe_multibranch_pr3_timed.sh \
+  --server http://localhost:8010/v1 \
+  --backend-server http://localhost:8001/v1 \
+  --model qwen-coder-7b \
+  --tokenizer-path /data2/model_zoo/Qwen2.5-Coder-7B-Instruct \
+  --instance-list data/results/mini_swe_lite10_instances.txt \
+  --num-instances 10 \
+  --rollouts 4 \
+  --max-steps 10 \
+  --run-id mini_swe_lite10_r4_timed \
+  --run-real
+```
+
+If mini-SWE-agent was run externally, timed adapter-only conversion can merge a real LLM timing sidecar without inventing missing tool timing:
+
+```bash
+bash scripts/run_mini_swe_multibranch_pr3_timed.sh \
+  --traj-root data/raw_trajs/mini_swe_lite10_r4_timed \
+  --run-id mini_swe_lite10_r4_timed \
+  --timing-sidecar data/logs/vllm_proxy_timing_mini_swe_lite10_r4_timed.jsonl \
+  --rollouts 4
+```
+
 Adapter-only mode for externally collected real trajectories:
 
 ```bash
@@ -346,8 +389,8 @@ Optional official SWE-bench harness evaluation uses only real generated patches:
 
 ```bash
 bash scripts/run_swebench_eval_pr3.sh \
-  --predictions data/results/mini_swe_lite5_predictions.jsonl \
-  --run-id mini_swe_lite5_agentweaver \
+  --predictions data/results/mini_swe_lite5_timed_predictions.jsonl \
+  --run-id mini_swe_lite5_timed_agentweaver \
   --max-workers 2
 ```
 
@@ -362,6 +405,7 @@ Expected PR3 outputs include:
 - `data/results/mini_swe_lite10_r4_branch_summary.csv`
 - `data/results/mini_swe_lite10_r4_replay_all_policies.csv`
 - `data/results/pr3_report.md`
+- `data/results/pr3_v2_report.md`
 
 Unknown verifier results mean the trajectory did not contain an official pass/fail result. They are tracked separately and must not be reported as solved rate. Only official harness verifier output may be used for solved-rate claims.
 

@@ -101,10 +101,28 @@ class EventDrivenReplay:
         self.branch_done: set[str] = set()
         self.first_success_time: float | None = None
         self.accepted_branch = ""
-        self.t0 = min((e.timestamp_ready or e.timestamp_start for e in self.events), default=0.0)
+        self.t0 = min(
+            (
+                e.timestamp_ready or e.timestamp_start
+                for e in self.events
+                if (not e.timing_missing) and (e.timestamp_ready or e.timestamp_start)
+            ),
+            default=0.0,
+        )
         self.by_branch: dict[str, list[Event]] = defaultdict(list)
         for ev in self.events:
             self.by_branch[ev.branch_id].append(ev)
+        self.branch_t0: dict[str, float] = {
+            branch_id: min(
+                (
+                    e.timestamp_ready or e.timestamp_start
+                    for e in branch_events
+                    if (not e.timing_missing) and (e.timestamp_ready or e.timestamp_start)
+                ),
+                default=self.t0,
+            )
+            for branch_id, branch_events in self.by_branch.items()
+        }
         self.next_index: dict[str, int] = defaultdict(int)
         self.tool_samples: dict[str, list[float]] = defaultdict(list)
         for ev in self.events:
@@ -269,7 +287,9 @@ class EventDrivenReplay:
         for branch_id in sorted(self.by_branch):
             node = self._next_node(branch_id)
             if node and node.node_type == "llm":
-                self.push(max(0.0, node.timestamp_ready - self.t0), "LLM_READY", branch_id, node)
+                branch_t0 = self.branch_t0.get(branch_id, self.t0)
+                node_ready = node.timestamp_ready or node.timestamp_start
+                self.push(max(0.0, node_ready - branch_t0), "LLM_READY", branch_id, node)
         last_time = 0.0
         while self.eventq:
             qe = heapq.heappop(self.eventq)

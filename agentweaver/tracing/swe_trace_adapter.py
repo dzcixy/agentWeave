@@ -87,6 +87,9 @@ def _first_num(obj: dict[str, Any], keys: tuple[str, ...]) -> float | None:
 
 
 def _timing(obj: dict[str, Any]) -> tuple[float, float, float, bool]:
+    info = obj.get("info")
+    if isinstance(info, dict) and isinstance(info.get("timing"), dict):
+        obj = {**obj, **info["timing"]}
     start = _first_num(obj, TIMING_START_KEYS)
     end = _first_num(obj, TIMING_END_KEYS)
     latency = _first_num(obj, LATENCY_KEYS)
@@ -95,6 +98,25 @@ def _timing(obj: dict[str, Any]) -> tuple[float, float, float, bool]:
     if latency is not None:
         return 0.0, 0.0, max(0.0, latency), True
     return 0.0, 0.0, 0.0, True
+
+
+def _load_timing_sidecar(path: str | Path | None) -> list[dict[str, Any]]:
+    if not path:
+        return []
+    p = Path(path)
+    if not p.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+            if isinstance(row, dict):
+                rows.append(row)
+        except Exception:
+            continue
+    return rows
 
 
 def _steps(obj: Any) -> list[dict[str, Any]]:
@@ -144,24 +166,50 @@ def _parse_observation_content(content: str) -> tuple[str, int | None]:
     return content.strip(), rc
 
 
+def _mini_msg(msg: Any) -> dict[str, Any]:
+    if isinstance(msg, dict):
+        content = msg.get("content")
+        if content is None:
+            content = msg.get("message") or msg.get("text") or msg.get("value")
+        return {
+            "role": str(msg.get("role") or msg.get("type") or msg.get("speaker") or "user"),
+            "content": _text(content),
+            "extra": msg.get("extra") if isinstance(msg.get("extra"), dict) else {},
+        }
+    return {"role": "user", "content": _text(msg), "extra": {}}
+
+
 def _mini_swe_message_steps(messages: list[Any]) -> list[dict[str, Any]]:
-    normalized = _messages(messages)
+    normalized_full = [_mini_msg(m) for m in messages]
+    normalized = [{"role": m["role"], "content": m["content"]} for m in normalized_full]
     steps: list[dict[str, Any]] = []
-    for i, msg in enumerate(normalized):
+    for i, msg in enumerate(normalized_full):
         if msg.get("role") != "assistant":
             continue
         assistant = msg.get("content", "")
         command = _extract_text_command(assistant)
         obs = ""
         rc: int | None = None
-        if i + 1 < len(normalized) and normalized[i + 1].get("role") == "user":
-            obs, rc = _parse_observation_content(normalized[i + 1].get("content", ""))
+        tool_extra: dict[str, Any] = {}
+        if i + 1 < len(normalized_full) and normalized_full[i + 1].get("role") == "user":
+            obs, rc = _parse_observation_content(normalized_full[i + 1].get("content", ""))
+            tool_extra = normalized_full[i + 1].get("extra") or {}
+        assistant_extra = msg.get("extra") or {}
         step: dict[str, Any] = {
             "messages": normalized[:i],
             "assistant": assistant,
             "command": command,
             "observation": obs,
         }
+        for key in ("timestamp_start", "timestamp_end", "latency", "ttft", "tpot"):
+            if key in assistant_extra:
+                step[key] = assistant_extra[key]
+        if command and tool_extra:
+            step["tool_timing"] = {
+                k: tool_extra[k]
+                for k in ("timestamp_start", "timestamp_end", "tool_latency", "latency")
+                if k in tool_extra
+            }
         if rc is not None:
             step["returncode"] = rc
         steps.append(step)
@@ -296,6 +344,68 @@ def _exit_code(step: dict[str, Any]) -> int | None:
     return None
 
 
+def _tool_timing(step: dict[str, Any]) -> tuple[float, float, float, bool]:
+    timing = step.get("tool_timing")
+    if isinstance(timing, dict):
+        return _timing(timing)
+    if "assistant" in step and any(k in step for k in ("timestamp_start", "timestamp_end", "latency")):
+        return 0.0, 0.0, 0.0, True
+    return _timing(step)
+
+
+def _apply_timing_sidecar(events: list[Event], rows: list[dict[str, Any]]) -> None:
+    if not rows:
+        return
+    unused = set(range(len(rows)))
+    by_hash: dict[str, list[int]] = {}
+    for i, row in enumerate(rows):
+        h = str(row.get("prompt_hash") or "")
+        if h:
+            by_hash.setdefault(h, []).append(i)
+    order_indices = list(range(len(rows)))
+    order_cursor = 0
+    for ev in [e for e in events if e.node_type == "llm"]:
+        if (not ev.timing_missing) and ev.timestamp_start and ev.timestamp_end:
+            continue
+        idx: int | None = None
+        for cand in by_hash.get(ev.prompt_hash, []):
+            if cand in unused:
+                idx = cand
+                break
+        if idx is None:
+            while order_cursor < len(order_indices) and order_indices[order_cursor] not in unused:
+                order_cursor += 1
+            if order_cursor < len(order_indices):
+                idx = order_indices[order_cursor]
+        if idx is None:
+            continue
+        unused.discard(idx)
+        row = rows[idx]
+        start = _num(row.get("timestamp_start"))
+        end = _num(row.get("timestamp_end"))
+        latency = _num(row.get("latency"))
+        if start is None or end is None:
+            continue
+        ev.timestamp_ready = start
+        ev.timestamp_start = start
+        ev.timestamp_end = end
+        ev.latency = max(0.0, latency if latency is not None else end - start)
+        ev.ttft = _num(row.get("ttft"))
+        ev.tpot = _num(row.get("tpot"))
+        if row.get("input_tokens") not in (None, ""):
+            try:
+                ev.input_tokens = int(row["input_tokens"])
+                ev.context_length = max(ev.context_length, ev.input_tokens)
+            except Exception:
+                pass
+        if row.get("output_tokens") not in (None, ""):
+            try:
+                ev.output_tokens = int(row["output_tokens"])
+            except Exception:
+                pass
+        ev.timing_missing = False
+
+
 def _success(obj: dict[str, Any]) -> tuple[str, bool | None]:
     for key in ("success", "resolved", "passed", "is_resolved"):
         if key in obj and obj[key] is not None:
@@ -351,6 +461,7 @@ def convert_swe_traj(
     parent_branch_id: str | None = None,
     rollout_id: str | None = None,
     instance_id: str | None = None,
+    timing_sidecar: str | Path | None = None,
 ) -> Trace:
     loaded = _load(path)
     obj = loaded if isinstance(loaded, dict) else {"trajectory": loaded}
@@ -402,7 +513,7 @@ def convert_swe_traj(
             _add_history(history, "assistant", assistant_output)
         cmd = _command(step)
         if cmd:
-            start, end, latency, timing_missing = _timing(step)
+            start, end, latency, timing_missing = _tool_timing(step)
             obs = _observation(step)
             events.append(
                 Event(
@@ -482,6 +593,7 @@ def convert_swe_traj(
         "sample_fixture": bool(obj.get("sample_fixture", False)),
         "sample_fixture_note": obj.get("sample_fixture_note", ""),
     }
+    _apply_timing_sidecar(events, _load_timing_sidecar(timing_sidecar))
     tr = Trace(metadata, sorted(events, key=lambda e: (e.branch_id, e.step_id, e.node_id)))
     if out:
         tr.to_jsonl(out)
@@ -497,6 +609,7 @@ def main() -> None:
     ap.add_argument("--parent-branch-id")
     ap.add_argument("--rollout-id")
     ap.add_argument("--instance-id")
+    ap.add_argument("--timing-sidecar")
     args = ap.parse_args()
     tr = convert_swe_traj(
         args.traj,
@@ -506,6 +619,7 @@ def main() -> None:
         parent_branch_id=args.parent_branch_id,
         rollout_id=args.rollout_id,
         instance_id=args.instance_id,
+        timing_sidecar=args.timing_sidecar,
     )
     print(f"wrote {len(tr.events)} events to {args.out}")
 

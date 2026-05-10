@@ -26,7 +26,15 @@ def _run(cmd: list[str], *, log_path: Path, env: dict[str, str], timeout: int | 
     with log_path.open("w", encoding="utf-8") as log:
         log.write("$ " + " ".join(cmd) + "\n\n")
         log.flush()
-        proc = subprocess.run(cmd, text=True, stdout=log, stderr=subprocess.STDOUT, env=env, timeout=timeout)
+        proc = subprocess.run(
+            cmd,
+            text=True,
+            stdin=subprocess.DEVNULL,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            env=env,
+            timeout=timeout,
+        )
         return proc.returncode
 
 
@@ -116,6 +124,10 @@ def _auto_command(
                 "agent.cost_limit=0",
                 config_flag,
                 f"model.model_kwargs.temperature={temperature}",
+                config_flag,
+                f"model.model_kwargs.api_base={server}",
+                config_flag,
+                "model.model_kwargs.api_key=dummy",
             ]
         )
     subset_flag = _has_flag(help_text, "--subset")
@@ -162,7 +174,7 @@ def _auto_command(
     return cmd
 
 
-def _choose_subcommand(results_dir: Path) -> tuple[list[str], str, str]:
+def _choose_subcommand(results_dir: Path, *, timed: bool = False) -> tuple[list[str], str, str]:
     mini_extra = shutil.which("mini-extra")
     if not mini_extra and Path(".venv/bin/mini-extra").exists():
         mini_extra = ".venv/bin/mini-extra"
@@ -171,10 +183,14 @@ def _choose_subcommand(results_dir: Path) -> tuple[list[str], str, str]:
     single_ok, single_help = _capture([mini_extra, "swebench-single", "--help"])
     (results_dir / "mini_extra_swebench_single_help.txt").write_text(single_help, encoding="utf-8")
     if single_ok:
+        if timed:
+            return [sys.executable, "-m", "agentweaver.tracing.miniswe_timing_bootstrap", "swebench-single"], single_help, "swebench-single-timed"
         return [mini_extra, "swebench-single"], single_help, "swebench-single"
     bench_ok, bench_help = _capture([mini_extra, "swebench", "--help"])
     (results_dir / "mini_extra_swebench_help.txt").write_text(bench_help, encoding="utf-8")
     if bench_ok:
+        if timed:
+            return [sys.executable, "-m", "agentweaver.tracing.miniswe_timing_bootstrap", "swebench"], bench_help, "swebench-timed"
         return [mini_extra, "swebench"], bench_help, "swebench"
     raise RuntimeError("neither `mini-extra swebench-single --help` nor `mini-extra swebench --help` ran successfully")
 
@@ -215,7 +231,7 @@ def run_real(args: argparse.Namespace) -> int:
         help_text = ""
         cli_name = "env-template"
     else:
-        subcommand, help_text, cli_name = _choose_subcommand(results)
+        subcommand, help_text, cli_name = _choose_subcommand(results, timed=args.timed)
 
     failures: list[dict[str, str]] = []
     successes = 0
@@ -223,7 +239,10 @@ def run_real(args: argparse.Namespace) -> int:
         for rollout in range(args.rollouts):
             rollout_id = f"rollout_{rollout}"
             run_out = raw_root / instance_id / f"_mini_extra_{rollout_id}"
+            shutil.rmtree(run_out, ignore_errors=True)
             run_out.mkdir(parents=True, exist_ok=True)
+            target = raw_root / instance_id / f"{rollout_id}.traj.json"
+            target.unlink(missing_ok=True)
             log_path = logs_root / instance_id / f"{rollout_id}.log"
             seed = args.seed_base + rollout
             temperature = args.temperature + (0.05 * rollout if args.rollouts > 1 else 0.0)
@@ -271,7 +290,6 @@ def run_real(args: argparse.Namespace) -> int:
 
             rc = _run(cmd, log_path=log_path, env=env, timeout=args.timeout_seconds)
             traj = _find_trajectory(run_out)
-            target = raw_root / instance_id / f"{rollout_id}.traj.json"
             if traj:
                 _copy_trajectory(traj, target)
                 successes += 1
@@ -328,6 +346,7 @@ def main() -> None:
     ap.add_argument("--config", default="configs/miniswe_swebench_vllm.yaml")
     ap.add_argument("--results-dir", default="data/results")
     ap.add_argument("--logs-dir", default="data/logs")
+    ap.add_argument("--timed", action="store_true")
     args = ap.parse_args()
     raise SystemExit(run_real(args))
 
