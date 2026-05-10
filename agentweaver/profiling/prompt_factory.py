@@ -10,7 +10,7 @@ from typing import Any
 from agentweaver.utils.tokenization import SimpleTokenizer
 
 
-DEFAULT_TOKENIZER_PATH = "/data2/model_zoo/Qwen2.5-7B-Instruct"
+DEFAULT_TOKENIZER_PATH = "/data2/model_zoo/Qwen2.5-Coder-7B-Instruct"
 
 
 @lru_cache(maxsize=8)

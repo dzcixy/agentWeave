@@ -3,8 +3,8 @@ set -euo pipefail
 
 SERVER=http://localhost:8000/v1
 METRICS_URL=http://localhost:8000/metrics
-MODEL=qwen2.5-7b
-TOKENIZER_PATH=${TOKENIZER_PATH:-/data2/model_zoo/Qwen2.5-7B-Instruct}
+MODEL=qwen-coder-7b
+TOKENIZER_PATH=${TOKENIZER_PATH:-/data2/model_zoo/Qwen2.5-Coder-7B-Instruct}
 OUT_DIR=data/profiles
 RUN_ID=h100_profile
 RESULTS_DIR=data/results

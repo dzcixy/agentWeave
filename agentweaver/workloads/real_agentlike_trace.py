@@ -217,6 +217,7 @@ async def _run(args: argparse.Namespace) -> list[Path]:
                 "model": args.model,
                 "server": args.server,
                 "timestamp": time.time(),
+                "run_id": args.run_id,
                 "pseudo_verifier": True,
             },
             sorted(events, key=lambda e: (e.timestamp_start, e.branch_id, e.step_id)),
@@ -227,6 +228,7 @@ async def _run(args: argparse.Namespace) -> list[Path]:
         summary_rows.append(
             {
                 "instance_id": instance_id,
+                "run_id": args.run_id,
                 "branch_fanout": args.branch_fanout,
                 "llm_events": sum(1 for e in events if e.node_type == "llm"),
                 "tool_events": sum(1 for e in events if e.node_type == "tool"),
@@ -236,13 +238,14 @@ async def _run(args: argparse.Namespace) -> list[Path]:
             }
         )
     ensure_dir("data/results")
-    write_csv("data/results/real_agentlike_trace_summary.csv", summary_rows)
-    _plots(summary_rows)
+    write_csv(args.summary_out, summary_rows)
+    _plots(summary_rows, args.latency_plot_out, args.context_plot_out)
     return trace_paths
 
 
-def _plots(rows: list[dict[str, object]]) -> None:
-    ensure_dir("data/plots")
+def _plots(rows: list[dict[str, object]], latency_plot_out: str, context_plot_out: str) -> None:
+    ensure_dir(Path(latency_plot_out).parent)
+    ensure_dir(Path(context_plot_out).parent)
     labels = [str(r["instance_id"]) for r in rows]
     llm = [float(r["total_llm_latency"]) for r in rows]
     tool = [float(r["total_tool_latency"]) for r in rows]
@@ -253,7 +256,7 @@ def _plots(rows: list[dict[str, object]]) -> None:
     plt.ylabel("seconds")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("data/plots/real_agentlike_latency_breakdown.pdf")
+    plt.savefig(latency_plot_out)
     plt.close()
     plt.figure(figsize=(5, 3))
     plt.plot(labels, [int(r["llm_events"]) for r in rows], marker="o", label="LLM events")
@@ -261,20 +264,24 @@ def _plots(rows: list[dict[str, object]]) -> None:
     plt.xticks(rotation=30, ha="right")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("data/plots/real_agentlike_context_reuse.pdf")
+    plt.savefig(context_plot_out)
     plt.close()
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--server", default="http://localhost:8000/v1")
-    ap.add_argument("--model", default="qwen2.5-7b")
+    ap.add_argument("--model", default="qwen-coder-7b")
     ap.add_argument("--tokenizer-path", default=None)
+    ap.add_argument("--run-id", default="real_agentlike_pr2_v2")
     ap.add_argument("--instances", type=int, default=5)
     ap.add_argument("--branch-fanout", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=128)
     ap.add_argument("--stream", action="store_true")
     ap.add_argument("--out", default="data/traces/real_agentlike_h100")
+    ap.add_argument("--summary-out", default="data/results/real_agentlike_trace_summary.csv")
+    ap.add_argument("--latency-plot-out", default="data/plots/real_agentlike_latency_breakdown.pdf")
+    ap.add_argument("--context-plot-out", default="data/plots/real_agentlike_context_reuse.pdf")
     args = ap.parse_args()
     paths = asyncio.run(_run(args))
     print(f"wrote {len(paths)} real agent-like traces to {args.out}")

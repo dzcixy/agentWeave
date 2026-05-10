@@ -416,8 +416,9 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
     trace = Trace.from_jsonl(processed / "events.jsonl")
     mapping = _load_mapping(processed, wafer_config, policy)
     lm = LatencyModel.load(processed / "h100_latency_model.json")
+    scenario = "real_agentlike_h100" if "real_agentlike_h100" in str(processed) else None
     rows = [
-        EventDrivenReplay(instance, instance, evs, policy, cfg, lm, mapping, run_id=run_id).run()
+        EventDrivenReplay(instance, scenario or instance, evs, policy, cfg, lm, mapping, run_id=run_id).run()
         for instance, evs in sorted(_group_by_instance(trace.events).items())
     ]
     if rows:
@@ -456,7 +457,7 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
             }
         )
     write_csv(out, rows)
-    if "real_agentlike" in str(processed) or "real_agentlike" in str(out):
+    if ("real_agentlike" in str(processed) or "real_agentlike" in str(out)) and "pr2_v2" not in str(out) and "pr2_v2" not in run_id:
         write_csv("data/results/real_agentlike_replay_summary.csv", rows)
         _update_pr2_real_agentlike_report(str(processed), str(out))
     return rows
