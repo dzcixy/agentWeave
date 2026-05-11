@@ -219,6 +219,45 @@ For tool timing:
 python -m agentweaver.tracing.tool_wrapper --out-trace data/traces/manual/tool.jsonl pytest -q
 ```
 
+## PR4-v7 TAPS-P Policy Portfolio
+
+PR4-v7 treats multi-session scheduling as a non-oracle policy portfolio problem. It builds a unified performance table from prior non-oracle policies, learns interpretable selectors on a train split, and evaluates on held-out configurations against the strongest available baseline for each configuration.
+
+```bash
+bash scripts/run_pr4_algo_v7.sh
+```
+
+Outputs:
+
+- `data/results/taps_policy_performance_dataset_pr4_v7.csv`
+- `data/results/taps_policy_selector_rules_pr4_v7.json`
+- `data/results/taps_policy_selector_training_pr4_v7.csv`
+- `data/results/taps_policy_portfolio_validation_pr4_v7.csv`
+- `data/results/taps_policy_portfolio_safe_fallback_pr4_v7.csv`
+- `data/results/pr4_algo_v7_report.md`
+
+The selector does not use validation labels, future JCT, or future tool completion at runtime. If it loses to the strongest non-oracle baseline, that loss is reported.
+
+## ASTRA-Sim Bridge Skeleton
+
+AgentWeaver can export trace DAGs to a Chakra-style intermediate JSON format for future ASTRA-sim validation:
+
+```bash
+python -m agentweaver.astra.run_astra_smoke
+bash scripts/run_astra_smoke.sh
+```
+
+Outputs:
+
+- `data/astra_traces/smoke/agentweaver_smoke.0.et.json`
+- `data/astra_configs/smoke/{system,network,memory}.json`
+- `data/astra_traces/mini_swe_taps/*.et.json`
+- `data/results/astra_smoke_export_report.md`
+- `data/results/astra_export_mini_swe_report.md`
+- `data/results/astra_run_report.md`
+
+This is an intermediate exporter only. It does not claim ASTRA-sim cycles unless a real ASTRA command is provided through `ASTRA_RUN_CMD`.
+
 The official SWE-bench harness can be attached by running the agent externally, preserving generated patches/test results in `.traj`, then converting with the adapters.
 
 ## PR3: mini-SWE-agent / SWE-agent real trace collection

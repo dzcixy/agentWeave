@@ -1,0 +1,840 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "metadata": {
+    "branch_id": "b0",
+    "framework": "swe-agent-adapter",
+    "instance_id": "astropy__astropy-12907",
+    "parent_branch_id": "root",
+    "rollout_id": "rollout_0",
+    "sample_fixture": false,
+    "sample_fixture_note": "",
+    "source": "data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json",
+    "timestamp": 1778428385.4824395
+  },
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 94847,
+      "id": 1,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 94846976,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        1
+      ],
+      "duration_cycles": 474235,
+      "id": 2,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 94846976,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2
+      ],
+      "duration_cycles": 93048998,
+      "id": 3,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "input_tokens": 1654,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3
+      ],
+      "duration_cycles": 1789523491,
+      "id": 4,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "LLM decode",
+        "output_tokens": 201
+      },
+      "name": "astropy__astropy-12907:b0:llm0:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        4
+      ],
+      "duration_cycles": 274274349,
+      "id": 5,
+      "metadata": {
+        "command": "python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool0",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool0:tool_delay",
+      "npu_id": 13,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        5
+      ],
+      "duration_cycles": 126960,
+      "id": 6,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 126959616,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        6
+      ],
+      "duration_cycles": 634798,
+      "id": 7,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 126959616,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        7
+      ],
+      "duration_cycles": 115355100,
+      "id": 8,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "input_tokens": 2215,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        8
+      ],
+      "duration_cycles": 1613544362,
+      "id": 9,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "LLM decode",
+        "output_tokens": 181
+      },
+      "name": "astropy__astropy-12907:b0:llm1:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        9
+      ],
+      "duration_cycles": 1417617798,
+      "id": 10,
+      "metadata": {
+        "command": "pip install erfa && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool1",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool1:tool_delay",
+      "npu_id": 0,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        10
+      ],
+      "duration_cycles": 139862,
+      "id": 11,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 139862016,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        11
+      ],
+      "duration_cycles": 699310,
+      "id": 12,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 139862016,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        12
+      ],
+      "duration_cycles": 124423669,
+      "id": 13,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "input_tokens": 2441,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        13
+      ],
+      "duration_cycles": 1507352519,
+      "id": 14,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "LLM decode",
+        "output_tokens": 169
+      },
+      "name": "astropy__astropy-12907:b0:llm2:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        14
+      ],
+      "duration_cycles": 6868169546,
+      "id": 15,
+      "metadata": {
+        "command": "pip install pyerfa && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool2",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool2:tool_delay",
+      "npu_id": 7,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        15
+      ],
+      "duration_cycles": 182870,
+      "id": 16,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm3",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm3:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 182870016,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        16
+      ],
+      "duration_cycles": 914350,
+      "id": 17,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm3",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm3:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 182870016,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        17
+      ],
+      "duration_cycles": 154898987,
+      "id": 18,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm3",
+        "input_tokens": 3192,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm3:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        18
+      ],
+      "duration_cycles": 1679714375,
+      "id": 19,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm3",
+        "mapping": "LLM decode",
+        "output_tokens": 188
+      },
+      "name": "astropy__astropy-12907:b0:llm3:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        19
+      ],
+      "duration_cycles": 198449373,
+      "id": 20,
+      "metadata": {
+        "command": "cd /testbed/astropy && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool3",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool3:tool_delay",
+      "npu_id": 8,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        20
+      ],
+      "duration_cycles": 196059,
+      "id": 21,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm4",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm4:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 196059136,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        21
+      ],
+      "duration_cycles": 980296,
+      "id": 22,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm4",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm4:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 196059136,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        22
+      ],
+      "duration_cycles": 164378120,
+      "id": 23,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm4",
+        "input_tokens": 3423,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm4:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        23
+      ],
+      "duration_cycles": 1796817276,
+      "id": 24,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm4",
+        "mapping": "LLM decode",
+        "output_tokens": 201
+      },
+      "name": "astropy__astropy-12907:b0:llm4:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        24
+      ],
+      "duration_cycles": 299240351,
+      "id": 25,
+      "metadata": {
+        "command": "find /testbed -name setup.py && cd $(dirname $(find /testbed -name setup.py)) && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool4",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool4:tool_delay",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        25
+      ],
+      "duration_cycles": 212230,
+      "id": 26,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 212230144,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        26
+      ],
+      "duration_cycles": 1061151,
+      "id": 27,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 212230144,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        27
+      ],
+      "duration_cycles": 176058564,
+      "id": 28,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "input_tokens": 3706,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        28
+      ],
+      "duration_cycles": 1493847500,
+      "id": 29,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "LLM decode",
+        "output_tokens": 167
+      },
+      "name": "astropy__astropy-12907:b0:llm5:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        29
+      ],
+      "duration_cycles": 60033044338,
+      "id": 30,
+      "metadata": {
+        "command": "pip install astropy --upgrade && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool5",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool5:tool_delay",
+      "npu_id": 0,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        30
+      ],
+      "duration_cycles": 260571,
+      "id": 31,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm6",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm6:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 260571136,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        31
+      ],
+      "duration_cycles": 1302856,
+      "id": 32,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm6",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm6:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 260571136,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        32
+      ],
+      "duration_cycles": 211334789,
+      "id": 33,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm6",
+        "input_tokens": 4550,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm6:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        33
+      ],
+      "duration_cycles": 1514663780,
+      "id": 34,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm6",
+        "mapping": "LLM decode",
+        "output_tokens": 169
+      },
+      "name": "astropy__astropy-12907:b0:llm6:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        34
+      ],
+      "duration_cycles": 34925909042,
+      "id": 35,
+      "metadata": {
+        "command": "pip install astropy --upgrade --timeout 120 && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool6",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool6:tool_delay",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        35
+      ],
+      "duration_cycles": 321184,
+      "id": 36,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm7",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm7:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 321183744,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        36
+      ],
+      "duration_cycles": 1605919,
+      "id": 37,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm7",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm7:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 321183744,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        37
+      ],
+      "duration_cycles": 256488985,
+      "id": 38,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm7",
+        "input_tokens": 5608,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm7:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        38
+      ],
+      "duration_cycles": 1689031540,
+      "id": 39,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm7",
+        "mapping": "LLM decode",
+        "output_tokens": 188
+      },
+      "name": "astropy__astropy-12907:b0:llm7:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        39
+      ],
+      "duration_cycles": 193381071,
+      "id": 40,
+      "metadata": {
+        "command": "cd /testbed/astropy && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool7",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool7:tool_delay",
+      "npu_id": 14,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        40
+      ],
+      "duration_cycles": 334373,
+      "id": 41,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm8",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm8:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 334372864,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        41
+      ],
+      "duration_cycles": 1671864,
+      "id": 42,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm8",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm8:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 334372864,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        42
+      ],
+      "duration_cycles": 266485925,
+      "id": 43,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm8",
+        "input_tokens": 5839,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm8:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        43
+      ],
+      "duration_cycles": 1806778713,
+      "id": 44,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm8",
+        "mapping": "LLM decode",
+        "output_tokens": 201
+      },
+      "name": "astropy__astropy-12907:b0:llm8:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        44
+      ],
+      "duration_cycles": 296846151,
+      "id": 45,
+      "metadata": {
+        "command": "find /testbed -name setup.py && cd $(dirname $(find /testbed -name setup.py)) && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool8",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool8:tool_delay",
+      "npu_id": 7,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        45
+      ],
+      "duration_cycles": 350544,
+      "id": 46,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm9",
+        "mapping": "KV/context fetch"
+      },
+      "name": "astropy__astropy-12907:b0:llm9:context_fetch",
+      "npu_id": 5,
+      "size_bytes": 350543872,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        46
+      ],
+      "duration_cycles": 1752719,
+      "id": 47,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm9",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "astropy__astropy-12907:b0:llm9:remote_kv",
+      "npu_id": 5,
+      "size_bytes": 350543872,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        47
+      ],
+      "duration_cycles": 278800740,
+      "id": 48,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "astropy__astropy-12907:b0:llm9",
+        "input_tokens": 6122,
+        "mapping": "LLM prefill"
+      },
+      "name": "astropy__astropy-12907:b0:llm9:prefill",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        48
+      ],
+      "duration_cycles": 1502123918,
+      "id": 49,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm9",
+        "mapping": "LLM decode",
+        "output_tokens": 167
+      },
+      "name": "astropy__astropy-12907:b0:llm9:decode",
+      "npu_id": 5,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        49
+      ],
+      "duration_cycles": 1323990345,
+      "id": 50,
+      "metadata": {
+        "command": "pip install astropy --upgrade && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool9",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool9:tool_delay",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        50
+      ],
+      "duration_cycles": 0,
+      "id": 51,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:verify",
+        "mapping": "verifier",
+        "verifier_result": "unknown"
+      },
+      "name": "astropy__astropy-12907:b0:verify0:verifier",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "stats": {
+    "communication_nodes": 10,
+    "compute_nodes": 21,
+    "delay_nodes": 10,
+    "dependency_count": 50,
+    "estimated_communication_bytes": 2219499520,
+    "estimated_compute_time": 18.234671351798834,
+    "memory_nodes": 10
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "conservative_fallback_selector": {
+    "fallback_policy": "taps_admission_v4",
+    "implemented": true,
+    "thresholds_evaluated": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "fallback_policy": "taps_admission_v4",
+  "feature_keys": [
+    "total_sessions",
+    "active_session_limit",
+    "effective_regions",
+    "memory_budget_gb",
+    "session_pressure",
+    "region_pressure",
+    "memory_pressure_bucket_id",
+    "arrival_closed_loop",
+    "arrival_poisson",
+    "arrival_bursty",
+    "high_domain_locality",
+    "high_tool_blocking",
+    "high_region_pressure",
+    "high_session_pressure"
+  ],
+  "runtime_constraints": {
+    "uses_future_jct": false,
+    "uses_future_tool_completion": false,
+    "uses_validation_labels_at_runtime": false
+  },
+  "selectors": [
+    {
+      "backoff_rules": [
+        {
+          "conditions": [
+            "bursty"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 3
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high"
+          ],
+          "policy": "taps_unified_adaptive_v6",
+          "support": 3
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "high"
+          ],
+          "policy": "taps_unified_adaptive_v6",
+          "support": 2
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "low"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "mid"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "low"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "low",
+            "high"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "mid"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "mid",
+            "high"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "poisson"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "poisson",
+            "high"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "poisson",
+            "high",
+            "high"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        }
+      ],
+      "global_policy": "taps_domain_v4",
+      "rules": [
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "high",
+            "high"
+          ],
+          "policy": "taps_unified_adaptive_v6",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "high",
+            "low"
+          ],
+          "policy": "taps_admission_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "high",
+            "mid"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "low",
+            "mid"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "high",
+            "mid",
+            "mid"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "low",
+            "high",
+            "mid"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "bursty",
+            "mid",
+            "high",
+            "mid"
+          ],
+          "policy": "taps_unified_v5",
+          "support": 1
+        },
+        {
+          "conditions": [
+            "poisson",
+            "high",
+            "high",
+            "mid"
+          ],
+          "policy": "taps_domain_v4",
+          "support": 1
+        }
+      ],
+      "selector": "RuleTableSelector"
+    },
+    {
+      "examples": [
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts128:al16:er4:arrbursty:mem32",
+          "label": "taps_unified_v5",
+          "region_pressure": "4.0",
+          "session_pressure": "8.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts16:al16:er4:arrbursty:mem32",
+          "label": "taps_domain_v4",
+          "region_pressure": "4.0",
+          "session_pressure": "1.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts32:al16:er4:arrbursty:mem32",
+          "label": "taps_domain_v4",
+          "region_pressure": "4.0",
+          "session_pressure": "2.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts64:al16:er16:arrbursty:mem32",
+          "label": "taps_unified_v5",
+          "region_pressure": "1.0",
+          "session_pressure": "4.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts64:al16:er4:arrbursty:mem32",
+          "label": "taps_unified_adaptive_v6",
+          "region_pressure": "4.0",
+          "session_pressure": "4.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts64:al16:er4:arrbursty:mem64",
+          "label": "taps_unified_adaptive_v6",
+          "region_pressure": "4.0",
+          "session_pressure": "4.0"
+        },
+        {
+          "arrival_pattern": "bursty",
+          "config_id": "aligned:ts64:al16:er4:arrbursty:mem8",
+          "label": "taps_admission_v4",
+          "region_pressure": "4.0",
+          "session_pressure": "4.0"
+        },
+        {
+          "arrival_pattern": "poisson",
+          "config_id": "aligned:ts64:al16:er4:arrpoisson:mem32",
+          "label": "taps_domain_v4",
+          "region_pressure": "4.0",
+          "session_pressure": "4.0"
+        }
+      ],
+      "selector": "NearestNeighborSelector"
+    }
+  ],
+  "train_config_count": 11,
+  "validation_config_count": 9
+}

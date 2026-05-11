@@ -1,0 +1,161 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "metadata": {
+    "experimental_data": false,
+    "sample_fixture": true,
+    "source": "agentweaver_astra_smoke_fixture"
+  },
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 36700,
+      "id": 1,
+      "metadata": {
+        "event_id": "smoke:llm0",
+        "mapping": "KV/context fetch"
+      },
+      "name": "smoke:llm0:context_fetch",
+      "npu_id": 2,
+      "size_bytes": 36700160,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        1
+      ],
+      "duration_cycles": 183501,
+      "id": 2,
+      "metadata": {
+        "event_id": "smoke:llm0",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "smoke:llm0:remote_kv",
+      "npu_id": 2,
+      "size_bytes": 36700160,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2
+      ],
+      "duration_cycles": 53471899,
+      "id": 3,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "smoke:llm0",
+        "input_tokens": 640,
+        "mapping": "LLM prefill"
+      },
+      "name": "smoke:llm0:prefill",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3
+      ],
+      "duration_cycles": 568467313,
+      "id": 4,
+      "metadata": {
+        "event_id": "smoke:llm0",
+        "mapping": "LLM decode",
+        "output_tokens": 64
+      },
+      "name": "smoke:llm0:decode",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        4
+      ],
+      "duration_cycles": 1250000000,
+      "id": 5,
+      "metadata": {
+        "command": "pytest -q",
+        "event_id": "smoke:tool0",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "smoke:tool0:tool_delay",
+      "npu_id": 6,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        5
+      ],
+      "duration_cycles": 55050,
+      "id": 6,
+      "metadata": {
+        "event_id": "smoke:llm1",
+        "mapping": "KV/context fetch"
+      },
+      "name": "smoke:llm1:context_fetch",
+      "npu_id": 14,
+      "size_bytes": 55050240,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        6
+      ],
+      "duration_cycles": 275251,
+      "id": 7,
+      "metadata": {
+        "event_id": "smoke:llm1",
+        "mapping": "remote KV/context movement"
+      },
+      "name": "smoke:llm1:remote_kv",
+      "npu_id": 14,
+      "size_bytes": 55050240,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        7
+      ],
+      "duration_cycles": 65858689,
+      "id": 8,
+      "metadata": {
+        "cached_tokens": 0,
+        "event_id": "smoke:llm1",
+        "input_tokens": 960,
+        "mapping": "LLM prefill"
+      },
+      "name": "smoke:llm1:prefill",
+      "npu_id": 14,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        8
+      ],
+      "duration_cycles": 711109274,
+      "id": 9,
+      "metadata": {
+        "event_id": "smoke:llm1",
+        "mapping": "LLM decode",
+        "output_tokens": 80
+      },
+      "name": "smoke:llm1:decode",
+      "npu_id": 14,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "stats": {
+    "communication_nodes": 2,
+    "compute_nodes": 4,
+    "delay_nodes": 1,
+    "dependency_count": 8,
+    "estimated_communication_bytes": 91750400,
+    "estimated_compute_time": 1.3989071761179992,
+    "memory_nodes": 2
+  }
+}
