@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 from collections import Counter, defaultdict
@@ -60,6 +61,14 @@ def _read_csv(path: str | Path) -> list[dict[str, str]]:
         return []
     with p.open("r", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
+
+
+def _file_sha256(path: str | Path) -> str:
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def _f(row: dict[str, Any] | None, key: str, default: float = 0.0) -> float:
@@ -471,6 +480,7 @@ def evaluate_compiler(
     validation_out: str | Path = "data/results/taps_compiler_v3_validation_pr4_v10.csv",
     params_out: str | Path = "data/results/taps_compiler_v3_params_pr4_v10.json",
     objectives_out: str | Path = "data/results/taps_compiler_v3_objectives_pr4_v10.csv",
+    integrity_out: str | Path | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     rows = _read_csv(valid_grid)
     audit_rows = _read_csv(audit_csv)
@@ -540,12 +550,16 @@ def evaluate_compiler(
                         "oracle_policy": oracle_row["policy"],
                         "p95_oracle_policy": p95_oracle["policy"],
                         "selected_p95": _f(selected_row, "p95_jct"),
+                        "selected_ready_wait": _f(selected_row, "ready_queue_wait"),
                         "best_fixed_p95": _f(best_fixed_row, "p95_jct"),
+                        "best_fixed_ready_wait": _f(best_fixed_row, "ready_queue_wait"),
                         "oracle_p95": _f(p95_oracle, "p95_jct"),
                         "selected_mean_jct": _f(selected_row, "mean_jct"),
                         "best_fixed_mean_jct": _f(best_fixed_row, "mean_jct"),
                         "selected_throughput": _f(selected_row, "throughput"),
                         "best_fixed_throughput": _f(best_fixed_row, "throughput"),
+                        "reactive_p95": _f(reactive, "p95_jct") if reactive else 0.0,
+                        "acd_nisp_p95": _f(group.get("acd_nisp"), "p95_jct"),
                         "gain_over_best_fixed_p95": gain_best,
                         "throughput_gain_over_best_fixed": _safe_gain(_f(best_fixed_row, "throughput"), _f(selected_row, "throughput"), lower_better=False),
                         "gain_over_reactive_p95": _safe_gain(_f(reactive, "p95_jct"), _f(selected_row, "p95_jct")) if reactive else 0.0,
@@ -581,6 +595,20 @@ def evaluate_compiler(
     write_csv(validation_out, validation_rows)
     write_csv(objectives_out, objective_summary)
     write_json(params_out, params)
+    persisted = _read_csv(validation_out)
+    if not persisted:
+        raise RuntimeError(f"compiler validation CSV is empty after write: {validation_out}")
+    if integrity_out:
+        lines = [
+            "# TAPS Compiler v3 Validation Integrity",
+            "",
+            f"VALIDATION_CSV = {validation_out}",
+            f"ROW_COUNT = {len(persisted)}",
+            f"SHA256 = {_file_sha256(validation_out)}",
+            f"OBJECTIVES_CSV = {objectives_out}",
+            f"OBJECTIVES_SHA256 = {_file_sha256(objectives_out)}",
+        ]
+        Path(integrity_out).write_text("\n".join(lines) + "\n", encoding="utf-8")
     return all_training, validation_rows, summarize_validation(validation_rows)
 
 
@@ -607,8 +635,22 @@ def main() -> None:
     ap.add_argument("--valid-grid", default="data/results/aligned_policy_grid_valid_pr4_v10.csv")
     ap.add_argument("--audit", default="data/results/aligned_policy_grid_audit_pr4_v10.csv")
     ap.add_argument("--features", default="data/results/workload_features_pr4_v10.csv")
+    ap.add_argument("--training-out", default="data/results/taps_cost_model_v3_training_pr4_v10.csv")
+    ap.add_argument("--validation-out", default="data/results/taps_compiler_v3_validation_pr4_v10.csv")
+    ap.add_argument("--params-out", default="data/results/taps_compiler_v3_params_pr4_v10.json")
+    ap.add_argument("--objectives-out", default="data/results/taps_compiler_v3_objectives_pr4_v10.csv")
+    ap.add_argument("--integrity-out")
     args = ap.parse_args()
-    training, validation, summary = evaluate_compiler(args.valid_grid, args.audit, args.features)
+    training, validation, summary = evaluate_compiler(
+        args.valid_grid,
+        args.audit,
+        args.features,
+        args.training_out,
+        args.validation_out,
+        args.params_out,
+        args.objectives_out,
+        args.integrity_out,
+    )
     print(json.dumps({"training_rows": len(training), "validation_rows": len(validation), **summary}, indent=2, sort_keys=True))
 
 

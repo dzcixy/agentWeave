@@ -1,0 +1,7 @@
+# TAPS Compiler v3 Validation Integrity
+
+VALIDATION_CSV = data/results/taps_compiler_v3_validation_pr4_v11.csv
+ROW_COUNT = 5360
+SHA256 = c3194e99587717ea0adf3ed77db2309e4c193b21104adcc20205b7aae3da2ce1
+OBJECTIVES_CSV = data/results/taps_compiler_v3_objectives_pr4_v11.csv
+OBJECTIVES_SHA256 = b666388a18dbec9be1a18e97dbb071098d19ab8b37c6e3910558aada01c93389

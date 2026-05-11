@@ -292,6 +292,106 @@ class ChakraExporter:
         path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return payload
 
+    def export_schedule_jsonl(
+        self,
+        schedule_rows: list[dict[str, Any]],
+        out_path: str | Path,
+        *,
+        policy: str,
+        raw: bool = False,
+    ) -> dict[str, Any]:
+        schedule_remote = 0.0
+        for row in sorted(schedule_rows, key=lambda r: (str(r.get("session_id", "")), float(r.get("timestamp_start", 0.0)), str(r.get("event_id", "")))):
+            branch_key = f"{row.get('session_id', '')}:{row.get('branch_id', '')}"
+            npu = int(float(row.get("region_id", 0))) % self.npu_count
+            deps = [self.last_by_branch[branch_key]] if branch_key in self.last_by_branch else []
+            input_tokens = int(float(row.get("input_tokens", 0) or 0))
+            output_tokens = int(float(row.get("output_tokens", 0) or 0))
+            cached_tokens = 0 if raw else min(input_tokens, int(float(row.get("cached_tokens", 0) or 0)))
+            if raw:
+                local_bytes = 0
+                remote_bytes = int(input_tokens * kv_bytes_per_token())
+            else:
+                local_bytes = int(float(row.get("local_context_bytes", 0) or 0))
+                remote_bytes = int(float(row.get("remote_context_bytes", 0) or 0))
+                schedule_remote += remote_bytes
+            metadata = {
+                "event_id": row.get("event_id", ""),
+                "run_id": row.get("run_id", ""),
+                "config_id": row.get("config_id", ""),
+                "policy": "raw" if raw else policy,
+                "context_domain_id": row.get("context_domain_id", ""),
+                "schedule_source": "provided_schedule",
+            }
+            last_dep = deps
+            if local_bytes > 0:
+                local_id = self._add(
+                    f"{row.get('node_id', row.get('event_id', 'llm'))}:local_context",
+                    "memory",
+                    npu,
+                    seconds=local_bytes / 1e12,
+                    size_bytes=local_bytes,
+                    deps=last_dep,
+                    metadata={**metadata, "mapping": "schedule local cached context"},
+                )
+                last_dep = [local_id]
+                self.stats["local_memory_bytes"] += local_bytes
+            if remote_bytes > 0:
+                comm_id = self._add(
+                    f"{row.get('node_id', row.get('event_id', 'llm'))}:remote_context",
+                    "communication",
+                    npu,
+                    seconds=remote_bytes / 2e11,
+                    size_bytes=remote_bytes,
+                    deps=last_dep,
+                    metadata={**metadata, "mapping": "schedule remote context"},
+                )
+                last_dep = [comm_id]
+                self.stats["remote_communication_bytes"] += remote_bytes
+            prefill = self.lm.predict_prefill(max(0, input_tokens - cached_tokens))
+            decode = self.lm.predict_decode(input_tokens, output_tokens)
+            prefill_id = self._add(
+                f"{row.get('node_id', row.get('event_id', 'llm'))}:prefill",
+                "compute",
+                npu,
+                seconds=prefill,
+                deps=last_dep,
+                metadata={**metadata, "mapping": "schedule LLM prefill", "input_tokens": input_tokens, "cached_tokens": cached_tokens},
+            )
+            decode_id = self._add(
+                f"{row.get('node_id', row.get('event_id', 'llm'))}:decode",
+                "compute",
+                npu,
+                seconds=decode,
+                deps=[prefill_id],
+                metadata={**metadata, "mapping": "schedule LLM decode", "output_tokens": output_tokens},
+            )
+            self.last_by_branch[branch_key] = decode_id
+            self.stats["schedule_llm_events"] += 1
+            self.stats["schedule_cached_tokens"] += cached_tokens
+            self.stats["schedule_local_context_bytes"] += local_bytes
+            self.stats["schedule_remote_context_bytes"] += remote_bytes
+        if not raw:
+            self.stats["schedule_match_error"] = abs(float(self.stats["remote_communication_bytes"]) - schedule_remote) / max(1.0, schedule_remote)
+        payload = {
+            "format": "agentweaver_chakra_intermediate_json",
+            "astra_export_format": "intermediate_json",
+            "policy_aware": not raw,
+            "policy": "raw" if raw else policy,
+            "schedule_source": "provided_schedule",
+            "metadata": {
+                "schedule_rows": len(schedule_rows),
+                "config_id": schedule_rows[0].get("config_id", "") if schedule_rows else "",
+                "run_id": schedule_rows[0].get("run_id", "") if schedule_rows else "",
+            },
+            "nodes": [n.to_dict() for n in self.nodes],
+            "stats": self.stats,
+        }
+        path = Path(out_path)
+        ensure_dir(path.parent)
+        path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        return payload
+
 
 def infer_policy_schedule(trace: Trace, policy: str = "acd_nisp", npu_count: int = 16) -> dict[str, dict[str, Any]]:
     schedule: dict[str, dict[str, Any]] = {}
@@ -336,6 +436,18 @@ def load_schedule_jsonl(path: str | Path) -> dict[str, dict[str, Any]]:
             if event_id:
                 schedule[str(event_id)] = row
     return schedule
+
+
+def load_schedule_jsonl_rows(path: str | Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    p = Path(path)
+    if not p.exists():
+        return rows
+    with p.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                rows.append(json.loads(line))
+    return rows
 
 
 def write_per_npu_traces(payload: dict[str, Any], out_dir: str | Path, prefix: str = "agentweaver") -> dict[str, Any]:
@@ -404,6 +516,19 @@ def export_policy_aware_trace_to_chakra_json(
     return ChakraExporter(lm, npu_count=npu_count).export_policy_aware_trace(trace, out_path, policy, schedule, allow_inferred_schedule)
 
 
+def export_schedule_jsonl_to_chakra_json(
+    schedule_jsonl: str | Path,
+    out_path: str | Path,
+    model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
+    npu_count: int = 16,
+    policy: str = "schedule_policy",
+    raw: bool = False,
+) -> dict[str, Any]:
+    rows = load_schedule_jsonl_rows(schedule_jsonl)
+    lm = LatencyModel.load(model_json)
+    return ChakraExporter(lm, npu_count=npu_count).export_schedule_jsonl(rows, out_path, policy=policy, raw=raw)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--trace", required=True)
@@ -415,10 +540,21 @@ def main() -> None:
     ap.add_argument("--schedule-json")
     ap.add_argument("--schedule-jsonl")
     ap.add_argument("--allow-inferred-schedule", action="store_true")
+    ap.add_argument("--schedule-only", action="store_true")
+    ap.add_argument("--raw-schedule", action="store_true")
     ap.add_argument("--per-npu-dir")
     ap.add_argument("--per-npu-prefix", default="agentweaver")
     args = ap.parse_args()
-    if args.policy_aware:
+    if args.schedule_only:
+        payload = export_schedule_jsonl_to_chakra_json(
+            args.schedule_jsonl or args.schedule_json or "",
+            args.out,
+            args.model_json,
+            args.npu_count,
+            args.policy,
+            raw=args.raw_schedule,
+        )
+    elif args.policy_aware:
         payload = export_policy_aware_trace_to_chakra_json(
             args.trace,
             args.out,

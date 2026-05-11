@@ -167,6 +167,8 @@ def _format_grid_row(
         "domain_cache_hit_rate": row.get("domain_cache_hit_rate", 0.0),
         "blocked_session_fraction": row.get("blocked_session_fraction", 0.0),
         "remote_kv_bytes": row.get("remote_kv_bytes", 0.0),
+        "recompute_tokens": row.get("recompute_tokens", 0.0),
+        "cache_hit_tokens": row.get("cache_hit_tokens", 0.0),
         "memory_occupancy": row.get("memory_occupancy", 0.0),
         "starvation_count": row.get("starvation_count", 0),
         "max_ready_age": row.get("max_ready_age", 0.0),
@@ -214,6 +216,8 @@ def _aggregate_replicates(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "domain_cache_hit_rate",
         "blocked_session_fraction",
         "remote_kv_bytes",
+        "recompute_tokens",
+        "cache_hit_tokens",
         "memory_occupancy",
     ]
     for key in mean_keys:

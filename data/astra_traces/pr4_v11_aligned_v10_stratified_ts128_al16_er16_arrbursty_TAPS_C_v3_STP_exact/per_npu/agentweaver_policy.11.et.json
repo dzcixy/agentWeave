@@ -1,0 +1,4321 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 432374,
+      "id": 114,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 86474752,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        114
+      ],
+      "duration_cycles": 28983342,
+      "id": 115,
+      "metadata": {
+        "cached_tokens": 1508,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "input_tokens": 1508,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        115
+      ],
+      "duration_cycles": 774309313,
+      "id": 116,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 87,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        116
+      ],
+      "duration_cycles": 495452,
+      "id": 117,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 99090432,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        117
+      ],
+      "duration_cycles": 28983342,
+      "id": 118,
+      "metadata": {
+        "cached_tokens": 1728,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm1",
+        "input_tokens": 1728,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        118
+      ],
+      "duration_cycles": 534277195,
+      "id": 119,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 60,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        119
+      ],
+      "duration_cycles": 521257,
+      "id": 120,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 104251392,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        120
+      ],
+      "duration_cycles": 28983342,
+      "id": 121,
+      "metadata": {
+        "cached_tokens": 1818,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm2",
+        "input_tokens": 1818,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        121
+      ],
+      "duration_cycles": 418603906,
+      "id": 122,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 47,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 100293230,
+      "id": 168,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm0",
+        "input_tokens": 1837,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        168
+      ],
+      "duration_cycles": 961940429,
+      "id": 169,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 108,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        169
+      ],
+      "duration_cycles": 578314,
+      "id": 170,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 115662848,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        170
+      ],
+      "duration_cycles": 28983342,
+      "id": 171,
+      "metadata": {
+        "cached_tokens": 2017,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm1",
+        "input_tokens": 2017,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        171
+      ],
+      "duration_cycles": 534632890,
+      "id": 172,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 60,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        172
+      ],
+      "duration_cycles": 604406,
+      "id": 173,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 120881152,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        173
+      ],
+      "duration_cycles": 28983342,
+      "id": 174,
+      "metadata": {
+        "cached_tokens": 2108,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm2",
+        "input_tokens": 2108,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        174
+      ],
+      "duration_cycles": 436708327,
+      "id": 175,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 49,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        175
+      ],
+      "duration_cycles": 881664,
+      "id": 176,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 176332800,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        176
+      ],
+      "duration_cycles": 28983342,
+      "id": 177,
+      "metadata": {
+        "cached_tokens": 3075,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm3",
+        "input_tokens": 3075,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        177
+      ],
+      "duration_cycles": 723512324,
+      "id": 178,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 81,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        178
+      ],
+      "duration_cycles": 925245,
+      "id": 179,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm4",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm4:remote_context",
+      "npu_id": 11,
+      "size_bytes": 185049088,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        179
+      ],
+      "duration_cycles": 28983342,
+      "id": 180,
+      "metadata": {
+        "cached_tokens": 3227,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm4",
+        "input_tokens": 3227,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm4:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        180
+      ],
+      "duration_cycles": 500380658,
+      "id": 181,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 56,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm4:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        181
+      ],
+      "duration_cycles": 949330,
+      "id": 182,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 189865984,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        182
+      ],
+      "duration_cycles": 28983342,
+      "id": 183,
+      "metadata": {
+        "cached_tokens": 3311,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm5",
+        "input_tokens": 3311,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        183
+      ],
+      "duration_cycles": 1885726407,
+      "id": 184,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 211,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        184
+      ],
+      "duration_cycles": 1014415,
+      "id": 185,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 202883072,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        185
+      ],
+      "duration_cycles": 28983342,
+      "id": 186,
+      "metadata": {
+        "cached_tokens": 3538,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm6",
+        "input_tokens": 3538,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        186
+      ],
+      "duration_cycles": 768990365,
+      "id": 187,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 86,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 432374,
+      "id": 376,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 86474752,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        376
+      ],
+      "duration_cycles": 28983342,
+      "id": 377,
+      "metadata": {
+        "cached_tokens": 1508,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "input_tokens": 1508,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        377
+      ],
+      "duration_cycles": 774309313,
+      "id": 378,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b3:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 87,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b3:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        474
+      ],
+      "duration_cycles": 881091,
+      "id": 475,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 176218112,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        475
+      ],
+      "duration_cycles": 28983342,
+      "id": 476,
+      "metadata": {
+        "cached_tokens": 3073,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm5",
+        "input_tokens": 3073,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        476
+      ],
+      "duration_cycles": 607390272,
+      "id": 477,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 68,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        477
+      ],
+      "duration_cycles": 977428,
+      "id": 478,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 195485696,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        478
+      ],
+      "duration_cycles": 28983342,
+      "id": 479,
+      "metadata": {
+        "cached_tokens": 3409,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm6",
+        "input_tokens": 3409,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        479
+      ],
+      "duration_cycles": 411198703,
+      "id": 480,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 46,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        480
+      ],
+      "duration_cycles": 1032192,
+      "id": 481,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 206438400,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        481
+      ],
+      "duration_cycles": 28983342,
+      "id": 482,
+      "metadata": {
+        "cached_tokens": 3600,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm7",
+        "input_tokens": 3600,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        482
+      ],
+      "duration_cycles": 465037052,
+      "id": 483,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 52,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        657
+      ],
+      "duration_cycles": 998646,
+      "id": 658,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 199729152,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        658
+      ],
+      "duration_cycles": 28983342,
+      "id": 659,
+      "metadata": {
+        "cached_tokens": 3483,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "input_tokens": 3483,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        659
+      ],
+      "duration_cycles": 759952718,
+      "id": 660,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 85,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        660
+      ],
+      "duration_cycles": 1209958,
+      "id": 661,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 241991680,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        661
+      ],
+      "duration_cycles": 28983342,
+      "id": 662,
+      "metadata": {
+        "cached_tokens": 4220,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "input_tokens": 4220,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        662
+      ],
+      "duration_cycles": 1011998426,
+      "id": 663,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 113,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 449864,
+      "id": 664,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 89972736,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        664
+      ],
+      "duration_cycles": 28983342,
+      "id": 665,
+      "metadata": {
+        "cached_tokens": 1569,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "input_tokens": 1569,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        665
+      ],
+      "duration_cycles": 916839909,
+      "id": 666,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 103,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        666
+      ],
+      "duration_cycles": 943309,
+      "id": 667,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 188661760,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        667
+      ],
+      "duration_cycles": 28983342,
+      "id": 668,
+      "metadata": {
+        "cached_tokens": 3290,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "input_tokens": 3290,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        668
+      ],
+      "duration_cycles": 911539443,
+      "id": 669,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 102,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        758
+      ],
+      "duration_cycles": 1531658,
+      "id": 759,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 306331648,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        759
+      ],
+      "duration_cycles": 28983342,
+      "id": 760,
+      "metadata": {
+        "cached_tokens": 5342,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm3",
+        "input_tokens": 5342,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        760
+      ],
+      "duration_cycles": 3268266407,
+      "id": 761,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 364,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        761
+      ],
+      "duration_cycles": 1640612,
+      "id": 762,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm4",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm4:remote_context",
+      "npu_id": 11,
+      "size_bytes": 328122368,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        762
+      ],
+      "duration_cycles": 28983342,
+      "id": 763,
+      "metadata": {
+        "cached_tokens": 5722,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm4",
+        "input_tokens": 5722,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm4:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        763
+      ],
+      "duration_cycles": 656018063,
+      "id": 764,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 73,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm4:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        764
+      ],
+      "duration_cycles": 1673011,
+      "id": 765,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 334602240,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        765
+      ],
+      "duration_cycles": 28983342,
+      "id": 766,
+      "metadata": {
+        "cached_tokens": 5835,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm5",
+        "input_tokens": 5835,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        766
+      ],
+      "duration_cycles": 826975743,
+      "id": 767,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 92,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        767
+      ],
+      "duration_cycles": 1710285,
+      "id": 768,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 342056960,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        768
+      ],
+      "duration_cycles": 28983342,
+      "id": 769,
+      "metadata": {
+        "cached_tokens": 5965,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm6",
+        "input_tokens": 5965,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        769
+      ],
+      "duration_cycles": 647390409,
+      "id": 770,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 72,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        770
+      ],
+      "duration_cycles": 1993564,
+      "id": 771,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 398712832,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        771
+      ],
+      "duration_cycles": 28983342,
+      "id": 772,
+      "metadata": {
+        "cached_tokens": 6953,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm7",
+        "input_tokens": 6953,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        772
+      ],
+      "duration_cycles": 531696218,
+      "id": 773,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 59,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        773
+      ],
+      "duration_cycles": 2021949,
+      "id": 774,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 404389888,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        774
+      ],
+      "duration_cycles": 28983342,
+      "id": 775,
+      "metadata": {
+        "cached_tokens": 7052,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm8",
+        "input_tokens": 7052,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        775
+      ],
+      "duration_cycles": 576885189,
+      "id": 776,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 64,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        776
+      ],
+      "duration_cycles": 2051195,
+      "id": 777,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 410238976,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        777
+      ],
+      "duration_cycles": 28983342,
+      "id": 778,
+      "metadata": {
+        "cached_tokens": 7154,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm9",
+        "input_tokens": 7154,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        778
+      ],
+      "duration_cycles": 649146485,
+      "id": 779,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b3:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 72,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b3:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 485417,
+      "id": 1223,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 97083392,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1223
+      ],
+      "duration_cycles": 28983342,
+      "id": 1224,
+      "metadata": {
+        "cached_tokens": 1693,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm0",
+        "input_tokens": 1693,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1224
+      ],
+      "duration_cycles": 1673933567,
+      "id": 1225,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 188,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1225
+      ],
+      "duration_cycles": 549642,
+      "id": 1226,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 109928448,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1226
+      ],
+      "duration_cycles": 28983342,
+      "id": 1227,
+      "metadata": {
+        "cached_tokens": 1917,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm1",
+        "input_tokens": 1917,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1227
+      ],
+      "duration_cycles": 481058831,
+      "id": 1228,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 54,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1228
+      ],
+      "duration_cycles": 828621,
+      "id": 1229,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 165724160,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1229
+      ],
+      "duration_cycles": 28983342,
+      "id": 1230,
+      "metadata": {
+        "cached_tokens": 2890,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm2",
+        "input_tokens": 2890,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1230
+      ],
+      "duration_cycles": 2732107538,
+      "id": 1231,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 306,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1231
+      ],
+      "duration_cycles": 926106,
+      "id": 1232,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 185221120,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1232
+      ],
+      "duration_cycles": 28983342,
+      "id": 1233,
+      "metadata": {
+        "cached_tokens": 3230,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm3",
+        "input_tokens": 3230,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1233
+      ],
+      "duration_cycles": 2528726810,
+      "id": 1234,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 283,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1240
+      ],
+      "duration_cycles": 1170964,
+      "id": 1241,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 234192896,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1241
+      ],
+      "duration_cycles": 28983342,
+      "id": 1242,
+      "metadata": {
+        "cached_tokens": 4084,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm6",
+        "input_tokens": 4084,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1242
+      ],
+      "duration_cycles": 975871389,
+      "id": 1243,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 109,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1243
+      ],
+      "duration_cycles": 1214259,
+      "id": 1244,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 242851840,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1244
+      ],
+      "duration_cycles": 28983342,
+      "id": 1245,
+      "metadata": {
+        "cached_tokens": 4235,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm7",
+        "input_tokens": 4235,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1245
+      ],
+      "duration_cycles": 922472736,
+      "id": 1246,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 103,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1246
+      ],
+      "duration_cycles": 1255260,
+      "id": 1247,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 251052032,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1247
+      ],
+      "duration_cycles": 28983342,
+      "id": 1248,
+      "metadata": {
+        "cached_tokens": 4378,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm8",
+        "input_tokens": 4378,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1248
+      ],
+      "duration_cycles": 851103037,
+      "id": 1249,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 95,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1249
+      ],
+      "duration_cycles": 1293107,
+      "id": 1250,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 258621440,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1250
+      ],
+      "duration_cycles": 28983342,
+      "id": 1251,
+      "metadata": {
+        "cached_tokens": 4510,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm9",
+        "input_tokens": 4510,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1251
+      ],
+      "duration_cycles": 797590148,
+      "id": 1252,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b1:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 89,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b1:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1297
+      ],
+      "duration_cycles": 710205,
+      "id": 1298,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b3:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b3:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 142041088,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1298
+      ],
+      "duration_cycles": 28983342,
+      "id": 1299,
+      "metadata": {
+        "cached_tokens": 2477,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b3:llm5",
+        "input_tokens": 2477,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b3:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1299
+      ],
+      "duration_cycles": 740358684,
+      "id": 1300,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b3:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 83,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b3:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1438
+      ],
+      "duration_cycles": 585196,
+      "id": 1439,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 117039104,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1439
+      ],
+      "duration_cycles": 28983342,
+      "id": 1440,
+      "metadata": {
+        "cached_tokens": 2041,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm3",
+        "input_tokens": 2041,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1440
+      ],
+      "duration_cycles": 1238634626,
+      "id": 1441,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 139,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1441
+      ],
+      "duration_cycles": 637665,
+      "id": 1442,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm4",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm4:remote_context",
+      "npu_id": 11,
+      "size_bytes": 127533056,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1442
+      ],
+      "duration_cycles": 28983342,
+      "id": 1443,
+      "metadata": {
+        "cached_tokens": 2224,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm4",
+        "input_tokens": 2224,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm4:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1443
+      ],
+      "duration_cycles": 891479435,
+      "id": 1444,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 100,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm4:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1444
+      ],
+      "duration_cycles": 677806,
+      "id": 1445,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 135561216,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1445
+      ],
+      "duration_cycles": 28983342,
+      "id": 1446,
+      "metadata": {
+        "cached_tokens": 2364,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm5",
+        "input_tokens": 2364,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1446
+      ],
+      "duration_cycles": 784754623,
+      "id": 1447,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 88,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1447
+      ],
+      "duration_cycles": 713073,
+      "id": 1448,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 142614528,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1448
+      ],
+      "duration_cycles": 28983342,
+      "id": 1449,
+      "metadata": {
+        "cached_tokens": 2487,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm6",
+        "input_tokens": 2487,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1449
+      ],
+      "duration_cycles": 660094006,
+      "id": 1450,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 74,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1450
+      ],
+      "duration_cycles": 998646,
+      "id": 1451,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 199729152,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1451
+      ],
+      "duration_cycles": 28983342,
+      "id": 1452,
+      "metadata": {
+        "cached_tokens": 3483,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "input_tokens": 3483,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1452
+      ],
+      "duration_cycles": 759952718,
+      "id": 1453,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 85,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1453
+      ],
+      "duration_cycles": 1209958,
+      "id": 1454,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 241991680,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1454
+      ],
+      "duration_cycles": 28983342,
+      "id": 1455,
+      "metadata": {
+        "cached_tokens": 4220,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "input_tokens": 4220,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1455
+      ],
+      "duration_cycles": 1011998426,
+      "id": 1456,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 113,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1459
+      ],
+      "duration_cycles": 943309,
+      "id": 1460,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 188661760,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1460
+      ],
+      "duration_cycles": 28983342,
+      "id": 1461,
+      "metadata": {
+        "cached_tokens": 3290,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "input_tokens": 3290,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1461
+      ],
+      "duration_cycles": 911539443,
+      "id": 1462,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 102,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1462
+      ],
+      "duration_cycles": 981156,
+      "id": 1463,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 196231168,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1463
+      ],
+      "duration_cycles": 28983342,
+      "id": 1464,
+      "metadata": {
+        "cached_tokens": 3422,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm2",
+        "input_tokens": 3422,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1464
+      ],
+      "duration_cycles": 572119611,
+      "id": 1465,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 64,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1480
+      ],
+      "duration_cycles": 2054062,
+      "id": 1481,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 410812416,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1481
+      ],
+      "duration_cycles": 28983342,
+      "id": 1482,
+      "metadata": {
+        "cached_tokens": 7164,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm8",
+        "input_tokens": 7164,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1482
+      ],
+      "duration_cycles": 513919327,
+      "id": 1483,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 57,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1483
+      ],
+      "duration_cycles": 2081300,
+      "id": 1484,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 416260096,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1484
+      ],
+      "duration_cycles": 28983342,
+      "id": 1485,
+      "metadata": {
+        "cached_tokens": 7259,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm9",
+        "input_tokens": 7259,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1485
+      ],
+      "duration_cycles": 441885786,
+      "id": 1486,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 49,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1524
+      ],
+      "duration_cycles": 577167,
+      "id": 1525,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 115433472,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1525
+      ],
+      "duration_cycles": 28983342,
+      "id": 1526,
+      "metadata": {
+        "cached_tokens": 2013,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm3",
+        "input_tokens": 2013,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1526
+      ],
+      "duration_cycles": 2004854875,
+      "id": 1527,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 225,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1527
+      ],
+      "duration_cycles": 668631,
+      "id": 1528,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm4",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm4:remote_context",
+      "npu_id": 11,
+      "size_bytes": 133726208,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1528
+      ],
+      "duration_cycles": 28983342,
+      "id": 1529,
+      "metadata": {
+        "cached_tokens": 2332,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm4",
+        "input_tokens": 2332,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm4:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1529
+      ],
+      "duration_cycles": 463684507,
+      "id": 1530,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 52,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm4:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1530
+      ],
+      "duration_cycles": 693002,
+      "id": 1531,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 138600448,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1531
+      ],
+      "duration_cycles": 28983342,
+      "id": 1532,
+      "metadata": {
+        "cached_tokens": 2417,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm5",
+        "input_tokens": 2417,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1532
+      ],
+      "duration_cycles": 677825255,
+      "id": 1533,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "abe26d93f28bbac8",
+        "event_id": "django__django-12708:b2:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 76,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b2:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1713
+      ],
+      "duration_cycles": 3037512,
+      "id": 1714,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 607502336,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1714
+      ],
+      "duration_cycles": 28983342,
+      "id": 1715,
+      "metadata": {
+        "cached_tokens": 10594,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm8",
+        "input_tokens": 10594,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1715
+      ],
+      "duration_cycles": 536102798,
+      "id": 1716,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 59,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1716
+      ],
+      "duration_cycles": 3063890,
+      "id": 1717,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 612777984,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1717
+      ],
+      "duration_cycles": 28983342,
+      "id": 1718,
+      "metadata": {
+        "cached_tokens": 10686,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm9",
+        "input_tokens": 10686,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1718
+      ],
+      "duration_cycles": 536214143,
+      "id": 1719,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b0:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 59,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b0:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 676372,
+      "id": 1720,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 135274496,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1720
+      ],
+      "duration_cycles": 28983342,
+      "id": 1721,
+      "metadata": {
+        "cached_tokens": 2359,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm0",
+        "input_tokens": 2359,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1721
+      ],
+      "duration_cycles": 731240216,
+      "id": 1722,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 82,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1722
+      ],
+      "duration_cycles": 707625,
+      "id": 1723,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 141524992,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1723
+      ],
+      "duration_cycles": 28983342,
+      "id": 1724,
+      "metadata": {
+        "cached_tokens": 2468,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm1",
+        "input_tokens": 2468,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1724
+      ],
+      "duration_cycles": 660065165,
+      "id": 1725,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b1:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 74,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b1:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1755
+      ],
+      "duration_cycles": 776438,
+      "id": 1756,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b2:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b2:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 155287552,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1756
+      ],
+      "duration_cycles": 28983342,
+      "id": 1757,
+      "metadata": {
+        "cached_tokens": 2708,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b2:llm2",
+        "input_tokens": 2708,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b2:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1757
+      ],
+      "duration_cycles": 580106972,
+      "id": 1758,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "513b56542c19aa09",
+        "event_id": "django__django-13033:b2:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 65,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13033:b2:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2304
+      ],
+      "duration_cycles": 2866053,
+      "id": 2305,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b3:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b3:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 573210624,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2305
+      ],
+      "duration_cycles": 28983342,
+      "id": 2306,
+      "metadata": {
+        "cached_tokens": 9996,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b3:llm6",
+        "input_tokens": 9996,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b3:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2306
+      ],
+      "duration_cycles": 1397430086,
+      "id": 2307,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b3:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 154,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b3:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2367
+      ],
+      "duration_cycles": 1493524,
+      "id": 2368,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm7",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm7:remote_context",
+      "npu_id": 11,
+      "size_bytes": 298704896,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2368
+      ],
+      "duration_cycles": 28983342,
+      "id": 2369,
+      "metadata": {
+        "cached_tokens": 5209,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm7",
+        "input_tokens": 5209,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm7:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2369
+      ],
+      "duration_cycles": 376993077,
+      "id": 2370,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 42,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm7:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2370
+      ],
+      "duration_cycles": 1531372,
+      "id": 2371,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm8",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm8:remote_context",
+      "npu_id": 11,
+      "size_bytes": 306274304,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2371
+      ],
+      "duration_cycles": 28983342,
+      "id": 2372,
+      "metadata": {
+        "cached_tokens": 5341,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm8",
+        "input_tokens": 5341,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm8:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2372
+      ],
+      "duration_cycles": 556681468,
+      "id": 2373,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 62,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm8:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 526705,
+      "id": 2460,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 105340928,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2460
+      ],
+      "duration_cycles": 28983342,
+      "id": 2461,
+      "metadata": {
+        "cached_tokens": 1837,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm0",
+        "input_tokens": 1837,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2461
+      ],
+      "duration_cycles": 961940429,
+      "id": 2462,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 108,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2486
+      ],
+      "duration_cycles": 1571226,
+      "id": 2487,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 314245120,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2487
+      ],
+      "duration_cycles": 28983342,
+      "id": 2488,
+      "metadata": {
+        "cached_tokens": 5480,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm9",
+        "input_tokens": 5480,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2488
+      ],
+      "duration_cycles": 583803003,
+      "id": 2489,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b1:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 65,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b1:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2516
+      ],
+      "duration_cycles": 8682742,
+      "id": 2517,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b2:llm9",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b2:llm9:remote_context",
+      "npu_id": 11,
+      "size_bytes": 1736548352,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2517
+      ],
+      "duration_cycles": 28983342,
+      "id": 2518,
+      "metadata": {
+        "cached_tokens": 30283,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b2:llm9",
+        "input_tokens": 30283,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b2:llm9:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2518
+      ],
+      "duration_cycles": 474518421,
+      "id": 2519,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b2:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 50,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b2:llm9:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2552
+      ],
+      "duration_cycles": 599245,
+      "id": 2553,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 119848960,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2553
+      ],
+      "duration_cycles": 28983342,
+      "id": 2554,
+      "metadata": {
+        "cached_tokens": 2090,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm1",
+        "input_tokens": 2090,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2554
+      ],
+      "duration_cycles": 935764789,
+      "id": 2555,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 105,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2555
+      ],
+      "duration_cycles": 662036,
+      "id": 2556,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 132407296,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2556
+      ],
+      "duration_cycles": 28983342,
+      "id": 2557,
+      "metadata": {
+        "cached_tokens": 2309,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm2",
+        "input_tokens": 2309,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2557
+      ],
+      "duration_cycles": 989735713,
+      "id": 2558,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 111,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2761
+      ],
+      "duration_cycles": 519537,
+      "id": 2762,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm1",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm1:remote_context",
+      "npu_id": 11,
+      "size_bytes": 103907328,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2762
+      ],
+      "duration_cycles": 28983342,
+      "id": 2763,
+      "metadata": {
+        "cached_tokens": 1812,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm1",
+        "input_tokens": 1812,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm1:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2763
+      ],
+      "duration_cycles": 543286923,
+      "id": 2764,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 61,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm1:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2764
+      ],
+      "duration_cycles": 548495,
+      "id": 2765,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm2",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm2:remote_context",
+      "npu_id": 11,
+      "size_bytes": 109699072,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2765
+      ],
+      "duration_cycles": 28983342,
+      "id": 2766,
+      "metadata": {
+        "cached_tokens": 1913,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm2",
+        "input_tokens": 1913,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm2:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2766
+      ],
+      "duration_cycles": 605772207,
+      "id": 2767,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 68,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm2:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2767
+      ],
+      "duration_cycles": 579461,
+      "id": 2768,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm3",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm3:remote_context",
+      "npu_id": 11,
+      "size_bytes": 115892224,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2768
+      ],
+      "duration_cycles": 28983342,
+      "id": 2769,
+      "metadata": {
+        "cached_tokens": 2021,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm3",
+        "input_tokens": 2021,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm3:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2769
+      ],
+      "duration_cycles": 552459073,
+      "id": 2770,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 62,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm3:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2770
+      ],
+      "duration_cycles": 851272,
+      "id": 2771,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm4",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm4:remote_context",
+      "npu_id": 11,
+      "size_bytes": 170254336,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2771
+      ],
+      "duration_cycles": 28983342,
+      "id": 2772,
+      "metadata": {
+        "cached_tokens": 2969,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm4",
+        "input_tokens": 2969,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm4:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2772
+      ],
+      "duration_cycles": 678685817,
+      "id": 2773,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7e99535fdd832df1",
+        "event_id": "django__django-12125:b2:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 76,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12125:b2:llm4:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 449864,
+      "id": 2965,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 89972736,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2965
+      ],
+      "duration_cycles": 28983342,
+      "id": 2966,
+      "metadata": {
+        "cached_tokens": 1569,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm0",
+        "input_tokens": 1569,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2966
+      ],
+      "duration_cycles": 1130472510,
+      "id": 2967,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b0:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 127,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b0:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 449864,
+      "id": 2992,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 89972736,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        2992
+      ],
+      "duration_cycles": 28983342,
+      "id": 2993,
+      "metadata": {
+        "cached_tokens": 1569,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "input_tokens": 1569,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2993
+      ],
+      "duration_cycles": 916839909,
+      "id": 2994,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "7d5e95cd5b106c1d",
+        "event_id": "django__django-12708:b1:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 103,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-12708:b1:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [],
+      "duration_cycles": 432374,
+      "id": 3168,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b0:llm0",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b0:llm0:remote_context",
+      "npu_id": 11,
+      "size_bytes": 86474752,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        3168
+      ],
+      "duration_cycles": 28983342,
+      "id": 3169,
+      "metadata": {
+        "cached_tokens": 1508,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b0:llm0",
+        "input_tokens": 1508,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b0:llm0:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3169
+      ],
+      "duration_cycles": 694208350,
+      "id": 3170,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b0:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 78,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b0:llm0:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3871
+      ],
+      "duration_cycles": 1337262,
+      "id": 3872,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm5",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm5:remote_context",
+      "npu_id": 11,
+      "size_bytes": 267452416,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        3872
+      ],
+      "duration_cycles": 28983342,
+      "id": 3873,
+      "metadata": {
+        "cached_tokens": 4664,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm5",
+        "input_tokens": 4664,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm5:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3873
+      ],
+      "duration_cycles": 421347765,
+      "id": 3874,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 47,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm5:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3874
+      ],
+      "duration_cycles": 1359340,
+      "id": 3875,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm6",
+        "mapping": "schedule remote context",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm6:remote_context",
+      "npu_id": 11,
+      "size_bytes": 271867904,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        3875
+      ],
+      "duration_cycles": 28983342,
+      "id": 3876,
+      "metadata": {
+        "cached_tokens": 4741,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm6",
+        "input_tokens": 4741,
+        "mapping": "schedule LLM prefill",
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm6:prefill",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3876
+      ],
+      "duration_cycles": 313824894,
+      "id": 3877,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "90473a8544001ef3",
+        "event_id": "django__django-11848:b1:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 35,
+        "policy": "TAPS-C-v3 + STP-exact",
+        "run_id": "pr4_v11_taps_c_v3_stp_exact_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11848:b1:llm6:decode",
+      "npu_id": 11,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 11,
+  "stats": {
+    "communication_nodes": 68,
+    "compute_nodes": 138,
+    "delay_nodes": 0,
+    "memory_nodes": 0,
+    "node_count": 206
+  }
+}
