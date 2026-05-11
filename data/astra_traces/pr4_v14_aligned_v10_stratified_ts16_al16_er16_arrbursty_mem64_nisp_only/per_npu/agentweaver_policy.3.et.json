@@ -1,0 +1,642 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 521658,
+      "id": 259,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm0",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm0:remote_context",
+      "npu_id": 3,
+      "size_bytes": 104331673,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        259
+      ],
+      "duration_cycles": 93048998,
+      "id": 260,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm0",
+        "input_tokens": 1654,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm0:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        260
+      ],
+      "duration_cycles": 658829544,
+      "id": 261,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 74,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm0:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        261
+      ],
+      "duration_cycles": 500040,
+      "id": 262,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm1",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm1:remote_context",
+      "npu_id": 3,
+      "size_bytes": 100007936,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        262
+      ],
+      "duration_cycles": 96607852,
+      "id": 263,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm1",
+        "input_tokens": 1744,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm1:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        263
+      ],
+      "duration_cycles": 1300122425,
+      "id": 264,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm1",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 146,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm1:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        264
+      ],
+      "duration_cycles": 546488,
+      "id": 265,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm2",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm2:remote_context",
+      "npu_id": 3,
+      "size_bytes": 109297664,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        265
+      ],
+      "duration_cycles": 103032728,
+      "id": 266,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm2",
+        "input_tokens": 1906,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm2:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        266
+      ],
+      "duration_cycles": 383055663,
+      "id": 267,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 43,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm2:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        267
+      ],
+      "duration_cycles": 666624,
+      "id": 268,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm3",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm3:remote_context",
+      "npu_id": 3,
+      "size_bytes": 133324800,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        268
+      ],
+      "duration_cycles": 119763086,
+      "id": 269,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm3",
+        "input_tokens": 2325,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm3:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        269
+      ],
+      "duration_cycles": 383425245,
+      "id": 270,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm3",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 43,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm3:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        270
+      ],
+      "duration_cycles": 691855,
+      "id": 271,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm4",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm4:remote_context",
+      "npu_id": 3,
+      "size_bytes": 138371072,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        271
+      ],
+      "duration_cycles": 123297558,
+      "id": 272,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm4",
+        "input_tokens": 2413,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm4:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        272
+      ],
+      "duration_cycles": 472689579,
+      "id": 273,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm4",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 53,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm4:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        273
+      ],
+      "duration_cycles": 721101,
+      "id": 274,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:remote_context",
+      "npu_id": 3,
+      "size_bytes": 144220160,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        274
+      ],
+      "duration_cycles": 127403323,
+      "id": 275,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "input_tokens": 2515,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        275
+      ],
+      "duration_cycles": 1088333163,
+      "id": 276,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 122,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        276
+      ],
+      "duration_cycles": 880230,
+      "id": 277,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm6",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm6:remote_context",
+      "npu_id": 3,
+      "size_bytes": 176046080,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        277
+      ],
+      "duration_cycles": 149912671,
+      "id": 278,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm6",
+        "input_tokens": 3070,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm6:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        278
+      ],
+      "duration_cycles": 678843274,
+      "id": 279,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm6",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 76,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm6:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        279
+      ],
+      "duration_cycles": 914063,
+      "id": 280,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm7",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm7:remote_context",
+      "npu_id": 3,
+      "size_bytes": 182812672,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        280
+      ],
+      "duration_cycles": 154735282,
+      "id": 281,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm7",
+        "input_tokens": 3188,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm7:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        281
+      ],
+      "duration_cycles": 437793875,
+      "id": 282,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm7",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 49,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm7:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        282
+      ],
+      "duration_cycles": 941015,
+      "id": 283,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm8",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm8:remote_context",
+      "npu_id": 3,
+      "size_bytes": 188203008,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        283
+      ],
+      "duration_cycles": 158586269,
+      "id": 284,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm8",
+        "input_tokens": 3282,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm8:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        284
+      ],
+      "duration_cycles": 500443838,
+      "id": 285,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm8",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 56,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm8:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        285
+      ],
+      "duration_cycles": 1019003,
+      "id": 286,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm9",
+        "mapping": "schedule remote context",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm9:remote_context",
+      "npu_id": 3,
+      "size_bytes": 203800576,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        286
+      ],
+      "duration_cycles": 169775731,
+      "id": 287,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm9",
+        "input_tokens": 3554,
+        "mapping": "schedule LLM prefill",
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm9:prefill",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        287
+      ],
+      "duration_cycles": 625945364,
+      "id": 288,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts16:al16:er16:arrbursty:mem64",
+        "context_domain_id": "c410c363fc7271be",
+        "event_id": "astropy__astropy-12907:b3:llm9",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 70,
+        "policy": "nisp_only",
+        "run_id": "pr4_v14_nisp_only_aligned_v10_stratified_ts16_al16_er16_arrbursty_mem64_r0",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm9:decode",
+      "npu_id": 3,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 3,
+  "stats": {
+    "communication_nodes": 10,
+    "compute_nodes": 20,
+    "delay_nodes": 0,
+    "memory_nodes": 0,
+    "node_count": 30
+  }
+}

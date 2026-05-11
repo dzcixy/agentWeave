@@ -52,11 +52,19 @@ def _least_squares(x: list[list[float]], y: list[float]) -> list[float]:
         return b
 
 
+def _report_title(path: str | Path) -> str:
+    stem = Path(path).stem
+    for part in stem.split("_"):
+        if part.startswith("v") and part[1:].isdigit():
+            return f"# H100 Calibration PR4-{part}"
+    return "# H100 Calibration Report"
+
+
 def fit_latency(
-    raw_csv: str | Path = "data/calibration/h100_vllm_latency_raw_pr4_v13.csv",
-    out_json: str | Path = "data/calibration/h100_vllm_latency_fit_pr4_v13.json",
-    report_md: str | Path = "data/results/h100_calibration_report_pr4_v13.md",
-    compare_csv: str | Path = "data/results/h100_latency_model_comparison_pr4_v13.csv",
+    raw_csv: str | Path = "data/calibration/h100_vllm_latency_raw_pr4_v14.csv",
+    out_json: str | Path = "data/calibration/h100_vllm_latency_fit_pr4_v14.json",
+    report_md: str | Path = "data/results/h100_calibration_report_pr4_v14.md",
+    compare_csv: str | Path = "data/results/analytic_vs_h100_model_pr4_v14.csv",
 ) -> dict[str, Any]:
     raw = [r for r in _read_csv(raw_csv) if r.get("status") == "OK"]
     if not raw:
@@ -89,14 +97,15 @@ def fit_latency(
         }
         Path(report_md).parent.mkdir(parents=True, exist_ok=True)
         Path(report_md).write_text(
-            "# H100 Calibration PR4-v13\n\n"
+            _report_title(report_md)
+            + "\n\n"
             + "\n".join(f"{k} = {v}" for k, v in fields.items())
             + "\n\nNo vLLM profiling rows were available; no fitted model or fake data was generated.\n",
             encoding="utf-8",
         )
         ensure_dir(Path(out_json).parent)
         Path(out_json).write_text(json.dumps(fields, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        write_csv(compare_csv, [])
+        write_csv(compare_csv, [{"comparison_status": "NOT_RUN", "reason": "No OK H100/vLLM profiling rows were available."}])
         return fields
 
     pre_x, pre_y, dec_x, dec_y = [], [], [], []
@@ -135,7 +144,8 @@ def fit_latency(
     write_csv(compare_csv, compare)
     Path(report_md).parent.mkdir(parents=True, exist_ok=True)
     Path(report_md).write_text(
-        "# H100 Calibration PR4-v13\n\n"
+        _report_title(report_md)
+        + "\n\n"
         + "\n".join(
             [
                 "H100_CALIBRATION = OK",
@@ -153,10 +163,10 @@ def fit_latency(
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--raw", default="data/calibration/h100_vllm_latency_raw_pr4_v13.csv")
-    ap.add_argument("--out-json", default="data/calibration/h100_vllm_latency_fit_pr4_v13.json")
-    ap.add_argument("--report", default="data/results/h100_calibration_report_pr4_v13.md")
-    ap.add_argument("--compare", default="data/results/h100_latency_model_comparison_pr4_v13.csv")
+    ap.add_argument("--raw", default="data/calibration/h100_vllm_latency_raw_pr4_v14.csv")
+    ap.add_argument("--out-json", "--out", dest="out_json", default="data/calibration/h100_vllm_latency_fit_pr4_v14.json")
+    ap.add_argument("--report", default="data/results/h100_calibration_report_pr4_v14.md")
+    ap.add_argument("--compare", default="data/results/analytic_vs_h100_model_pr4_v14.csv")
     args = ap.parse_args()
     print(json.dumps(fit_latency(args.raw, args.out_json, args.report, args.compare), indent=2, sort_keys=True))
 

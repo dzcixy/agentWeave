@@ -313,7 +313,7 @@ class ChakraExporter:
                 remote_bytes = int(input_tokens * kv_bytes_per_token())
             else:
                 local_bytes = int(float(row.get("local_context_bytes", 0) or 0))
-                remote_bytes = int(float(row.get("remote_context_bytes", 0) or 0))
+                remote_bytes = int(float(row.get("remote_kv_bytes", row.get("remote_context_bytes", 0)) or 0))
                 schedule_remote += remote_bytes
             metadata = {
                 "event_id": row.get("event_id", ""),
