@@ -36,6 +36,7 @@ def apply_patch() -> None:
             "modified_files_count": 0,
             "untracked_files_count": 0,
             "git_diff_stat_bytes": 0,
+            "git_diff_name_count": 0,
             "patch_hash_prefix": "",
             "file_modification_seen": False,
         }
@@ -70,6 +71,7 @@ def apply_patch() -> None:
                 "modified_files_count": modified,
                 "untracked_files_count": untracked,
                 "git_diff_stat_bytes": len(stat_text.encode("utf-8")),
+                "git_diff_name_count": len([x for x in names_text.splitlines() if x.strip()]),
                 "patch_hash_prefix": hashlib.sha256((stat_text + "\n" + names_text).encode("utf-8")).hexdigest()[:16]
                 if stat_text.strip() or names_text.strip()
                 else "",

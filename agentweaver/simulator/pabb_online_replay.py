@@ -34,6 +34,7 @@ class BranchOnlineState:
     modified_files_count: int = 0
     untracked_files_count: int = 0
     git_diff_stat_bytes: int = 0
+    git_diff_name_count: int = 0
     patch_candidate_seen: bool = False
     patch_hash_seen: str = ""
     duplicate_patch_seen_so_far: bool = False
@@ -196,6 +197,7 @@ def update_branch_state(
         st.modified_files_count = max(st.modified_files_count, int(getattr(ev, "modified_files_count", 0) or 0))
         st.untracked_files_count = max(st.untracked_files_count, int(getattr(ev, "untracked_files_count", 0) or 0))
         st.git_diff_stat_bytes = max(st.git_diff_stat_bytes, int(getattr(ev, "git_diff_stat_bytes", 0) or 0))
+        st.git_diff_name_count = max(st.git_diff_name_count, int(getattr(ev, "git_diff_name_count", 0) or 0))
         st.file_modification_seen = st.file_modification_seen or snapshot_mod or (_looks_like_file_write(command) and ev.exit_code in {0, None})
         st.tool_time += float(ev.tool_latency if ev.tool_latency is not None else ev.latency or 0.0)
         made_progress = st.latest_returncode == 0 or st.file_modification_seen or st.pytest_seen
@@ -374,7 +376,7 @@ def _run_instance_snapshot_policy(
     lm: LatencyModel,
     weights: dict[str, float],
 ) -> dict[str, Any]:
-    mapped_policy = "pabb_online" if policy in {"pabb_online_v3", "pabb_snapshot_online"} else policy
+    mapped_policy = "pabb_online" if policy in {"pabb_online_v3", "pabb_snapshot_online", "pabb_snapshot_online_v5"} else policy
     states = {branch_id: BranchOnlineState(branch_id, events) for branch_id, events in sorted(branches.items())}
     max_tokens = _max_branch_tokens(branches)
     seen_patch_hashes: set[str] = set()
@@ -438,6 +440,7 @@ def run_pabb_snapshot_online(
     weights_yaml: str | Path = "configs/pabb_weights.yaml",
     out_csv: str | Path = "data/results/pabb_snapshot_online_pr4_v4.csv",
     plot_out: str | Path = "data/plots/pabb_snapshot_online_pr4_v4.pdf",
+    snapshot_policy_name: str = "pabb_snapshot_online",
 ) -> list[dict[str, Any]]:
     trace_dirs = trace_dirs or ["data/traces/mini_swe_lite10_r4_timed", "data/traces/mini_swe_lite5_patchcap_verified"]
     lm = LatencyModel.load(model_json)
@@ -446,9 +449,12 @@ def run_pabb_snapshot_online(
     rows: list[dict[str, Any]] = []
     for instance_id, branches in sorted(by_instance.items()):
         for policy in SNAPSHOT_POLICIES:
+            row_policy = snapshot_policy_name if policy == "pabb_snapshot_online" else policy
             for max_active in [1, 2, 4]:
                 for max_steps in [5, 10, 15]:
-                    rows.append(_run_instance_snapshot_policy(instance_id, branches, policy, max_active, max_steps, lm, weights))
+                    row = _run_instance_snapshot_policy(instance_id, branches, policy, max_active, max_steps, lm, weights)
+                    row["policy"] = row_policy
+                    rows.append(row)
     _fill_snapshot_gains(rows)
     write_csv(out_csv, rows)
     plot_pabb_snapshot(rows, plot_out)
@@ -462,7 +468,7 @@ def _fill_snapshot_gains(rows: list[dict[str, Any]]) -> None:
     for group in by_key.values():
         fcfs = group.get("fcfs_budget")
         pabb = group.get("pabb_online_v3")
-        snap = group.get("pabb_snapshot_online")
+        snap = group.get("pabb_snapshot_online") or group.get("pabb_snapshot_online_v5")
         oracle = group.get("pabb_oracle_upper_bound")
         if snap:
             snap_cost = _as_float(snap.get("cost_to_patch"))
@@ -488,11 +494,14 @@ def plot_pabb_snapshot(rows: list[dict[str, Any]], out: str | Path) -> None:
             vals[row["policy"]].append(c)
         if f is not None:
             file_vals[row["policy"]].append(f)
+    policies = [p for p in SNAPSHOT_POLICIES if p in vals or p in file_vals]
+    extras = sorted({row["policy"] for row in rows} - set(policies))
+    policies.extend(extras)
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), constrained_layout=True)
-    axes[0].bar(SNAPSHOT_POLICIES, [sum(vals[p]) / len(vals[p]) if vals[p] else 0.0 for p in SNAPSHOT_POLICIES])
+    axes[0].bar(policies, [sum(vals[p]) / len(vals[p]) if vals[p] else 0.0 for p in policies])
     axes[0].set_ylabel("cost to non-empty patch")
     axes[0].tick_params(axis="x", rotation=25)
-    axes[1].bar(SNAPSHOT_POLICIES, [sum(file_vals[p]) / len(file_vals[p]) if file_vals[p] else 0.0 for p in SNAPSHOT_POLICIES])
+    axes[1].bar(policies, [sum(file_vals[p]) / len(file_vals[p]) if file_vals[p] else 0.0 for p in policies])
     axes[1].set_ylabel("time to file modification")
     axes[1].tick_params(axis="x", rotation=25)
     fig.savefig(out)

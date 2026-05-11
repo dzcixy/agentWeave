@@ -215,6 +215,7 @@ def _mini_swe_message_steps(messages: list[Any]) -> list[dict[str, Any]]:
                 "modified_files_count",
                 "untracked_files_count",
                 "git_diff_stat_bytes",
+                "git_diff_name_count",
                 "patch_hash_prefix",
                 "file_modification_seen",
             ):
@@ -548,6 +549,7 @@ def convert_swe_traj(
                     modified_files_count=int(_num(step.get("modified_files_count")) or 0),
                     untracked_files_count=int(_num(step.get("untracked_files_count")) or 0),
                     git_diff_stat_bytes=int(_num(step.get("git_diff_stat_bytes")) or 0),
+                    git_diff_name_count=int(_num(step.get("git_diff_name_count")) or 0),
                     patch_hash_prefix=str(step.get("patch_hash_prefix") or "") or None,
                     file_modification_seen=bool(step.get("file_modification_seen", False)),
                     timing_missing=timing_missing,
