@@ -210,6 +210,16 @@ def _mini_swe_message_steps(messages: list[Any]) -> list[dict[str, Any]]:
                 for k in ("timestamp_start", "timestamp_end", "tool_latency", "latency")
                 if k in tool_extra
             }
+            for key in (
+                "patch_snapshot_available",
+                "modified_files_count",
+                "untracked_files_count",
+                "git_diff_stat_bytes",
+                "patch_hash_prefix",
+                "file_modification_seen",
+            ):
+                if key in tool_extra:
+                    step[key] = tool_extra[key]
         if rc is not None:
             step["returncode"] = rc
         steps.append(step)
@@ -534,6 +544,12 @@ def convert_swe_traj(
                     tool_latency=latency if not timing_missing or latency else None,
                     observation_tokens=count_tokens(obs, model),
                     exit_code=_exit_code(step),
+                    patch_snapshot_available=bool(step.get("patch_snapshot_available", False)),
+                    modified_files_count=int(_num(step.get("modified_files_count")) or 0),
+                    untracked_files_count=int(_num(step.get("untracked_files_count")) or 0),
+                    git_diff_stat_bytes=int(_num(step.get("git_diff_stat_bytes")) or 0),
+                    patch_hash_prefix=str(step.get("patch_hash_prefix") or "") or None,
+                    file_modification_seen=bool(step.get("file_modification_seen", False)),
                     timing_missing=timing_missing,
                     rollout_id=rollout_id,
                 )

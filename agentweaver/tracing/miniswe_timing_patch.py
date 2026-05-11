@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import hashlib
 import time
 from typing import Any
 
@@ -28,6 +29,54 @@ def apply_patch() -> None:
     orig_serialize = DefaultAgent.serialize
     orig_model_query = LitellmModel.query
     orig_execute = DockerEnvironment.execute
+
+    def capture_patch_snapshot(env: Any, cwd: str) -> dict[str, Any]:
+        snapshot: dict[str, Any] = {
+            "patch_snapshot_available": False,
+            "modified_files_count": 0,
+            "untracked_files_count": 0,
+            "git_diff_stat_bytes": 0,
+            "patch_hash_prefix": "",
+            "file_modification_seen": False,
+        }
+        if not (_env_enabled("AGENTWEAVER_CAPTURE_PATCH_SNAPSHOTS") or _env_enabled("AGENTWEAVER_CAPTURE_PATCH")):
+            return snapshot
+        probe_cwd = cwd or getattr(getattr(env, "config", None), "cwd", "") or "/testbed"
+        try:
+            status = orig_execute(env, {"command": "git status --porcelain"}, cwd=probe_cwd, timeout=30)
+            stat = orig_execute(env, {"command": "git diff --stat"}, cwd=probe_cwd, timeout=30)
+            names = orig_execute(env, {"command": "git diff --name-only"}, cwd=probe_cwd, timeout=30)
+        except Exception as exc:
+            snapshot["patch_snapshot_error"] = str(exc)
+            return snapshot
+        if int(status.get("returncode", -1)) != 0:
+            snapshot["patch_snapshot_error"] = f"git status rc={status.get('returncode')}"
+            return snapshot
+        status_text = str(status.get("output", "") or "")
+        stat_text = str(stat.get("output", "") or "")
+        names_text = str(names.get("output", "") or "")
+        modified = 0
+        untracked = 0
+        for line in status_text.splitlines():
+            if not line.strip():
+                continue
+            if line.startswith("??"):
+                untracked += 1
+            else:
+                modified += 1
+        snapshot.update(
+            {
+                "patch_snapshot_available": True,
+                "modified_files_count": modified,
+                "untracked_files_count": untracked,
+                "git_diff_stat_bytes": len(stat_text.encode("utf-8")),
+                "patch_hash_prefix": hashlib.sha256((stat_text + "\n" + names_text).encode("utf-8")).hexdigest()[:16]
+                if stat_text.strip() or names_text.strip()
+                else "",
+                "file_modification_seen": modified > 0 or untracked > 0 or bool(stat_text.strip()),
+            }
+        )
+        return snapshot
 
     def capture_git_diff(agent: Any) -> dict[str, Any]:
         info: dict[str, Any] = {
@@ -175,6 +224,9 @@ def apply_patch() -> None:
         }
         output.update(timing)
         output.setdefault("extra", {}).update(timing)
+        snapshot = capture_patch_snapshot(self, cwd)
+        output.update(snapshot)
+        output.setdefault("extra", {}).update(snapshot)
         return output
 
     DefaultAgent.run = run_with_timing

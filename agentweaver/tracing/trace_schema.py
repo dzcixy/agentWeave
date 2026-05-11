@@ -88,6 +88,12 @@ class Event:
     verifier_result: Optional[VerifierResult] = None
     patch_id: Optional[str] = None
     patch_hash: Optional[str] = None
+    patch_snapshot_available: bool = False
+    modified_files_count: int = 0
+    untracked_files_count: int = 0
+    git_diff_stat_bytes: int = 0
+    patch_hash_prefix: Optional[str] = None
+    file_modification_seen: bool = False
     is_first_success: bool = False
     success: Optional[bool] = None
     timing_missing: bool = False
