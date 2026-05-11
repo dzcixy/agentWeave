@@ -13,6 +13,7 @@ from agentweaver.profiling.latency_model import LatencyModel
 from agentweaver.simulator.acd_mapping import branch_key, run_mapping
 from agentweaver.simulator.bes_scheduler import BESScheduler
 from agentweaver.simulator.context_arena import ContextArena
+from agentweaver.simulator.context_domain_factorization import selected_segment_ids
 from agentweaver.simulator.metrics import percentile
 from agentweaver.simulator.nisp import BranchKVState, NISP, NISPDecision
 from agentweaver.simulator.wafer_config import WaferConfig
@@ -29,15 +30,19 @@ POLICIES = {
     "acd_bes",
     "acd_nisp",
     "full_agentweaver",
+    "acd_cdf",
+    "acd_cdf_nisp",
+    "full_agentweaver_cdf",
 }
 
 
 def _policy_flags(policy: str) -> dict[str, bool]:
     return {
-        "acd": policy in {"acd_only", "acd_bes", "acd_nisp", "full_agentweaver"},
+        "acd": policy in {"acd_only", "acd_bes", "acd_nisp", "full_agentweaver", "acd_cdf", "acd_cdf_nisp", "full_agentweaver_cdf"},
+        "cdf": policy in {"acd_cdf", "acd_cdf_nisp", "full_agentweaver_cdf"},
         "bes": policy in {"acd_bes", "full_agentweaver"},
-        "nisp": policy in {"acd_nisp", "full_agentweaver"},
-        "cancel": policy == "full_agentweaver",
+        "nisp": policy in {"acd_nisp", "full_agentweaver", "acd_cdf_nisp", "full_agentweaver_cdf"},
+        "cancel": policy in {"full_agentweaver", "full_agentweaver_cdf"},
         "static": policy == "static_branch_pinning",
         "release_on_tool": policy not in {"static_branch_pinning"},
     }
@@ -95,6 +100,14 @@ class EventDrivenReplay:
         self.arena = ContextArena(cfg.kv_capacity_bytes_per_die * cfg.num_regions)
         self.nisp = NISP(latency_model, mesh=self.mesh)
         self.scheduler = BESScheduler(latency_model, self.arena, free_regions=self.free_regions)
+        self.cdf_selected_segments = selected_segment_ids(self.events, latency_model) if self.flags["cdf"] else set()
+        self.cdf_seen_segments: set[str] = set()
+        cdf_segment_sizes: dict[str, int] = {}
+        for ev in self.events:
+            for seg in ev.context_segments:
+                if seg.segment_id in self.cdf_selected_segments:
+                    cdf_segment_sizes.setdefault(seg.segment_id, seg.kv_bytes or seg.length * self.bpt)
+        self.cdf_selected_kv_bytes = sum(cdf_segment_sizes.values())
         self.ready_queue: deque[Event] = deque()
         self.ready_since: dict[str, float] = {}
         self.eventq: list[QueueEvent] = []
@@ -138,6 +151,11 @@ class EventDrivenReplay:
         self.prefill_tokens_avoided = 0
         self.kv_hit_tokens = 0
         self.kv_miss_tokens = 0
+        self.natural_kv_hit_tokens = 0
+        self.cdf_added_kv_hit_tokens = 0
+        self.cdf_prefill_tokens_avoided = 0
+        self.cdf_model_side_time_saved = 0.0
+        self.cdf_kv_bytes = 0
         self.noc_bytes = 0.0
         self.hop_sum = 0.0
         self.hop_n = 0
@@ -235,6 +253,18 @@ class EventDrivenReplay:
         if self.flags["acd"] and cached == 0:
             cached = self.arena.match(ev.context_segments)
             delta = max(0, ev.input_tokens - cached)
+        cdf_added = 0
+        if self.flags["cdf"] and self.cdf_selected_segments:
+            cdf_refs = [seg for seg in ev.context_segments if seg.segment_id in self.cdf_selected_segments and seg.segment_id in self.cdf_seen_segments]
+            if cdf_refs:
+                cdf_eligible = sum(seg.length for seg in cdf_refs)
+                naturally_resident = self.arena.match(cdf_refs) if self.flags["acd"] else 0
+                cdf_added = min(delta, max(0, cdf_eligible - naturally_resident))
+                cached += cdf_added
+                delta = max(0, delta - cdf_added)
+                self.cdf_added_kv_hit_tokens += cdf_added
+                self.cdf_prefill_tokens_avoided += cdf_added
+                self.cdf_model_side_time_saved += self.latency_model.predict_prefill(cdf_added) if cdf_added else 0.0
         fetch_latency = 0.0
         for seg in ev.context_segments:
             if self.flags["acd"] and seg.segment_id in self.arena.resident:
@@ -251,6 +281,7 @@ class EventDrivenReplay:
         self.prefill_tokens_avoided += cached
         self.kv_hit_tokens += cached
         self.kv_miss_tokens += delta
+        self.natural_kv_hit_tokens += max(0, cached - cdf_added)
         if ev.step_id >= 3:
             self.resume_prefill_tokens += delta
         self.running[ev.branch_id] = RunningLLM(ev, region, now, duration, cached, delta, fetch_latency)
@@ -316,6 +347,10 @@ class EventDrivenReplay:
                 self.scheduler.region_busy_time[run.region] = self.scheduler.region_busy_time.get(run.region, 0.0) + run.duration
                 self.arena.now = now
                 self.arena.insert(run.node.context_segments, self.bpt)
+                if self.flags["cdf"]:
+                    for seg in run.node.context_segments:
+                        if seg.segment_id in self.cdf_selected_segments:
+                            self.cdf_seen_segments.add(seg.segment_id)
                 next_node = self._next_node(qe.branch_id)
                 if next_node and next_node.node_type == "tool":
                     self.push(now, "TOOL_START", qe.branch_id, next_node)
@@ -405,6 +440,12 @@ class EventDrivenReplay:
             "prefill_tokens_avoided": self.prefill_tokens_avoided,
             "kv_hit_tokens": self.kv_hit_tokens,
             "kv_miss_tokens": self.kv_miss_tokens,
+            "natural_kv_hit_tokens": self.natural_kv_hit_tokens,
+            "cdf_added_kv_hit_tokens": self.cdf_added_kv_hit_tokens,
+            "total_kv_hit_tokens": self.kv_hit_tokens,
+            "cdf_prefill_tokens_avoided": self.cdf_prefill_tokens_avoided,
+            "cdf_model_side_time_saved": self.cdf_model_side_time_saved,
+            "cdf_kv_bytes": self.cdf_kv_bytes or self.cdf_selected_kv_bytes,
             "noc_bytes": self.noc_bytes,
             "avg_hops": self.hop_sum / self.hop_n if self.hop_n else 0.0,
             "hotspot_ratio": self.mesh.hotspot_ratio(),
@@ -469,6 +510,12 @@ def replay(processed: str | Path, wafer_config: str | Path, policy: str, out: st
                 "prefill_tokens_avoided": sum(int(r["prefill_tokens_avoided"]) for r in rows),
                 "kv_hit_tokens": sum(int(r["kv_hit_tokens"]) for r in rows),
                 "kv_miss_tokens": sum(int(r["kv_miss_tokens"]) for r in rows),
+                "natural_kv_hit_tokens": sum(int(r.get("natural_kv_hit_tokens", 0)) for r in rows),
+                "cdf_added_kv_hit_tokens": sum(int(r.get("cdf_added_kv_hit_tokens", 0)) for r in rows),
+                "total_kv_hit_tokens": sum(int(r.get("total_kv_hit_tokens", r["kv_hit_tokens"])) for r in rows),
+                "cdf_prefill_tokens_avoided": sum(int(r.get("cdf_prefill_tokens_avoided", 0)) for r in rows),
+                "cdf_model_side_time_saved": sum(float(r.get("cdf_model_side_time_saved", 0.0)) for r in rows),
+                "cdf_kv_bytes": sum(float(r.get("cdf_kv_bytes", 0.0)) for r in rows),
                 "noc_bytes": sum(float(r["noc_bytes"]) for r in rows),
                 "avg_hops": sum(float(r["avg_hops"]) for r in rows) / len(rows),
                 "hotspot_ratio": max(float(r["hotspot_ratio"]) for r in rows),
