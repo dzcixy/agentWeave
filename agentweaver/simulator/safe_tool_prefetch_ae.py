@@ -15,6 +15,7 @@ from typing import Any
 from agentweaver.simulator.safe_tool_prefetch_v2 import (
     SAFE_READ_ONLY_EXACT,
     SAFE_SANDBOXED,
+    UNSAFE,
     UNKNOWN,
     canonicalize_command,
     classify_command_safety,
@@ -207,7 +208,7 @@ def _extract_literal_pattern(args: list[str]) -> tuple[str, list[str]]:
 def command_artifacts(command: str | None, repo: str, snapshot_hash: str, step_id: int) -> list[Artifact]:
     cmd = command or ""
     safety, cls, _reason = classify_command_safety(cmd)
-    if safety == UNKNOWN or cls in {"file_write", "shell_other"} and safety != SAFE_READ_ONLY_EXACT:
+    if safety in {UNKNOWN, UNSAFE} or cls in {"file_write", "shell_other"} and safety != SAFE_READ_ONLY_EXACT:
         return []
     cwd, stripped = _extract_cwd_and_command(cmd)
     parts = _split_chain(cmd)
@@ -278,6 +279,35 @@ def command_artifacts(command: str | None, repo: str, snapshot_hash: str, step_i
     return []
 
 
+def _extract_paths_from_text(text: str) -> list[str]:
+    if not text:
+        return []
+    raw = re.findall(r"(?<![\w.-])(?:[A-Za-z0-9_./-]+/(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+|[A-Za-z0-9_.-]+\.(?:py|txt|md|json|yaml|yml|toml|ini|cfg|rst|log))(?![\w.-])", text)
+    paths: list[str] = []
+    for item in raw:
+        cleaned = item.strip("'\"`:,()[]{}")
+        if cleaned and cleaned not in paths:
+            paths.append(cleaned)
+    return paths[:8]
+
+
+def _extract_query_terms_from_text(text: str) -> list[str]:
+    if not text:
+        return []
+    terms: list[str] = []
+    for match in re.finditer(r"\b(?:rg|grep)\b(?:\s+-[A-Za-z0-9]+)*\s+['\"]([^'\"]{3,80})['\"]", text):
+        terms.append(match.group(1))
+    for match in re.finditer(r"(?:ImportError|ModuleNotFoundError|AttributeError|NameError|NotSupportedError|ValidationError|TypeError|ValueError)[\w.: -]*", text):
+        term = match.group(0).strip()
+        if 3 <= len(term) <= 80:
+            terms.append(term)
+    out: list[str] = []
+    for term in terms:
+        if term not in out:
+            out.append(term)
+    return out[:6]
+
+
 def can_answer(actual_command: str | None, artifact: Artifact, repo: str, snapshot_hash: str, step_id: int) -> bool:
     if artifact.repo_family != repo or artifact.workspace_snapshot_hash != snapshot_hash or artifact.valid_until_step < step_id:
         return False
@@ -337,11 +367,20 @@ def build_tool_records(traces: list[Trace]) -> list[dict[str, Any]]:
         for branch, events in _events_by_branch(trace).items():
             prev_class = "START"
             prev_key = "START"
+            prev_command = ""
+            prev_observation_text = ""
             last_returncode = 0
             error_count = 0
             for idx, ev in enumerate(events):
                 if ev.node_type != "tool":
                     continue
+                prev_llm = next((candidate for candidate in reversed(events[:idx]) if candidate.node_type == "llm"), None)
+                llm_text = str(
+                    getattr(prev_llm, "output_text", "")
+                    or getattr(prev_llm, "content", "")
+                    or getattr(prev_llm, "message", "")
+                    or ""
+                )
                 snapshot, snapshot_source, available = _snapshot_hash(ev)
                 safety, cls, reason = classify_command_safety(ev.command, ev.tool_type)
                 artifacts = command_artifacts(ev.command, repo, snapshot, ev.step_id)
@@ -363,6 +402,11 @@ def build_tool_records(traces: list[Trace]) -> list[dict[str, Any]]:
                         "answerable_by_artifact": str(bool(artifacts)).lower(),
                         "prev_canonical_tool_key": prev_key,
                         "prev_command_class": prev_class,
+                        "prev_command": prev_command,
+                        "prev_observation_text": prev_observation_text,
+                        "current_llm_output_text": llm_text,
+                        "llm_output_paths": json.dumps(_extract_paths_from_text(llm_text)),
+                        "observation_paths": json.dumps(_extract_paths_from_text(prev_observation_text)),
                         "previous_returncode": last_returncode,
                         "observation_token_length": int(ev.observation_tokens or 0),
                         "error_count": error_count,
@@ -377,6 +421,8 @@ def build_tool_records(traces: list[Trace]) -> list[dict[str, Any]]:
                 error_count += int(last_returncode != 0)
                 prev_class = cls
                 prev_key = canonicalize_command(ev.command)
+                prev_command = ev.command or ""
+                prev_observation_text = str(getattr(ev, "observation", "") or getattr(ev, "output", "") or "")
     return rows
 
 
@@ -429,22 +475,28 @@ class ArtifactPredictor:
         repo = str(row["repo_family"])
         prev_key = str(row["prev_canonical_tool_key"])
         prev_class = str(row["prev_command_class"])
-        scored: Counter[str] = Counter()
+        scored: defaultdict[str, float] = defaultdict(float)
         for (r, p, key), n in self.by_repo_prev_key.items():
             if r == repo and p == prev_key:
-                scored[key] += n
+                scored[key] += 2.0 * n
         for (r, p, key), n in self.by_repo_prev_class.items():
             if r == repo and p == prev_class:
-                scored[key] += n
+                scored[key] += 1.5 * n
         for (p, key), n in self.by_prev_class.items():
             if p == prev_class:
-                scored[key] += n
-        scored.update(self.global_counts)
+                scored[key] += 1.0 * n
+        for key, n in self.global_counts.items():
+            scored[key] += 0.25 * n
         total = sum(scored.values()) or 1
         snapshot = str(row["workspace_snapshot_hash"])
         step = int(float(row.get("step_id", 0) or 0))
+        for art, boost in self._signal_artifacts(row, repo, snapshot, step):
+            self.artifact_by_key.setdefault(art.key, art)
+            scored[art.key] += boost
+        total = sum(scored.values()) or 1.0
         out: list[tuple[Artifact, float]] = []
-        for key, score in scored.most_common(max(k * 4, 12)):
+        ordered = sorted(scored.items(), key=lambda item: item[1], reverse=True)
+        for key, score in ordered[: max(k * 4, 18)]:
             proto = self.artifact_by_key.get(key)
             if not proto:
                 continue
@@ -458,12 +510,77 @@ class ArtifactPredictor:
                 command_class_source=prev_class,
                 content_bytes=proto.content_bytes,
                 generation_latency=self.predicted_generation_latency(proto),
-                valid_until_step=step + 1,
+                valid_until_step=step + 10,
                 safety_level=proto.safety_level,
             )
             out.append((art, score / total))
             if len(out) >= k:
                 break
+        return out
+
+    def _signal_artifacts(self, row: dict[str, Any], repo: str, snapshot: str, step: int) -> list[tuple[Artifact, float]]:
+        texts = [
+            str(row.get("current_llm_output_text", "")),
+            str(row.get("prev_observation_text", "")),
+            str(row.get("prev_command", "")),
+        ]
+        paths: list[str] = []
+        queries: list[str] = []
+        for text in texts:
+            for path in _extract_paths_from_text(text):
+                if path not in paths:
+                    paths.append(path)
+            for term in _extract_query_terms_from_text(text):
+                if term not in queries:
+                    queries.append(term)
+        prev_command = str(row.get("prev_command", ""))
+        redirected = re.findall(r">\s*([A-Za-z0-9_./-]+\.(?:txt|log|patch|diff|json|py))", prev_command)
+        for path in redirected:
+            if path not in paths:
+                paths.insert(0, path)
+        out: list[tuple[Artifact, float]] = []
+
+        def art(typ: str, path_scope: str = ".", query: str = "", boost: float = 10.0, safety: str = READ_ONLY_ARTIFACT) -> None:
+            key = artifact_key(typ, path_scope, query)
+            proto = Artifact(
+                artifact_id=stable_hash((repo, snapshot, key))[:20],
+                artifact_type=typ,
+                repo_family=repo,
+                workspace_snapshot_hash=snapshot,
+                path_scope=path_scope,
+                query_terms=query,
+                command_class_source=str(row.get("prev_command_class", "")),
+                content_bytes=4096 if typ in {FILE_CONTENT, GREP_INDEX} else 1024,
+                generation_latency=self.predicted_generation_latency(
+                    Artifact("", typ, repo, snapshot, path_scope, query, "", 0, 0.2, step + 10, safety)
+                ),
+                valid_until_step=step + 10,
+                safety_level=safety,
+            )
+            out.append((proto, boost))
+
+        prev_low = prev_command.lower()
+        if "git diff" in prev_low:
+            art(GIT_DIFF, ".", boost=6.0)
+        if "git status" in prev_low:
+            art(GIT_STATUS, ".", boost=6.0)
+        if "git log" in prev_low or "git show" in prev_low:
+            art(GIT_LOG, ".", "log", boost=4.0)
+        if re.search(r"\b(cat|head|tail|sed)\b", prev_low):
+            for path in paths[:4]:
+                art(FILE_CONTENT, _norm_path(path), boost=12.0)
+        if re.search(r"\b(rg|grep|search)\b", prev_low):
+            for path in paths[:3]:
+                art(FILE_CONTENT, _norm_path(path), boost=7.0)
+            for term in queries[:3]:
+                art(GREP_INDEX, ".", term, boost=8.0)
+        for path in paths[:5]:
+            if re.search(r"\.(py|txt|md|json|yaml|yml|toml|rst|log|patch|diff)$", path):
+                art(FILE_CONTENT, _norm_path(path), boost=9.0)
+            elif "/" in path:
+                art(DIRECTORY_LISTING, _norm_path(path), boost=3.0)
+        for term in queries[:3]:
+            art(GREP_INDEX, ".", term, boost=6.0)
         return out
 
     def predict_exact_key(self, row: dict[str, Any]) -> str:
