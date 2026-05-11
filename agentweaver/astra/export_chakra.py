@@ -157,8 +157,14 @@ class ChakraExporter:
             return
         total_context_tokens = sum(ref.length for ref in ev.context_segments)
         cached_tokens = min(int(schedule.get("cached_tokens", 0)), ev.input_tokens, total_context_tokens)
-        local_bytes = int(schedule.get("local_context_bytes", cached_tokens * kv_bytes_per_token()))
-        remote_bytes = int(schedule.get("remote_context_bytes", max(0, total_context_tokens - cached_tokens) * kv_bytes_per_token()))
+        total_context_bytes = int(total_context_tokens * kv_bytes_per_token())
+        cached_context_bytes = int(cached_tokens * kv_bytes_per_token())
+        local_bytes = min(int(schedule.get("local_context_bytes", cached_context_bytes)), cached_context_bytes, total_context_bytes)
+        remote_bytes = min(
+            int(schedule.get("remote_context_bytes", 0)),
+            max(0, cached_context_bytes - local_bytes),
+            max(0, total_context_bytes - local_bytes),
+        )
         context_domain_id = schedule.get("context_domain_id", ev.shared_prefix_id or ev.prompt_hash or ev.instance_id)
         self.stats["local_memory_bytes"] += local_bytes
         self.stats["remote_communication_bytes"] += remote_bytes
@@ -242,8 +248,18 @@ class ChakraExporter:
         out_path: str | Path,
         policy: str = "acd_nisp",
         schedule: dict[str, dict[str, Any]] | None = None,
+        allow_inferred_schedule: bool = False,
     ) -> dict[str, Any]:
-        schedule = schedule or infer_policy_schedule(trace, policy, self.npu_count)
+        schedule_source = "provided_schedule"
+        warning = ""
+        if schedule is None:
+            if allow_inferred_schedule:
+                schedule = infer_policy_schedule(trace, policy, self.npu_count)
+                schedule_source = "inferred_schedule"
+            else:
+                schedule = {}
+                schedule_source = "missing_schedule"
+                warning = "WARNING_NO_SCHEDULE"
         for ev in sorted(trace.events, key=lambda e: (e.branch_id, e.step_id, e.timestamp_start or 0.0, e.node_id)):
             if ev.node_type in {"llm", "tool", "verifier"}:
                 self.add_event_policy_aware(ev, schedule.get(ev.event_id, {}), policy)
@@ -252,6 +268,8 @@ class ChakraExporter:
             "astra_export_format": "intermediate_json",
             "policy_aware": True,
             "policy": policy,
+            "schedule_source": schedule_source,
+            "policy_aware_warning": warning,
             "metadata": trace.metadata,
             "nodes": [n.to_dict() for n in self.nodes],
             "stats": self.stats,
@@ -292,6 +310,57 @@ def infer_policy_schedule(trace: Trace, policy: str = "acd_nisp", npu_count: int
     return schedule
 
 
+def load_schedule_jsonl(path: str | Path) -> dict[str, dict[str, Any]]:
+    schedule: dict[str, dict[str, Any]] = {}
+    p = Path(path)
+    if not p.exists():
+        return schedule
+    with p.open("r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            event_id = row.get("event_id")
+            if event_id:
+                schedule[str(event_id)] = row
+    return schedule
+
+
+def write_per_npu_traces(payload: dict[str, Any], out_dir: str | Path, prefix: str = "agentweaver") -> dict[str, Any]:
+    nodes = payload.get("nodes", [])
+    by_npu: dict[int, list[dict[str, Any]]] = {}
+    for node in nodes:
+        npu = int(node.get("npu_id", 0))
+        by_npu.setdefault(npu, []).append(node)
+    out = Path(out_dir)
+    ensure_dir(out)
+    files: list[str] = []
+    for npu, npu_nodes in sorted(by_npu.items()):
+        p = out / f"{prefix}.{npu}.et.json"
+        shard = {
+            "format": payload.get("format", "agentweaver_chakra_intermediate_json"),
+            "astra_export_format": payload.get("astra_export_format", "intermediate_json"),
+            "npu_id": npu,
+            "nodes": npu_nodes,
+            "stats": {
+                "node_count": len(npu_nodes),
+                "communication_nodes": sum(1 for n in npu_nodes if n.get("type") == "communication"),
+                "memory_nodes": sum(1 for n in npu_nodes if n.get("type") == "memory"),
+                "compute_nodes": sum(1 for n in npu_nodes if n.get("type") == "compute"),
+                "delay_nodes": sum(1 for n in npu_nodes if n.get("type") == "delay"),
+            },
+        }
+        p.write_text(json.dumps(shard, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        files.append(str(p))
+    return {
+        "npu_files": files,
+        "npu_file_count": len(files),
+        "global_node_count": len(nodes),
+        "per_npu_node_count_sum": sum(len(v) for v in by_npu.values()),
+        "cross_npu_communication_nodes": sum(1 for n in nodes if n.get("type") == "communication"),
+    }
+
+
 def export_trace_to_chakra_json(
     trace_path: str | Path,
     out_path: str | Path,
@@ -310,13 +379,17 @@ def export_policy_aware_trace_to_chakra_json(
     npu_count: int = 16,
     policy: str = "acd_nisp",
     schedule_json: str | Path | None = None,
+    schedule_jsonl: str | Path | None = None,
+    allow_inferred_schedule: bool = False,
 ) -> dict[str, Any]:
     trace = Trace.from_jsonl(trace_path)
     lm = LatencyModel.load(model_json)
     schedule = None
-    if schedule_json and Path(schedule_json).exists():
+    if schedule_jsonl and Path(schedule_jsonl).exists():
+        schedule = load_schedule_jsonl(schedule_jsonl)
+    elif schedule_json and Path(schedule_json).exists():
         schedule = json.loads(Path(schedule_json).read_text(encoding="utf-8"))
-    return ChakraExporter(lm, npu_count=npu_count).export_policy_aware_trace(trace, out_path, policy, schedule)
+    return ChakraExporter(lm, npu_count=npu_count).export_policy_aware_trace(trace, out_path, policy, schedule, allow_inferred_schedule)
 
 
 def main() -> None:
@@ -328,11 +401,26 @@ def main() -> None:
     ap.add_argument("--policy-aware", action="store_true")
     ap.add_argument("--policy", default="acd_nisp")
     ap.add_argument("--schedule-json")
+    ap.add_argument("--schedule-jsonl")
+    ap.add_argument("--allow-inferred-schedule", action="store_true")
+    ap.add_argument("--per-npu-dir")
+    ap.add_argument("--per-npu-prefix", default="agentweaver")
     args = ap.parse_args()
     if args.policy_aware:
-        payload = export_policy_aware_trace_to_chakra_json(args.trace, args.out, args.model_json, args.npu_count, args.policy, args.schedule_json)
+        payload = export_policy_aware_trace_to_chakra_json(
+            args.trace,
+            args.out,
+            args.model_json,
+            args.npu_count,
+            args.policy,
+            args.schedule_json,
+            args.schedule_jsonl,
+            args.allow_inferred_schedule,
+        )
     else:
         payload = export_trace_to_chakra_json(args.trace, args.out, args.model_json, args.npu_count)
+    if args.per_npu_dir:
+        payload["per_npu"] = write_per_npu_traces(payload, args.per_npu_dir, args.per_npu_prefix)
     print(json.dumps(payload["stats"], indent=2, sort_keys=True))
 
 

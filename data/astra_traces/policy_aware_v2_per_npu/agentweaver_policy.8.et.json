@@ -1,0 +1,98 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 474235,
+      "id": 1,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "remote context movement",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:remote_context",
+      "npu_id": 8,
+      "size_bytes": 94846976,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1
+      ],
+      "duration_cycles": 94847,
+      "id": 2,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "remote context memory load",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:remote_context_load",
+      "npu_id": 8,
+      "size_bytes": 94846976,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        2
+      ],
+      "duration_cycles": 28983342,
+      "id": 3,
+      "metadata": {
+        "cached_tokens": 1654,
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "input_tokens": 1654,
+        "mapping": "LLM prefill after policy cache",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:policy_prefill",
+      "npu_id": 8,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3
+      ],
+      "duration_cycles": 1789523491,
+      "id": 4,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "LLM decode",
+        "output_tokens": 201,
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:policy_decode",
+      "npu_id": 8,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        19
+      ],
+      "duration_cycles": 198449373,
+      "id": 20,
+      "metadata": {
+        "command": "cd /testbed/astropy && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool3",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool3:tool_delay",
+      "npu_id": 8,
+      "size_bytes": 0,
+      "type": "delay"
+    }
+  ],
+  "npu_id": 8,
+  "stats": {
+    "communication_nodes": 1,
+    "compute_nodes": 2,
+    "delay_nodes": 1,
+    "memory_nodes": 1,
+    "node_count": 5
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [
+        34
+      ],
+      "duration_cycles": 34925909042,
+      "id": 35,
+      "metadata": {
+        "command": "pip install astropy --upgrade --timeout 120 && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool6",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool6:tool_delay",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        49
+      ],
+      "duration_cycles": 1323990345,
+      "id": 50,
+      "metadata": {
+        "command": "pip install astropy --upgrade && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool9",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool9:tool_delay",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        50
+      ],
+      "duration_cycles": 0,
+      "id": 51,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:verify",
+        "mapping": "verifier",
+        "verifier_result": "unknown"
+      },
+      "name": "astropy__astropy-12907:b0:verify0:verifier",
+      "npu_id": 2,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 2,
+  "stats": {
+    "communication_nodes": 0,
+    "compute_nodes": 1,
+    "delay_nodes": 2,
+    "memory_nodes": 0,
+    "node_count": 3
+  }
+}

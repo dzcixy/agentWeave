@@ -1,0 +1,109 @@
+{
+  "feature_keys": [
+    "bias",
+    "total_sessions_log",
+    "active_session_limit_log",
+    "effective_regions_log",
+    "memory_budget_log",
+    "session_pressure",
+    "region_pressure",
+    "memory_budget_per_active_session",
+    "predicted_arrival_burstiness",
+    "trace_llm_time_mean",
+    "trace_llm_time_p95",
+    "trace_tool_time_mean",
+    "trace_tool_time_p95",
+    "tool_time_share",
+    "llm_time_share",
+    "branch_jct_cv",
+    "tool_latency_cv",
+    "shared_context_ratio",
+    "estimated_domain_fanout",
+    "estimated_context_entropy",
+    "predicted_ready_depth",
+    "predicted_blocked_fraction",
+    "estimated_remote_kv_pressure",
+    "arrival_closed_loop",
+    "arrival_poisson",
+    "arrival_bursty"
+  ],
+  "leave_arrival_bursty_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "reactive_admission",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_arrival_closed_loop_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_arrival_poisson_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "reactive_admission",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_memory_16_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_memory_32_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_memory_64_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "reactive_admission",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_memory_8_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_session_128_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_session_16_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "reactive_admission",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_session_32_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "reactive_admission",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "leave_session_64_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "objectives": [
+    "p95_opt",
+    "throughput_opt",
+    "balanced"
+  ],
+  "random_best_fixed": {
+    "balanced": "taps_admission_v4",
+    "p95_opt": "taps_admission_v4",
+    "throughput_opt": "taps_admission_v4"
+  },
+  "splits": [
+    "leave_arrival_bursty",
+    "leave_arrival_closed_loop",
+    "leave_arrival_poisson",
+    "leave_memory_16",
+    "leave_memory_32",
+    "leave_memory_64",
+    "leave_memory_8",
+    "leave_session_128",
+    "leave_session_16",
+    "leave_session_32",
+    "leave_session_64",
+    "random"
+  ]
+}

@@ -153,6 +153,9 @@ class TAPSUnifiedReplay:
         latency_model: LatencyModel,
         config: TAPSUnifiedConfig | None = None,
         seed: int = 101,
+        run_id: str | None = None,
+        config_id: str | None = None,
+        schedule_log_path: str | Path | None = None,
     ) -> None:
         if policy not in POLICIES:
             raise ValueError(f"unknown policy {policy}; expected {POLICIES}")
@@ -166,6 +169,11 @@ class TAPSUnifiedReplay:
         self.memory_budget_gb = memory_budget_gb
         self.memory_budget_bytes = max(1, memory_budget_gb) * 1024**3
         self.policy = policy
+        self.run_id = run_id or "taps_unified_schedule"
+        self.config_id = config_id or f"ts{total_sessions}:al{active_session_limit}:er{effective_regions}:arr{arrival_pattern}:mem{memory_budget_gb}"
+        self.schedule_log_path = Path(schedule_log_path) if schedule_log_path else None
+        self.schedule_rows: list[dict[str, Any]] = []
+        self._last_llm_accounting: dict[str, Any] = {}
         self.lm = latency_model
         self.config = config or TAPSUnifiedConfig()
         self.rng = random.Random(seed)
@@ -505,14 +513,93 @@ class TAPSUnifiedReplay:
             cached = 0
         else:
             cached = min(ev.input_tokens, self._resident_tokens_for_event(st, ev) + st.parked_cached_tokens)
+        parked_tokens = st.parked_cached_tokens
+        state_residency = "WARM" if parked_tokens > 0 else "NONE"
         self.cache_hit_tokens += cached
-        self.recompute_tokens += max(0, ev.input_tokens - cached)
+        recompute = max(0, ev.input_tokens - cached)
+        self.recompute_tokens += recompute
         hops, bytes_ = self._remote_cost(st, region, cached)
         self.remote_kv_bytes += bytes_ * hops
         self.hop_weighted_bytes += bytes_ * hops
         remote_penalty = (bytes_ * hops) / 2e11
         st.parked_cached_tokens = 0
+        cached_bytes = int(cached * self.bpt)
+        self._last_llm_accounting = {
+            "cached_tokens": int(cached),
+            "recompute_tokens": int(recompute),
+            "local_context_bytes": int(cached_bytes if hops <= 0 else 0),
+            "remote_context_bytes": int(cached_bytes if hops > 0 else 0),
+            "avg_context_hops": float(hops),
+            "state_residency": state_residency,
+            "parked_state_bytes": int(parked_tokens * self.bpt),
+        }
         return self.lm.predict_llm(ev.input_tokens, ev.output_tokens, cached, concurrency=max(1, self.regions)) + remote_penalty
+
+    def _record_schedule_event(
+        self,
+        st: SessionState,
+        ev: Event,
+        region: int,
+        start: float,
+        end: float,
+        memory_before: int,
+        memory_after: int,
+        eviction_before: int,
+        eviction_after: int,
+    ) -> None:
+        meta = dict(self._last_llm_accounting)
+        row = {
+            "run_id": self.run_id,
+            "policy": self.policy,
+            "config_id": self.config_id,
+            "session_id": st.session_id,
+            "branch_id": ev.branch_id,
+            "event_id": ev.event_id,
+            "node_id": ev.node_id,
+            "timestamp_start": start,
+            "timestamp_end": end,
+            "region_id": region,
+            "context_domain_id": st.context_domain_id,
+            "repo_domain_id": st.repo_domain_id,
+            "input_tokens": ev.input_tokens,
+            "output_tokens": ev.output_tokens,
+            "cached_tokens": meta.get("cached_tokens", 0),
+            "recompute_tokens": meta.get("recompute_tokens", ev.input_tokens),
+            "local_context_bytes": meta.get("local_context_bytes", 0),
+            "remote_context_bytes": meta.get("remote_context_bytes", 0),
+            "avg_context_hops": meta.get("avg_context_hops", 0.0),
+            "state_residency": meta.get("state_residency", "NONE"),
+            "parked_state_bytes": meta.get("parked_state_bytes", 0),
+            "prefetch_bytes": 0,
+            "eviction_count_before": eviction_before,
+            "eviction_count_after": eviction_after,
+            "memory_occupancy_before": memory_before,
+            "memory_occupancy_after": memory_after,
+        }
+        self.schedule_rows.append(row)
+
+    def _write_schedule_log(self) -> None:
+        if not self.schedule_log_path:
+            return
+        ensure_dir(self.schedule_log_path.parent)
+        with self.schedule_log_path.open("w", encoding="utf-8") as f:
+            for row in self.schedule_rows:
+                f.write(json.dumps(row, sort_keys=True) + "\n")
+        summary = {
+            "run_id": self.run_id,
+            "policy": self.policy,
+            "config_id": self.config_id,
+            "llm_events": len(self.schedule_rows),
+            "cached_tokens": sum(int(r.get("cached_tokens", 0)) for r in self.schedule_rows),
+            "recompute_tokens": sum(int(r.get("recompute_tokens", 0)) for r in self.schedule_rows),
+            "local_context_bytes": sum(int(r.get("local_context_bytes", 0)) for r in self.schedule_rows),
+            "remote_context_bytes": sum(int(r.get("remote_context_bytes", 0)) for r in self.schedule_rows),
+            "prefetch_bytes": sum(int(r.get("prefetch_bytes", 0)) for r in self.schedule_rows),
+            "max_memory_occupancy": max([int(r.get("memory_occupancy_after", 0)) for r in self.schedule_rows] or [0]),
+            "eviction_count": self.eviction_count,
+        }
+        out = Path("data/results") / f"schedule_summary_{self.run_id}.csv"
+        write_csv(out, [summary])
 
     def _account_idle(self, now: float) -> None:
         dt = max(0.0, now - self.last_event_time)
@@ -543,8 +630,21 @@ class TAPSUnifiedReplay:
                 if self.last_domain and self.last_domain != st.context_domain_id:
                     self.domain_switches += 1
                 self.last_domain = st.context_domain_id
+                memory_before = self.memory_occupancy
+                eviction_before = self.eviction_count
                 dur = self._llm_duration(st, item.event, item.region_id)
                 self.llm_busy += dur
+                self._record_schedule_event(
+                    st,
+                    item.event,
+                    item.region_id,
+                    now,
+                    now + dur,
+                    memory_before,
+                    self.memory_occupancy,
+                    eviction_before,
+                    self.eviction_count,
+                )
                 self._push(now + dur, "LLM_DONE", item.session_id, item.event, item.region_id)
             elif item.kind == "LLM_DONE" and st is not None:
                 if item.event is not None:
@@ -590,6 +690,7 @@ class TAPSUnifiedReplay:
         total_region_time = max(1e-9, makespan * self.regions)
         self.starvation_count = self.starved_ready_events + max(0, self.total_sessions - len(self.done))
         domain_queries = self.cache_hit_tokens + self.recompute_tokens
+        self._write_schedule_log()
         return {
             "total_sessions": self.total_sessions,
             "active_session_limit": self.active_limit,

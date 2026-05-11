@@ -1,0 +1,48 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [
+        9
+      ],
+      "duration_cycles": 1417617798,
+      "id": 10,
+      "metadata": {
+        "command": "pip install erfa && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool1",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool1:tool_delay",
+      "npu_id": 0,
+      "size_bytes": 0,
+      "type": "delay"
+    },
+    {
+      "deps": [
+        29
+      ],
+      "duration_cycles": 60033044338,
+      "id": 30,
+      "metadata": {
+        "command": "pip install astropy --upgrade && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool5",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool5:tool_delay",
+      "npu_id": 0,
+      "size_bytes": 0,
+      "type": "delay"
+    }
+  ],
+  "npu_id": 0,
+  "stats": {
+    "communication_nodes": 0,
+    "compute_nodes": 0,
+    "delay_nodes": 2,
+    "memory_nodes": 0,
+    "node_count": 2
+  }
+}
