@@ -1,0 +1,31 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [
+        19
+      ],
+      "duration_cycles": 198449373,
+      "id": 20,
+      "metadata": {
+        "command": "cd /testbed/astropy && python setup.py build_ext --inplace && python -c \"from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))\"",
+        "event_id": "astropy__astropy-12907:b0:tool3",
+        "mapping": "tool call",
+        "tool_type": "shell_other"
+      },
+      "name": "astropy__astropy-12907:b0:tool3:tool_delay",
+      "npu_id": 8,
+      "size_bytes": 0,
+      "type": "delay"
+    }
+  ],
+  "npu_id": 8,
+  "stats": {
+    "communication_nodes": 0,
+    "compute_nodes": 0,
+    "delay_nodes": 1,
+    "memory_nodes": 0,
+    "node_count": 1
+  }
+}

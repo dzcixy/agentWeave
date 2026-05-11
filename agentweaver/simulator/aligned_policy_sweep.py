@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 import itertools
 import json
 import math
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -23,8 +25,19 @@ ALIGNED_POLICIES = [
     "taps_unified_adaptive_v6",
 ]
 
+_WORKER_TRACES: list[Any] = []
+_WORKER_LM: LatencyModel | None = None
+_WORKER_PROFILES: AdaptiveProfiles | None = None
 
-def config_id(total: int, limit: int, regions: int, arrival: str, memory: int, grid_label: str = "aligned_v8") -> str:
+
+def _init_worker(trace_dirs: list[str | Path], model_json: str | Path) -> None:
+    global _WORKER_TRACES, _WORKER_LM, _WORKER_PROFILES
+    _WORKER_TRACES = _load_traces(trace_dirs)
+    _WORKER_LM = LatencyModel.load(model_json)
+    _WORKER_PROFILES = AdaptiveProfiles.default()
+
+
+def config_id(total: int, limit: int, regions: int, arrival: str, memory: int, grid_label: str = "aligned_v10") -> str:
     return f"{grid_label}:ts{total}:al{limit}:er{regions}:arr{arrival}:mem{memory}"
 
 
@@ -114,6 +127,62 @@ def _run_policy(
     return row
 
 
+def _run_policy_task(args: tuple[int, int, int, str, int, str, int, str]) -> dict[str, Any]:
+    total, limit, regions, arrival, memory, policy, replicates, cid = args
+    if _WORKER_LM is None:
+        raise RuntimeError("worker latency model was not initialized")
+    rep_rows: list[dict[str, Any]] = []
+    for rep in range(max(1, replicates)):
+        rep_rows.append(_run_policy(_WORKER_TRACES, _WORKER_LM, total, limit, regions, arrival, memory, policy, _WORKER_PROFILES, seed_offset=rep))
+    row = _aggregate_replicates(rep_rows)
+    return _format_grid_row(cid, total, limit, regions, arrival, memory, policy, row, replicates)
+
+
+def _format_grid_row(
+    cid: str,
+    total: int,
+    limit: int,
+    regions: int,
+    arrival: str,
+    memory: int,
+    policy: str,
+    row: dict[str, Any],
+    replicates: int,
+) -> dict[str, Any]:
+    return {
+        "config_id": cid,
+        "total_sessions": total,
+        "active_session_limit": limit,
+        "effective_regions": regions,
+        "arrival_pattern": arrival,
+        "memory_budget_gb": memory,
+        "policy": policy,
+        "throughput": row.get("throughput", 0.0),
+        "mean_jct": row.get("mean_jct", 0.0),
+        "p50_jct": row.get("p50_jct", 0.0),
+        "p95_jct": row.get("p95_jct", 0.0),
+        "p99_jct": row.get("p99_jct", 0.0),
+        "ready_queue_wait": row.get("ready_queue_wait", 0.0),
+        "region_utilization": row.get("region_utilization", 0.0),
+        "domain_cache_hit_rate": row.get("domain_cache_hit_rate", 0.0),
+        "blocked_session_fraction": row.get("blocked_session_fraction", 0.0),
+        "remote_kv_bytes": row.get("remote_kv_bytes", 0.0),
+        "memory_occupancy": row.get("memory_occupancy", 0.0),
+        "starvation_count": row.get("starvation_count", 0),
+        "max_ready_age": row.get("max_ready_age", 0.0),
+        "completed_sessions": row.get("completed_sessions", 0),
+        "completion_reason": row.get("completion_reason", ""),
+        "replicates": row.get("replicates", max(1, replicates)),
+        "throughput_std": row.get("throughput_std", 0.0),
+        "mean_jct_std": row.get("mean_jct_std", 0.0),
+        "p95_jct_std": row.get("p95_jct_std", 0.0),
+        "p99_jct_std": row.get("p99_jct_std", 0.0),
+        "ready_queue_wait_std": row.get("ready_queue_wait_std", 0.0),
+        "completed_sessions_mean": row.get("completed_sessions_mean", row.get("completed_sessions", 0)),
+        "starvation_count_mean": row.get("starvation_count_mean", row.get("starvation_count", 0)),
+    }
+
+
 def _std(vals: list[float]) -> float:
     vals = [v for v in vals if math.isfinite(v)]
     if len(vals) <= 1:
@@ -155,6 +224,9 @@ def _aggregate_replicates(rows: list[dict[str, Any]]) -> dict[str, Any]:
     out["completed_sessions_mean"] = sum(_num(r, "completed_sessions") for r in rows) / max(1, len(rows))
     out["starvation_count"] = max(int(round(_num(r, "starvation_count"))) for r in rows)
     out["starvation_count_mean"] = sum(_num(r, "starvation_count") for r in rows) / max(1, len(rows))
+    out["max_ready_age"] = max(_num(r, "max_ready_age") for r in rows)
+    reasons = [str(r.get("completion_reason", "")) for r in rows if r.get("completion_reason")]
+    out["completion_reason"] = "completed" if all(r == "completed" for r in reasons) else ";".join(sorted(set(reasons)))
     out["replicates"] = len(rows)
     return out
 
@@ -165,8 +237,9 @@ def run_aligned_policy_grid(
     grid_label: str | None = None,
     trace_dirs: list[str | Path] | None = None,
     model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
-    out_csv: str | Path = "data/results/aligned_policy_grid_pr4_v8.csv",
-    missing_out: str | Path = "data/results/aligned_policy_grid_missing_pr4_v8.md",
+    out_csv: str | Path = "data/results/aligned_policy_grid_pr4_v10.csv",
+    missing_out: str | Path = "data/results/aligned_policy_grid_summary_pr4_v10.md",
+    workers: int = 1,
 ) -> list[dict[str, Any]]:
     trace_dirs = trace_dirs or ["data/traces/mini_swe_lite10_r4_timed", "data/traces/mini_swe_lite5_patchcap_verified"]
     traces = _load_traces(trace_dirs)
@@ -174,52 +247,35 @@ def run_aligned_policy_grid(
     profiles = AdaptiveProfiles.default()
     rows: list[dict[str, Any]] = []
     missing: list[str] = []
-    grid_label = grid_label or ("aligned_v9_stratified" if size == "stratified_full" else "aligned_v8")
+    grid_label = grid_label or ("aligned_v10_stratified" if size == "stratified_full" else "aligned_v10")
+    tasks = []
     for total, limit, regions, arrival, memory in select_configs(size):
         cid = config_id(total, limit, regions, arrival, memory, grid_label)
         for policy in ALIGNED_POLICIES:
+            tasks.append((total, limit, regions, arrival, memory, policy, max(1, replicates), cid))
+    if workers and workers > 1:
+        with ProcessPoolExecutor(max_workers=workers, initializer=_init_worker, initargs=(trace_dirs, model_json)) as ex:
+            futs = {ex.submit(_run_policy_task, task): task for task in tasks}
+            for fut in as_completed(futs):
+                task = futs[fut]
+                try:
+                    rows.append(fut.result())
+                except Exception as exc:
+                    missing.append(f"{task[7]},{task[5]},{type(exc).__name__}:{exc}")
+        rows.sort(key=lambda r: (r["config_id"], ALIGNED_POLICIES.index(r["policy"]) if r["policy"] in ALIGNED_POLICIES else 999))
+    else:
+        for total, limit, regions, arrival, memory, policy, reps, cid in tasks:
             try:
                 rep_rows: list[dict[str, Any]] = []
-                for rep in range(max(1, replicates)):
+                for rep in range(reps):
                     rep_rows.append(_run_policy(traces, lm, total, limit, regions, arrival, memory, policy, profiles, seed_offset=rep))
                 row = _aggregate_replicates(rep_rows)
-                rows.append(
-                    {
-                        "config_id": cid,
-                        "total_sessions": total,
-                        "active_session_limit": limit,
-                        "effective_regions": regions,
-                        "arrival_pattern": arrival,
-                        "memory_budget_gb": memory,
-                        "policy": policy,
-                        "throughput": row.get("throughput", 0.0),
-                        "mean_jct": row.get("mean_jct", 0.0),
-                        "p50_jct": row.get("p50_jct", 0.0),
-                        "p95_jct": row.get("p95_jct", 0.0),
-                        "p99_jct": row.get("p99_jct", 0.0),
-                        "ready_queue_wait": row.get("ready_queue_wait", 0.0),
-                        "region_utilization": row.get("region_utilization", 0.0),
-                        "domain_cache_hit_rate": row.get("domain_cache_hit_rate", 0.0),
-                        "blocked_session_fraction": row.get("blocked_session_fraction", 0.0),
-                        "remote_kv_bytes": row.get("remote_kv_bytes", 0.0),
-                        "memory_occupancy": row.get("memory_occupancy", 0.0),
-                        "starvation_count": row.get("starvation_count", 0),
-                        "completed_sessions": row.get("completed_sessions", 0),
-                        "replicates": row.get("replicates", max(1, replicates)),
-                        "throughput_std": row.get("throughput_std", 0.0),
-                        "mean_jct_std": row.get("mean_jct_std", 0.0),
-                        "p95_jct_std": row.get("p95_jct_std", 0.0),
-                        "p99_jct_std": row.get("p99_jct_std", 0.0),
-                        "ready_queue_wait_std": row.get("ready_queue_wait_std", 0.0),
-                        "completed_sessions_mean": row.get("completed_sessions_mean", row.get("completed_sessions", 0)),
-                        "starvation_count_mean": row.get("starvation_count_mean", row.get("starvation_count", 0)),
-                    }
-                )
+                rows.append(_format_grid_row(cid, total, limit, regions, arrival, memory, policy, row, reps))
             except Exception as exc:
                 missing.append(f"{cid},{policy},{type(exc).__name__}:{exc}")
     write_csv(out_csv, rows)
     lines = [
-        "# Aligned Policy Grid Missing Rows PR4-v8",
+        "# Aligned Policy Grid Summary PR4-v10",
         "",
         f"GRID_SIZE = {size}",
         f"REPLICATES = {max(1, replicates)}",
@@ -240,10 +296,11 @@ def main() -> None:
     ap.add_argument("--size", choices=["small", "medium", "full", "stratified_full"], default="medium")
     ap.add_argument("--replicates", type=int, default=1)
     ap.add_argument("--grid-label")
-    ap.add_argument("--out", default="data/results/aligned_policy_grid_pr4_v8.csv")
-    ap.add_argument("--missing-out", default="data/results/aligned_policy_grid_missing_pr4_v8.md")
+    ap.add_argument("--out", default="data/results/aligned_policy_grid_pr4_v10.csv")
+    ap.add_argument("--missing-out", default="data/results/aligned_policy_grid_summary_pr4_v10.md")
+    ap.add_argument("--workers", type=int, default=max(1, min(8, os.cpu_count() or 1)))
     args = ap.parse_args()
-    rows = run_aligned_policy_grid(size=args.size, replicates=args.replicates, grid_label=args.grid_label, out_csv=args.out, missing_out=args.missing_out)
+    rows = run_aligned_policy_grid(size=args.size, replicates=args.replicates, grid_label=args.grid_label, out_csv=args.out, missing_out=args.missing_out, workers=args.workers)
     configs = len({r["config_id"] for r in rows})
     print(json.dumps({"rows": len(rows), "configs": configs, "out": args.out}, indent=2, sort_keys=True))
 

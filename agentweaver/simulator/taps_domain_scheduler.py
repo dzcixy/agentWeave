@@ -144,6 +144,20 @@ class DomainReplay:
         self.domain_cache_query_tokens = 0
         self.domain_batch_sizes: list[int] = []
         self.domain_switches = 0
+        self.max_consecutive_domain = 4
+        self._consecutive_domain_count = 0
+        self.max_ready_age = 0.0
+
+    def _starvation_threshold(self) -> float:
+        llm_samples = sorted(
+            self.lm.predict_llm(ev.input_tokens, ev.output_tokens)
+            for tr in self.traces
+            for ev in tr.events
+            if ev.node_type == "llm"
+        )
+        median_llm = llm_samples[len(llm_samples) // 2] if llm_samples else 1.0
+        slo_proxy = (sum(llm_samples) / max(1, len(llm_samples))) * 10.0 if llm_samples else 60.0
+        return max(2.0 * median_llm, 0.1 * slo_proxy)
 
     def _push(self, time: float, kind: str, session_id: str, event: Event | None = None, region_id: int | None = None) -> None:
         self.seq += 1
@@ -207,7 +221,7 @@ class DomainReplay:
         home = self.domain_home_region.setdefault(domain, int(stable_hash(domain), 16) % self.regions)
         nearest = min(self.free_regions or [home], key=lambda r: abs(r - home))
         remote_penalty = abs(nearest - home) * cached * self.bpt / 1e9
-        return (
+        score = (
             self.config.w_domain * domain_locality
             + self.config.w_batch * batch_bonus
             + self.config.w_hot * hotness
@@ -216,6 +230,11 @@ class DomainReplay:
             + self.config.w_short * short
             - self.config.w_remote * remote_penalty
         )
+        if age > self._starvation_threshold():
+            score += 1_000_000.0 + age
+        if now > st.arrival_time + 10.0 * self._starvation_threshold():
+            score += 500_000.0 + now - st.arrival_time
+        return score
 
     def _choose_region(self, st: SessionState) -> int:
         if self.policy == "taps_domain":
@@ -228,10 +247,15 @@ class DomainReplay:
 
     def _try_schedule(self, now: float) -> None:
         while self.ready and self.free_regions:
+            candidates = list(self.ready)
+            if self.last_domain and self._consecutive_domain_count >= self.max_consecutive_domain:
+                other_domain = [pair for pair in candidates if self.sessions[pair[0]].context_domain_id != self.last_domain]
+                if other_domain:
+                    candidates = other_domain
             if self.policy == "taps_domain":
-                selected = max(self.ready, key=lambda pair: self._score(now, pair[0], pair[1]))
+                selected = max(candidates, key=lambda pair: self._score(now, pair[0], pair[1]))
             else:
-                selected = self.ready[0]
+                selected = candidates[0]
             self.ready.remove(selected)
             sid, ev = selected
             st = self.sessions[sid]
@@ -283,6 +307,11 @@ class DomainReplay:
                     continue
                 if self.last_domain is not None and self.last_domain != st.context_domain_id:
                     self.domain_switches += 1
+                    self._consecutive_domain_count = 1
+                elif self.last_domain == st.context_domain_id:
+                    self._consecutive_domain_count += 1
+                else:
+                    self._consecutive_domain_count = 1
                 self.last_domain = st.context_domain_id
                 self.domain_batch_sizes.append(self._domain_ready_count(st.context_domain_id, st.repo_domain_id) + 1)
                 dur = self._llm_duration(st, item.event, item.region_id)
@@ -316,6 +345,8 @@ class DomainReplay:
                 self._try_schedule(now)
             elif item.kind == "SESSION_DONE":
                 st.done_time = now
+            for sid, ev in self.ready:
+                self.max_ready_age = max(self.max_ready_age, max(0.0, now - self.ready_since.get((sid, ev.event_id), now)))
         completed = [s for s in self.sessions.values() if s.done_time > 0]
         jcts = [s.done_time - s.arrival_time for s in completed]
         makespan = max([s.done_time for s in completed] or [last_time, 1e-9])
@@ -339,6 +370,9 @@ class DomainReplay:
             "domain_batch_size": sum(self.domain_batch_sizes) / max(1, len(self.domain_batch_sizes)),
             "domain_switches": self.domain_switches,
             "completed_sessions": len(completed),
+            "starvation_count": max(0, self.sessions_n - len(completed)),
+            "max_ready_age": self.max_ready_age,
+            "completion_reason": "completed" if len(completed) == self.sessions_n else "incomplete_sessions",
         }
 
 

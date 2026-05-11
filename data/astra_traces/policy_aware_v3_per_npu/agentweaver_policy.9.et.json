@@ -1,0 +1,83 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [
+        25
+      ],
+      "duration_cycles": 1061151,
+      "id": 26,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "remote context movement",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:remote_context",
+      "npu_id": 9,
+      "size_bytes": 212230144,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        26
+      ],
+      "duration_cycles": 212230,
+      "id": 27,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "remote context memory load",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:remote_context_load",
+      "npu_id": 9,
+      "size_bytes": 212230144,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        27
+      ],
+      "duration_cycles": 29173186,
+      "id": 28,
+      "metadata": {
+        "cached_tokens": 3701,
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "input_tokens": 3706,
+        "mapping": "LLM prefill after policy cache",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:policy_prefill",
+      "npu_id": 9,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        28
+      ],
+      "duration_cycles": 1493847500,
+      "id": 29,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm5",
+        "mapping": "LLM decode",
+        "output_tokens": 167,
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm5:policy_decode",
+      "npu_id": 9,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 9,
+  "stats": {
+    "communication_nodes": 1,
+    "compute_nodes": 2,
+    "delay_nodes": 0,
+    "memory_nodes": 1,
+    "node_count": 4
+  }
+}

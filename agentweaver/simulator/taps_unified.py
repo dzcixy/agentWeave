@@ -216,6 +216,13 @@ class TAPSUnifiedReplay:
         self.starvation_count = 0
         self.starved_ready_events = 0
         self.max_ready_age = 0.0
+        self.max_consecutive_domain = 4
+        self._consecutive_domain_count = 0
+        self._pending_schedule_index: dict[tuple[str, str], int] = {}
+        self.completion_reason = "not_started"
+
+    def _starvation_threshold(self) -> float:
+        return max(2.0 * self.global_llm_service, 0.1 * self.slo_target)
 
     def _median_llm_service(self, events: list[Event]) -> float:
         vals = [self.lm.predict_llm(e.input_tokens, e.output_tokens) for e in events if e.node_type == "llm"]
@@ -294,6 +301,8 @@ class TAPSUnifiedReplay:
         stall_overlap = min(1.0, predicted_tool / max(1e-9, self.slo_target))
         urgency = 1.0 if len(self.ready) < self.regions else 0.0
         tool_dom = predicted_tool / max(1e-9, predicted_tool + self.global_llm_service)
+        wait = max(0.0, now - arrival)
+        blocked_guard = 100.0 if wait > max(self._starvation_threshold(), 1.0) else 0.0
         return (
             self.config.admission_domain * expected_reuse
             + self.config.admission_llm * expected_llm_work
@@ -301,7 +310,8 @@ class TAPSUnifiedReplay:
             + self.config.admission_tail * urgency
             - self.config.admission_tool_penalty * tool_dom
             - self.config.admission_mem * self._memory_pressure()
-            - 0.001 * max(0.0, now - arrival)
+            + 0.001 * wait
+            + blocked_guard
             + 1e-6 * int(stable_hash(sid), 16) % 1000
         )
 
@@ -343,14 +353,28 @@ class TAPSUnifiedReplay:
             target = self.regions
         else:
             target = max(1, int(math.ceil(self.config.ready_depth_factor * self.regions)))
+        force_progress = bool(
+            self.backlog
+            and len(self.active) < self.active_limit
+            and (not self.ready or max(0.0, now - min(c[4] for c in self.backlog)) > self._starvation_threshold())
+        )
         while (
             self.backlog
             and len(self.active) < self.active_limit
-            and len(self.ready) < target
-            and (self.policy != "taps_unified" or self._memory_pressure() < self.config.memory_pressure_threshold)
+            and (len(self.ready) < target or force_progress)
         ):
-            if not self._admit_one(now):
+            # Memory pressure is a soft priority signal. If there is no ready work
+            # and capacity is available, admission must eventually proceed so the
+            # simulator cannot park forever with only backlog left.
+            if (
+                self.policy == "taps_unified"
+                and self._memory_pressure() >= self.config.memory_pressure_threshold
+                and not force_progress
+            ):
                 break
+            if not self._admit_one(now, force_first=force_progress and not any(c[4] <= now for c in self.backlog)):
+                break
+            force_progress = False
 
     def _initial_admit(self) -> None:
         self._prepare_backlog()
@@ -397,7 +421,7 @@ class TAPSUnifiedReplay:
         nearest = min(self.free_regions or [home], key=lambda r: abs(r - home))
         hops, bytes_ = self._remote_cost(st, nearest, cached)
         switch = 1.0 if self.last_domain and self.last_domain != st.context_domain_id else 0.0
-        return (
+        score = (
             self.config.w_tail * self._tail_risk(st, now)
             + self.config.w_domain * domain_hit
             + self.config.w_batch * batch
@@ -408,6 +432,11 @@ class TAPSUnifiedReplay:
             - self.config.w_switch * switch
             - self.config.w_mem * self._eviction_penalty(st)
         )
+        if age > self._starvation_threshold():
+            score += 1_000_000.0 + age
+        if now > st.arrival_time + self.slo_target:
+            score += 500_000.0 + (now - st.arrival_time - self.slo_target)
+        return score
 
     def _choose_region(self, st: SessionState) -> int:
         if self.policy in {"taps_domain_v4", "taps_unified"}:
@@ -420,27 +449,36 @@ class TAPSUnifiedReplay:
 
     def _schedule(self, now: float) -> None:
         while self.ready and self.free_regions:
+            candidates = list(self.ready)
+            if self.last_domain and self._consecutive_domain_count >= self.max_consecutive_domain:
+                other_domain = [
+                    pair
+                    for pair in candidates
+                    if self.active[pair[0]].context_domain_id != self.last_domain
+                ]
+                if other_domain:
+                    candidates = other_domain
             if self.policy == "taps_unified":
-                selected = max(self.ready, key=lambda pair: self._score_ready(now, pair[0], pair[1]))
+                selected = max(candidates, key=lambda pair: self._score_ready(now, pair[0], pair[1]))
             elif self.policy == "taps_domain_v4":
                 selected = max(
-                    self.ready,
+                    candidates,
                     key=lambda pair: (
+                        1.0 if now - self.ready_since.get((pair[0], pair[1].event_id), now) > self._starvation_threshold() else 0.0,
+                        1.0 if now > self.active[pair[0]].arrival_time + self.slo_target else 0.0,
                         self._resident_tokens_for_event(self.active[pair[0]], pair[1]) / max(1, pair[1].input_tokens),
                         self._ready_count_in_domain(self.active[pair[0]].context_domain_id, self.active[pair[0]].repo_domain_id),
                         now - self.ready_since.get((pair[0], pair[1].event_id), now),
                     ),
                 )
             else:
-                selected = self.ready[0]
+                selected = candidates[0]
             self.ready.remove(selected)
             sid, ev = selected
             st = self.active[sid]
             region = self._choose_region(st)
             wait = max(0.0, now - self.ready_since.pop((sid, ev.event_id), now))
             self.ready_wait += wait
-            if wait > max(2.0 * self.slo_target, 60.0):
-                self.starved_ready_events += 1
             st.state = "RUNNING_LLM"
             st.current_region = region
             self._push(now, "LLM_START", sid, ev, region)
@@ -577,6 +615,14 @@ class TAPSUnifiedReplay:
             "memory_occupancy_after": memory_after,
         }
         self.schedule_rows.append(row)
+        self._pending_schedule_index[(st.session_id, ev.event_id)] = len(self.schedule_rows) - 1
+
+    def _update_schedule_after_llm_done(self, st: SessionState, ev: Event) -> None:
+        idx = self._pending_schedule_index.pop((st.session_id, ev.event_id), None)
+        if idx is None or idx >= len(self.schedule_rows):
+            return
+        self.schedule_rows[idx]["eviction_count_after"] = self.eviction_count
+        self.schedule_rows[idx]["memory_occupancy_after"] = self.memory_occupancy
 
     def _write_schedule_log(self) -> None:
         if not self.schedule_log_path:
@@ -594,12 +640,24 @@ class TAPSUnifiedReplay:
             "recompute_tokens": sum(int(r.get("recompute_tokens", 0)) for r in self.schedule_rows),
             "local_context_bytes": sum(int(r.get("local_context_bytes", 0)) for r in self.schedule_rows),
             "remote_context_bytes": sum(int(r.get("remote_context_bytes", 0)) for r in self.schedule_rows),
+            "schedule_remote_kv_bytes": sum(
+                float(r.get("remote_context_bytes", 0)) * float(r.get("avg_context_hops", 0.0))
+                for r in self.schedule_rows
+            ),
+            "simulator_remote_kv_bytes": self.remote_kv_bytes,
+            "schedule_match_error": abs(
+                sum(float(r.get("remote_context_bytes", 0)) * float(r.get("avg_context_hops", 0.0)) for r in self.schedule_rows)
+                - self.remote_kv_bytes
+            )
+            / max(1.0, self.remote_kv_bytes),
             "prefetch_bytes": sum(int(r.get("prefetch_bytes", 0)) for r in self.schedule_rows),
             "max_memory_occupancy": max([int(r.get("memory_occupancy_after", 0)) for r in self.schedule_rows] or [0]),
             "eviction_count": self.eviction_count,
         }
         out = Path("data/results") / f"schedule_summary_{self.run_id}.csv"
         write_csv(out, [summary])
+        if self.run_id.startswith("pr4_v10"):
+            write_csv("data/results/schedule_summary_pr4_v10.csv", [summary])
 
     def _account_idle(self, now: float) -> None:
         dt = max(0.0, now - self.last_event_time)
@@ -616,7 +674,18 @@ class TAPSUnifiedReplay:
     def run(self) -> dict[str, Any]:
         self._initial_admit()
         last = 0.0
-        while self.eventq:
+        while self.eventq or self.backlog or self.active or self.ready:
+            if not self.eventq:
+                if self.ready and self.free_regions:
+                    self._schedule(last)
+                    if self.eventq:
+                        continue
+                if self.backlog and len(self.active) < self.active_limit:
+                    next_arrival = min(c[4] for c in self.backlog)
+                    tick = max(last, next_arrival)
+                    self._push(tick, "ADMISSION_TICK", "__admission__")
+                    continue
+                break
             item = heapq.heappop(self.eventq)
             now = item.time
             self._account_idle(now)
@@ -624,11 +693,20 @@ class TAPSUnifiedReplay:
             # Allow poisson/bursty arrivals to enter when clock reaches their arrival.
             self._maybe_admit(now)
             st = self.active.get(item.session_id)
+            if item.kind == "ADMISSION_TICK":
+                self._maybe_admit(now)
+                self._schedule(now)
+                continue
             if item.kind == "SESSION_ARRIVAL" and st is not None:
                 self._enqueue_next(now, st)
             elif item.kind == "LLM_START" and st is not None and item.event is not None and item.region_id is not None:
                 if self.last_domain and self.last_domain != st.context_domain_id:
                     self.domain_switches += 1
+                    self._consecutive_domain_count = 1
+                elif self.last_domain == st.context_domain_id:
+                    self._consecutive_domain_count += 1
+                else:
+                    self._consecutive_domain_count = 1
                 self.last_domain = st.context_domain_id
                 memory_before = self.memory_occupancy
                 eviction_before = self.eviction_count
@@ -650,6 +728,7 @@ class TAPSUnifiedReplay:
                 if item.event is not None:
                     self.domain_hotness[st.context_domain_id] += 1
                     self._insert_cache(st, item.event, now)
+                    self._update_schedule_after_llm_done(st, item.event)
                 if item.region_id is not None:
                     self.free_regions.append(item.region_id)
                     self.free_regions.sort()
@@ -689,6 +768,7 @@ class TAPSUnifiedReplay:
         makespan = max([st.done_time for st in self.done] or [last, 1e-9])
         total_region_time = max(1e-9, makespan * self.regions)
         self.starvation_count = self.starved_ready_events + max(0, self.total_sessions - len(self.done))
+        self.completion_reason = "completed" if len(self.done) == self.total_sessions else "incomplete_sessions"
         domain_queries = self.cache_hit_tokens + self.recompute_tokens
         self._write_schedule_log()
         return {
@@ -719,6 +799,8 @@ class TAPSUnifiedReplay:
             "completed_sessions": len(self.done),
             "admission_count": self.admission_count,
             "starvation_count": self.starvation_count,
+            "completion_reason": self.completion_reason,
+            "max_ready_age": self.max_ready_age,
             "predictor_median_abs_error": self.predictor_median_abs_error,
             "predictor_p95_abs_error": self.predictor_p95_abs_error,
             "slo_target": self.slo_target,

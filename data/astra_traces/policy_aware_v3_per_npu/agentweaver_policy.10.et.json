@@ -1,0 +1,219 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 474235,
+      "id": 1,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "remote context movement",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:remote_context",
+      "npu_id": 10,
+      "size_bytes": 94846976,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1
+      ],
+      "duration_cycles": 94847,
+      "id": 2,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "remote context memory load",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:remote_context_load",
+      "npu_id": 10,
+      "size_bytes": 94846976,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        2
+      ],
+      "duration_cycles": 28983342,
+      "id": 3,
+      "metadata": {
+        "cached_tokens": 1654,
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "input_tokens": 1654,
+        "mapping": "LLM prefill after policy cache",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:policy_prefill",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        3
+      ],
+      "duration_cycles": 1789523491,
+      "id": 4,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm0",
+        "mapping": "LLM decode",
+        "output_tokens": 201,
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm0:policy_decode",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        5
+      ],
+      "duration_cycles": 634798,
+      "id": 6,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "remote context movement",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:remote_context",
+      "npu_id": 10,
+      "size_bytes": 126959616,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        6
+      ],
+      "duration_cycles": 126960,
+      "id": 7,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "remote context memory load",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:remote_context_load",
+      "npu_id": 10,
+      "size_bytes": 126959616,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        7
+      ],
+      "duration_cycles": 29021309,
+      "id": 8,
+      "metadata": {
+        "cached_tokens": 2214,
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "input_tokens": 2215,
+        "mapping": "LLM prefill after policy cache",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:policy_prefill",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        8
+      ],
+      "duration_cycles": 1613544362,
+      "id": 9,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm1",
+        "mapping": "LLM decode",
+        "output_tokens": 181,
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm1:policy_decode",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        10
+      ],
+      "duration_cycles": 699310,
+      "id": 11,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "remote context movement",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:remote_context",
+      "npu_id": 10,
+      "size_bytes": 139862016,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        11
+      ],
+      "duration_cycles": 139862,
+      "id": 12,
+      "metadata": {
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "remote context memory load",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:remote_context_load",
+      "npu_id": 10,
+      "size_bytes": 139862016,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        12
+      ],
+      "duration_cycles": 29059277,
+      "id": 13,
+      "metadata": {
+        "cached_tokens": 2439,
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "input_tokens": 2441,
+        "mapping": "LLM prefill after policy cache",
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:policy_prefill",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        13
+      ],
+      "duration_cycles": 1507352519,
+      "id": 14,
+      "metadata": {
+        "event_id": "astropy__astropy-12907:b0:llm2",
+        "mapping": "LLM decode",
+        "output_tokens": 169,
+        "policy": "taps_admission_v4"
+      },
+      "name": "astropy__astropy-12907:b0:llm2:policy_decode",
+      "npu_id": 10,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 10,
+  "stats": {
+    "communication_nodes": 3,
+    "compute_nodes": 6,
+    "delay_nodes": 0,
+    "memory_nodes": 3,
+    "node_count": 12
+  }
+}

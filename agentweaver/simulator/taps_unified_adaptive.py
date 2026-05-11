@@ -110,6 +110,9 @@ class TAPSAdaptiveReplay(TAPSUnifiedReplay):
         latency_model: LatencyModel,
         profiles: AdaptiveProfiles | None = None,
         seed: int = 121,
+        run_id: str | None = None,
+        config_id: str | None = None,
+        schedule_log_path: str | Path | None = None,
     ) -> None:
         self.profiles = profiles or AdaptiveProfiles.default()
         self.classifier = RegimeClassifier(self.profiles.thresholds)
@@ -126,6 +129,9 @@ class TAPSAdaptiveReplay(TAPSUnifiedReplay):
             latency_model,
             config=self.profiles.balanced,
             seed=seed,
+            run_id=run_id,
+            config_id=config_id,
+            schedule_log_path=schedule_log_path,
         )
         self.policy = ADAPTIVE_POLICY
         self.slo_target = self.config.slo_target or self._historical_slo_percentile(traces, self.profiles.tail_slo_percentile)
@@ -207,17 +213,25 @@ class TAPSAdaptiveReplay(TAPSUnifiedReplay):
         if not self.backlog:
             return
         regime = self._set_regime(now, "admit")
-        if regime == "MEMORY_PRESSURE" and self._memory_pressure() >= self.current_profile.memory_pressure_threshold:
-            return
         target = max(1, int(math.ceil(self.current_profile.ready_depth_factor * self.regions)))
+        force_progress = bool(
+            len(self.active) < self.active_limit
+            and (not self.ready or max(0.0, now - min(c[4] for c in self.backlog)) > self._starvation_threshold())
+        )
         while (
             self.backlog
             and len(self.active) < self.active_limit
-            and len(self.ready) < target
-            and self._memory_pressure() < self.current_profile.memory_pressure_threshold
+            and (len(self.ready) < target or force_progress)
         ):
-            if not self._admit_one(now):
+            if (
+                regime == "MEMORY_PRESSURE"
+                and self._memory_pressure() >= self.current_profile.memory_pressure_threshold
+                and not force_progress
+            ):
                 break
+            if not self._admit_one(now, force_first=force_progress and not any(c[4] <= now for c in self.backlog)):
+                break
+            force_progress = False
 
     def _admit_one(self, now: float, force_first: bool = False) -> bool:
         candidates = [c for c in self.backlog if c[4] <= now or force_first]
@@ -250,15 +264,22 @@ class TAPSAdaptiveReplay(TAPSUnifiedReplay):
 
     def _schedule(self, now: float) -> None:
         while self.ready and self.free_regions:
-            selected = max(self.ready, key=lambda pair: self._score_ready(now, pair[0], pair[1]))
+            candidates = list(self.ready)
+            if self.last_domain and self._consecutive_domain_count >= self.max_consecutive_domain:
+                other_domain = [
+                    pair
+                    for pair in candidates
+                    if self.active[pair[0]].context_domain_id != self.last_domain
+                ]
+                if other_domain:
+                    candidates = other_domain
+            selected = max(candidates, key=lambda pair: self._score_ready(now, pair[0], pair[1]))
             self.ready.remove(selected)
             sid, ev = selected
             st = self.active[sid]
             region = self._choose_region(st)
             wait = max(0.0, now - self.ready_since.pop((sid, ev.event_id), now))
             self.ready_wait += wait
-            if wait > max(2.0 * self.slo_target, 60.0):
-                self.starved_ready_events += 1
             st.state = "RUNNING_LLM"
             st.current_region = region
             self._push(now, "LLM_START", sid, ev, region)

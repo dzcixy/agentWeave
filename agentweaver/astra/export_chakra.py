@@ -43,6 +43,11 @@ class ChakraExporter:
             "estimated_compute_time": 0.0,
             "local_memory_bytes": 0,
             "remote_communication_bytes": 0,
+            "schedule_llm_events": 0,
+            "schedule_cached_tokens": 0,
+            "schedule_local_context_bytes": 0,
+            "schedule_remote_context_bytes": 0,
+            "schedule_match_error": 0.0,
         }
 
     def _add(self, name: str, typ: str, npu: int, *, seconds: float = 0.0, size_bytes: int = 0, deps: list[int] | None = None, metadata: dict[str, Any] | None = None) -> int:
@@ -168,6 +173,11 @@ class ChakraExporter:
         context_domain_id = schedule.get("context_domain_id", ev.shared_prefix_id or ev.prompt_hash or ev.instance_id)
         self.stats["local_memory_bytes"] += local_bytes
         self.stats["remote_communication_bytes"] += remote_bytes
+        if schedule:
+            self.stats["schedule_llm_events"] += 1
+            self.stats["schedule_cached_tokens"] += cached_tokens
+            self.stats["schedule_local_context_bytes"] += local_bytes
+            self.stats["schedule_remote_context_bytes"] += remote_bytes
         last_dep = deps
         if local_bytes > 0:
             local_id = self._add(
@@ -263,6 +273,8 @@ class ChakraExporter:
         for ev in sorted(trace.events, key=lambda e: (e.branch_id, e.step_id, e.timestamp_start or 0.0, e.node_id)):
             if ev.node_type in {"llm", "tool", "verifier"}:
                 self.add_event_policy_aware(ev, schedule.get(ev.event_id, {}), policy)
+        scheduled_remote = sum(int(row.get("remote_context_bytes", 0)) for row in schedule.values()) if schedule else 0
+        self.stats["schedule_match_error"] = abs(float(self.stats["remote_communication_bytes"]) - float(scheduled_remote)) / max(1.0, float(scheduled_remote))
         payload = {
             "format": "agentweaver_chakra_intermediate_json",
             "astra_export_format": "intermediate_json",

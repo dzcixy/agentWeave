@@ -85,10 +85,10 @@ def audit_row(row: dict[str, Any]) -> tuple[bool, list[str]]:
 
 
 def audit_grid(
-    grid_csv: str | Path = "data/results/aligned_policy_grid_pr4_v8.csv",
-    audit_csv: str | Path = "data/results/aligned_policy_grid_audit_pr4_v9.csv",
-    valid_csv: str | Path = "data/results/aligned_policy_grid_valid_pr4_v9.csv",
-    report_md: str | Path = "data/results/aligned_policy_grid_audit_pr4_v9.md",
+    grid_csv: str | Path = "data/results/aligned_policy_grid_pr4_v10.csv",
+    audit_csv: str | Path = "data/results/aligned_policy_grid_audit_pr4_v10.csv",
+    valid_csv: str | Path = "data/results/aligned_policy_grid_valid_pr4_v10.csv",
+    report_md: str | Path = "data/results/aligned_policy_grid_audit_pr4_v10.md",
 ) -> dict[str, Any]:
     rows = _read_csv(grid_csv)
     audit_rows: list[dict[str, Any]] = []
@@ -126,7 +126,7 @@ def audit_grid(
     write_csv(valid_csv, valid_rows)
 
     lines = [
-        "# Aligned Policy Grid Audit PR4-v9",
+        "# Aligned Policy Grid Audit PR4-v10",
         "",
         f"INPUT_GRID = {grid_csv}",
         f"TOTAL_ROWS = {len(rows)}",
@@ -175,10 +175,10 @@ def audit_grid(
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--grid", default="data/results/aligned_policy_grid_pr4_v8.csv")
-    ap.add_argument("--audit-out", default="data/results/aligned_policy_grid_audit_pr4_v9.csv")
-    ap.add_argument("--valid-out", default="data/results/aligned_policy_grid_valid_pr4_v9.csv")
-    ap.add_argument("--report", default="data/results/aligned_policy_grid_audit_pr4_v9.md")
+    ap.add_argument("--grid", default="data/results/aligned_policy_grid_pr4_v10.csv")
+    ap.add_argument("--audit-out", default="data/results/aligned_policy_grid_audit_pr4_v10.csv")
+    ap.add_argument("--valid-out", default="data/results/aligned_policy_grid_valid_pr4_v10.csv")
+    ap.add_argument("--report", default="data/results/aligned_policy_grid_audit_pr4_v10.md")
     args = ap.parse_args()
     summary = audit_grid(args.grid, args.audit_out, args.valid_out, args.report)
     print(summary)

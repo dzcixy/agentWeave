@@ -1,0 +1,893 @@
+trace_source,repo_family,branch_id,step_index,event_id,command,tool_type,tool_class,safety,safety_reason,is_safe,prev_tool_class,previous_returncode,observation_length,error_count,mentioned_file_not_found,mentioned_test_fail,mentioned_import_error,tool_latency
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,1,astropy__astropy-12907:b0:tool0,"python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,START,0,344,0,false,false,false,0.2742743492126465
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,3,astropy__astropy-12907:b0:tool1,"pip install erfa && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,28,1,false,false,false,1.4176177978515625
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,5,astropy__astropy-12907:b0:tool2,"pip install pyerfa && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,565,2,false,false,false,6.868169546127319
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,7,astropy__astropy-12907:b0:tool3,"cd /testbed/astropy && python setup.py build_ext --inplace && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bsetup\.py\s+build\b|\bbuild_ext\b|\bmake\b|\bconfigure\b,false,python_inspect,1,26,3,false,false,false,0.19844937324523926
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,9,astropy__astropy-12907:b0:tool4,"find /testbed -name setup.py && cd $(dirname $(find /testbed -name setup.py)) && python setup.py build_ext --inplace && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,list_find,UNSAFE_SIDE_EFFECT,matched:\bsetup\.py\s+build\b|\bbuild_ext\b|\bmake\b|\bconfigure\b,false,python_inspect,2,66,4,false,false,false,0.2992403507232666
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,11,astropy__astropy-12907:b0:tool5,"pip install astropy --upgrade && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,list_find,1,657,5,false,false,false,60.03304433822632
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,13,astropy__astropy-12907:b0:tool6,"pip install astropy --upgrade --timeout 120 && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,-1,872,6,false,false,false,34.9259090423584
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,15,astropy__astropy-12907:b0:tool7,"cd /testbed/astropy && python setup.py build_ext --inplace && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bsetup\.py\s+build\b|\bbuild_ext\b|\bmake\b|\bconfigure\b,false,python_inspect,1,26,7,false,false,false,0.19338107109069824
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,17,astropy__astropy-12907:b0:tool8,"find /testbed -name setup.py && cd $(dirname $(find /testbed -name setup.py)) && python setup.py build_ext --inplace && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,list_find,UNSAFE_SIDE_EFFECT,matched:\bsetup\.py\s+build\b|\bbuild_ext\b|\bmake\b|\bconfigure\b,false,python_inspect,2,66,8,false,false,false,0.2968461513519287
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_0.traj.json,astropy,b0,19,astropy__astropy-12907:b0:tool9,"pip install astropy --upgrade && python -c ""from astropy.modeling import models as m; from astropy.modeling.separable import separability_matrix; print(separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))); print(separability_matrix(m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))))""",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,list_find,1,549,9,false,false,false,1.3239903450012207
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,1,astropy__astropy-12907:b1:tool0,"grep -r ""def separability_matrix"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,14,0,false,false,false,0.25761938095092773
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,3,astropy__astropy-12907:b1:tool1,nano ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.17438554763793945
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,5,astropy__astropy-12907:b1:tool2,vim ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.17327356338500977
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,7,astropy__astropy-12907:b1:tool3,cat ./astropy/modeling/separable.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2411,2,false,false,false,0.17165541648864746
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,9,astropy__astropy-12907:b1:tool4,"sed -i 's|elif isinstance(transform, CompoundModel):|elif isinstance(transform, CompoundModel):\\n    return _separable(transform)|' ./astropy/modeling/separable.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,0,15,2,false,false,false,0.17894768714904785
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,11,astropy__astropy-12907:b1:tool5,git diff -- ./astropy/modeling/separable.py > patch.txt,file_write,git_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,0,15,2,false,false,false,0.18763184547424316
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,13,astropy__astropy-12907:b1:tool6,cat patch.txt,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,git_read,0,180,2,false,false,false,0.1706383228302002
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_1.traj.json,astropy,b1,15,astropy__astropy-12907:b1:tool7,echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt,shell_other,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,0,2,false,false,false,0.0
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,1,astropy__astropy-12907:b2:tool0,"grep -r ""def separability_matrix"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,14,0,false,false,false,0.2562260627746582
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,3,astropy__astropy-12907:b2:tool1,nano ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.1792147159576416
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,5,astropy__astropy-12907:b2:tool2,vim ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.18051481246948242
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,7,astropy__astropy-12907:b2:tool3,less ./astropy/modeling/separable.py,shell_other,shell_other,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2411,2,false,false,false,0.1734609603881836
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,9,astropy__astropy-12907:b2:tool4,nano ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,0,11,2,false,false,false,0.19256210327148438
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,11,astropy__astropy-12907:b2:tool5,vim ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,3,false,false,false,0.187485933303833
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,13,astropy__astropy-12907:b2:tool6,less ./astropy/modeling/separable.py,shell_other,shell_other,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2411,4,false,false,false,0.18164539337158203
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,15,astropy__astropy-12907:b2:tool7,nano ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,0,11,4,false,false,false,0.19180870056152344
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,17,astropy__astropy-12907:b2:tool8,vim ./astropy/modeling/separable.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,5,false,false,false,0.1723768711090088
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_2.traj.json,astropy,b2,19,astropy__astropy-12907:b2:tool9,less ./astropy/modeling/separable.py,shell_other,shell_other,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2411,6,false,false,false,0.17553400993347168
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,1,astropy__astropy-12907:b3:tool0,touch reproduce_issue.py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,START,0,15,0,false,false,false,0.17786669731140137
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,3,astropy__astropy-12907:b3:tool1,"echo ""from astropy.modeling import models as m"" >> reproduce_issue.py
+echo ""from astropy.modeling.separable import separability_matrix"" >> reproduce_issue.py
+echo """" >> reproduce_issue.py
+echo ""cm = m.Linear1D(10) & m.Linear1D(5)"" >> reproduce_issue.py
+echo ""print('Separability matrix for nested CompoundModel:', separability_matrix(m.Pix2Sky_TAN() & cm))"" >> reproduce_issue.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,0,15,0,false,false,false,0.1771221160888672
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,5,astropy__astropy-12907:b3:tool2,python reproduce_issue.py,shell_other,python_inspect,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,0,360,0,false,false,false,0.2615242004394531
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,7,astropy__astropy-12907:b3:tool3,pip install erfa,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,28,1,false,false,false,1.689943552017212
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,9,astropy__astropy-12907:b3:tool4,pip install erfa-py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,shell_other,1,32,2,false,false,false,1.1331276893615723
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,11,astropy__astropy-12907:b3:tool5,"wget https://github.com/liberfa/erfa/archive/refs/tags/v1.8.0.tar.gz
+tar -xzf v1.8.0.tar.gz
+cd erfa-1.8.0
+./configure
+make
+sudo make install
+cd ..
+rm -rf erfa-1.8.0 v1.8.0.tar.gz",build,shell_other,UNSAFE_SIDE_EFFECT,matched:\bsetup\.py\s+build\b|\bbuild_ext\b|\bmake\b|\bconfigure\b,false,shell_other,1,416,3,false,false,false,1.5038681030273438
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,13,astropy__astropy-12907:b3:tool6,"sudo apt-get update
+sudo apt-get install liberfa-dev",shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,0,23,3,false,false,false,0.16753101348876953
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,15,astropy__astropy-12907:b3:tool7,pip install erfa,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,shell_other,127,28,4,false,false,false,0.802725076675415
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,17,astropy__astropy-12907:b3:tool8,conda install -c conda-forge erfa,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,196,5,false,false,false,60.06302738189697
+data/raw_trajs/mini_swe_lite10_r4_timed/astropy__astropy-12907/rollout_3.traj.json,astropy,b3,19,astropy__astropy-12907:b3:tool9,pip install erfa --index-url=https://pypi.org/simple,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,shell_other,-1,28,6,false,false,false,0.8095722198486328
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,1,django__django-11815:b0:tool0,"grep -r ""default="" *.py | grep -E ""Enum\(|CharField""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,15,0,false,false,false,0.1785876750946045
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,3,django__django-11815:b0:tool1,"grep -r ""models.py"" *.py | grep -E ""Enum|CharField""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,1,false,false,false,0.17742109298706055
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,5,django__django-11815:b0:tool2,"echo ""from enum import Enum
+from django.db import models
+
+class Status(Enum):
+    GOOD = 'Good'
+    BAD = 'Bad'
+
+class Item(models.Model):
+    status = models.CharField(default=Status.GOOD.value, max_length=128)"" > models.py
+
+python manage.py makemigrations > migration_output.txt
+cat migration_output.txt",build,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,grep_search,1,23,2,false,false,false,0.20926237106323242
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,7,django__django-11815:b0:tool3,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,958,2,false,false,false,0.1840038299560547
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,9,django__django-11815:b0:tool4,"echo ""from enum import Enum
+from django.db import models
+
+class Status(Enum):
+    GOOD = 'Good'
+    BAD = 'Bad'
+
+class Item(models.Model):
+    status = models.CharField(default=Status.GOOD.value, max_length=128)"" > models.py
+
+python manage.py makemigrations > migration_output.txt
+cat migration_output.txt",build,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,23,2,false,false,false,0.1939539909362793
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,11,django__django-11815:b0:tool5,cd django && python manage.py makemigrations > ../migration_output.txt && cat ../migration_output.txt,build,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,0,25,2,false,false,false,0.19393253326416016
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,13,django__django-11815:b0:tool6,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,958,3,false,false,false,0.17717528343200684
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,15,django__django-11815:b0:tool7,"echo ""from enum import Enum
+from django.db import models
+
+class Status(Enum):
+    GOOD = 'Good'
+    BAD = 'Bad'
+
+class Item(models.Model):
+    status = models.CharField(default=Status.GOOD.value, max_length=128)"" > models.py
+
+python manage.py makemigrations > migration_output.txt
+cat migration_output.txt",build,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,23,3,false,false,false,0.19568347930908203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,17,django__django-11815:b0:tool8,cd django && python manage.py makemigrations > ../migration_output.txt && cat ../migration_output.txt,build,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,0,25,3,false,false,false,0.1942145824432373
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_0.traj.json,django,b0,19,django__django-11815:b0:tool9,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,958,4,false,false,false,0.18259716033935547
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,1,django__django-11815:b1:tool0,"grep -r ""Item"" *.py | grep ""migrations""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,15,0,false,false,false,0.19770026206970215
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,3,django__django-11815:b1:tool1,"grep -r ""Status"" *.py",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,12,1,false,false,false,0.17990350723266602
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,5,django__django-11815:b1:tool2,"echo ""from enum import Enum
+from django.utils.translation import gettext_lazy as _
+from django.db import models
+
+class Status(Enum):
+    GOOD = _('Good')
+    BAD = _('Bad')
+
+class Item(models.Model):
+    status = models.CharField(default=Status.GOOD, max_length=128)"" > test_script.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,grep_search,0,15,1,false,false,false,0.18500471115112305
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,7,django__django-11815:b1:tool3,python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,shell_other,0,23,1,false,false,false,0.2015078067779541
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,9,django__django-11815:b1:tool4,"cd ..
+python manage.py makemigrations",build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,21,2,false,false,false,0.19305682182312012
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,11,django__django-11815:b1:tool5,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,931,3,false,false,false,0.17500662803649902
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,13,django__django-11815:b1:tool6,"python -m venv venv
+source venv/bin/activate
+pip install -e .",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,list_find,0,890,3,false,false,false,14.657510757446289
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,15,django__django-11815:b1:tool7,python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,0,23,3,false,false,false,0.1958913803100586
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_1.traj.json,django,b1,17,django__django-11815:b1:tool8,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,960,4,false,false,false,0.18632030487060547
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,1,django__django-11815:b2:tool0,"grep -r ""default=Status("" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,15,0,false,false,false,0.3541269302368164
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,3,django__django-11815:b2:tool1,"grep -r ""default=Status"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,1,false,false,false,0.3356468677520752
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,5,django__django-11815:b2:tool2,"grep -r ""Status\."" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,176,2,false,false,false,0.33498167991638184
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,7,django__django-11815:b2:tool3,"find . -name ""*.py"" -exec sed -i 's/default=Status\(.*\)/default=Status.\1/g' {} +",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,2,false,false,false,0.5345256328582764
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,9,django__django-11815:b2:tool4,"grep -r ""default=Status\."" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,15,2,false,false,false,0.3388381004333496
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,11,django__django-11815:b2:tool5,git diff --stat,shell_other,git_read,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,3,false,false,false,0.771648645401001
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,13,django__django-11815:b2:tool6,echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt,shell_other,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,git_read,0,18,3,false,false,false,0.18085837364196777
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,15,django__django-11815:b2:tool7,git diff > patch.txt,file_write,git_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,1,15,4,false,false,false,0.17867207527160645
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,17,django__django-11815:b2:tool8,cat patch.txt,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,git_read,0,15,4,false,false,false,0.17634844779968262
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_2.traj.json,django,b2,19,django__django-11815:b2:tool9,echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt,shell_other,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,0,4,false,false,false,0.0
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,1,django__django-11815:b3:tool0,"grep -r ""CharField"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,2509,0,false,false,false,0.35705137252807617
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,3,django__django-11815:b3:tool1,"grep -r ""makemigrations"" .",build,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,2534,0,false,false,false,0.30984926223754883
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,5,django__django-11815:b3:tool2,"grep -r ""default="" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,2417,0,false,false,false,0.31242918968200684
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,7,django__django-11815:b3:tool3,"grep -r ""default=Enum\["" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,15,0,false,false,false,0.32700490951538086
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,9,django__django-11815:b3:tool4,"grep -r ""default=Enum\["" /path/to/project",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,12,1,false,false,false,0.18616890907287598
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,11,django__django-11815:b3:tool5,"grep -r ""default=Enum\["" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,2,15,2,false,false,false,0.3556981086730957
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,13,django__django-11815:b3:tool6,"grep -r ""default="" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,2417,3,false,false,false,0.3064463138580322
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,15,django__django-11815:b3:tool7,"grep -r ""default="" /path/to/project",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,12,3,false,false,false,0.1849970817565918
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,17,django__django-11815:b3:tool8,"grep -r ""default="" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,2,2417,4,false,false,false,0.3108186721801758
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11815/rollout_3.traj.json,django,b3,19,django__django-11815:b3:tool9,"grep -r ""default="" /path/to/project",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,12,4,false,false,false,0.18545293807983398
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,1,django__django-11848:b0:tool0,"grep -r ""def parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,23,0,false,false,false,0.4611537456512451
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,3,django__django-11848:b0:tool1,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.2521641254425049
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,5,django__django-11848:b0:tool2,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.2501189708709717
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,7,django__django-11848:b0:tool3,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,2,false,false,false,0.26477527618408203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,9,django__django-11848:b0:tool4,"grep -r ""def parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,23,2,false,false,false,0.4461376667022705
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,11,django__django-11848:b0:tool5,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,2,false,false,false,0.26338672637939453
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,13,django__django-11848:b0:tool6,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,3,false,false,false,0.23671412467956543
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,15,django__django-11848:b0:tool7,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,4,false,false,false,0.25392818450927734
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,17,django__django-11848:b0:tool8,"grep -r ""def parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,23,4,false,false,false,0.4064812660217285
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_0.traj.json,django,b0,19,django__django-11848:b0:tool9,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,4,false,false,false,0.24701690673828125
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,1,django__django-11848:b1:tool0,"grep -r ""def parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,23,0,false,false,false,0.4013535976409912
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,3,django__django-11848:b1:tool1,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.2509288787841797
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,5,django__django-11848:b1:tool2,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.23380684852600098
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,7,django__django-11848:b1:tool3,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,2,false,false,false,0.2432255744934082
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,9,django__django-11848:b1:tool4,"sed -i 's/\(\d{2}\)-\(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) \(20\d{2}\)/\1-\2-\3/g' django/utils/http.py
+sed -i 's/\(\d{2}\)-\(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) \(19\d{2}\)/\1-\2-\3/g' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,0,15,2,false,false,false,0.25356554985046387
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,11,django__django-11848:b1:tool5,pytest testbed/,pytest,test,UNSAFE_SIDE_EFFECT,matched:\bpytest\b|\btox\b|\bunittest\b|\bnox\b,false,file_read,0,11,2,false,false,false,0.23649859428405762
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,13,django__django-11848:b1:tool6,pip install pytest,pytest,test,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,test,127,416,3,false,false,false,4.843150854110718
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,15,django__django-11848:b1:tool7,pytest testbed/,pytest,test,UNSAFE_SIDE_EFFECT,matched:\bpytest\b|\btox\b|\bunittest\b|\bnox\b,false,test,0,74,3,false,false,false,0.47539734840393066
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,17,django__django-11848:b1:tool8,"mkdir testbed
+touch testbed/test_parse_http_date.py
+nano testbed/test_parse_http_date.py",shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mkdir\s,false,test,4,11,4,false,false,false,0.25066661834716797
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_1.traj.json,django,b1,19,django__django-11848:b1:tool9,vim testbed/test_parse_http_date.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,5,false,false,false,0.24727654457092285
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,1,django__django-11848:b2:tool0,"grep -r ""parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,375,0,false,false,false,0.4517958164215088
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,3,django__django-11848:b2:tool1,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.2436833381652832
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,5,django__django-11848:b2:tool2,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.2445995807647705
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,7,django__django-11848:b2:tool3,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,2,false,false,false,0.2361466884613037
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,9,django__django-11848:b2:tool4,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,2,false,false,false,0.2554757595062256
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,11,django__django-11848:b2:tool5,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,3,false,false,false,0.24949407577514648
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,13,django__django-11848:b2:tool6,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,4,false,false,false,0.2399606704711914
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,15,django__django-11848:b2:tool7,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,4,false,false,false,0.25263452529907227
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,17,django__django-11848:b2:tool8,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,5,false,false,false,0.2503082752227783
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_2.traj.json,django,b2,19,django__django-11848:b2:tool9,cat django/utils/http.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2577,6,false,false,false,0.2498795986175537
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,1,django__django-11848:b3:tool0,"find . -name ""http.py"" | xargs grep -Hn ""parse_http_date""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,117,0,false,false,false,0.33987879753112793
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,3,django__django-11848:b3:tool1,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.2333371639251709
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,5,django__django-11848:b3:tool2,vim django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.24156498908996582
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,7,django__django-11848:b3:tool3,sed -i 's/\(if date >= 70\)/if date >= (datetime.datetime.now().year % 100) + 70/' django/utils/http.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,127,15,2,false,false,false,0.2621450424194336
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,9,django__django-11848:b3:tool4,"python -c ""import datetime; print(datetime.datetime.strptime('Sun, 06 Nov 1994 08:49:37 GMT', '%a, %d %b %Y %H:%M:%S GMT'))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,file_read,0,19,2,false,false,false,0.28010058403015137
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,11,django__django-11848:b3:tool5,git diff -- django/utils/http.py > patch.txt,file_write,git_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,python_inspect,0,15,2,false,false,false,0.5181341171264648
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,13,django__django-11848:b3:tool6,cat patch.txt,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,git_read,0,15,2,false,false,false,0.23802423477172852
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11848/rollout_3.traj.json,django,b3,15,django__django-11848:b3:tool7,echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt,shell_other,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,0,2,false,false,false,0.0
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,1,django__django-11964:b0:tool0,"sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*FIRST_CHOICE = ""first"".*$/    FIRST_CHOICE = ""first"", _(""The first choice, it is"")/' testbed/models.py
+sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*SECOND_CHOICE = ""second"".*$/    SECOND_CHOICE = ""second"", _(""The second choice, it is"")/' testbed/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,133,0,false,false,false,0.26924991607666016
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,3,django__django-11964:b0:tool1,ls -la testbed/models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,15,1,false,false,false,0.25444531440734863
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,5,django__django-11964:b0:tool2,cd /path/to/correct/directory && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,21,2,false,false,false,0.2603302001953125
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,7,django__django-11964:b0:tool3,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,901,3,false,false,false,0.2691361904144287
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,9,django__django-11964:b0:tool4,"cd tests && sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*FIRST_CHOICE = ""first"".*$/    FIRST_CHOICE = ""first"", _(""The first choice, it is"")/' models.py && sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*SECOND_CHOICE = ""second"".*$/    SECOND_CHOICE = ""second"", _(""The second choice, it is"")/' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,64,3,false,false,false,0.21570277214050293
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,11,django__django-11964:b0:tool5,ls -la models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,13,4,false,false,false,0.2237699031829834
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,13,django__django-11964:b0:tool6,cd /path/to/correct/directory && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,21,5,false,false,false,0.21976017951965332
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,15,django__django-11964:b0:tool7,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,901,6,false,false,false,0.22803783416748047
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,17,django__django-11964:b0:tool8,"cd tests && sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*FIRST_CHOICE = ""first"".*$/    FIRST_CHOICE = ""first"", _(""The first choice, it is"")/' models.py && sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*SECOND_CHOICE = ""second"".*$/    SECOND_CHOICE = ""second"", _(""The second choice, it is"")/' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,64,6,false,false,false,0.23694825172424316
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_0.traj.json,django,b0,19,django__django-11964:b0:tool9,ls -la models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,13,7,false,false,false,0.21843981742858887
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,1,django__django-11964:b1:tool0,"sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*$/    def __str__(self):\\n        return self.value/' testbed/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,55,0,false,false,false,0.2534003257751465
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,3,django__django-11964:b1:tool1,ls -la testbed/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,14,1,false,false,false,0.23602867126464844
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,5,django__django-11964:b1:tool2,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,901,2,false,false,false,0.25562047958374023
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,7,django__django-11964:b1:tool3,"sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*$/    def __str__(self):\\n        return self.value/' tests/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,54,2,false,false,false,0.2537271976470947
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,9,django__django-11964:b1:tool4,cat tests/models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,11,3,false,false,false,0.28471803665161133
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,11,django__django-11964:b1:tool5,"touch tests/models.py && echo ""from django.db import models"" >> tests/models.py && echo ""from django.utils.translation import gettext_lazy as _"" >> tests/models.py && echo """" >> tests/models.py && echo ""class MyChoice(models.TextChoices':"" >> tests/models.py && echo ""    FIRST_CHOICE = \""first\"", _(\""The first choice, it is\"")"" >> tests/models.py && echo ""    SECOND_CHOICE = \""second\"", _(\""The second choice, it is\"")"" >> tests/models.py && echo """" >> tests/models.py && echo ""class MyObject(models.Model':"" >> tests/models.py && echo ""    my_str_value = models.CharField(max_length=10, choices=MyChoice.choices)"" >> tests/models.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,file_read,1,15,4,false,false,false,0.25147032737731934
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,13,django__django-11964:b1:tool6,"sed -i '' '/class MyChoice(models.TextChoices):/,/^$/ s/^.*$/    def __str__(self):\\n        return self.value/' tests/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,0,39,4,false,false,false,0.2676877975463867
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,15,django__django-11964:b1:tool7,nano tests/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,2,11,5,false,false,false,0.25098490715026855
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,17,django__django-11964:b1:tool8,apt-get update && apt-get install -y nano && nano tests/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,1641,6,false,false,false,13.79404902458191
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_1.traj.json,django,b1,19,django__django-11964:b1:tool9,nano tests/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,632,7,false,false,false,1.6615867614746094
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,1,django__django-11964:b2:tool0,sed -i 's/return cls.value/return cls.label/' testbed/models.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,15,0,false,false,false,0.2756819725036621
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,3,django__django-11964:b2:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,901,1,false,false,false,0.2488548755645752
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,5,django__django-11964:b2:tool2,sed -i 's/return cls.value/return cls.label/' tests/pkg/models.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,15,1,false,false,false,0.24196982383728027
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,7,django__django-11964:b2:tool3,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,5331,2,false,false,false,0.25339555740356445
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,9,django__django-11964:b2:tool4,sed -i 's/return cls.value/return cls.label/' tests/pkg/models.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,15,2,false,false,false,0.24672293663024902
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,11,django__django-11964:b2:tool5,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,5331,3,false,false,false,0.24939465522766113
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,13,django__django-11964:b2:tool6,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,5331,3,false,false,false,0.2526862621307373
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,15,django__django-11964:b2:tool7,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,5331,3,false,false,false,0.2536451816558838
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,17,django__django-11964:b2:tool8,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,5331,3,false,false,false,0.2422325611114502
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_2.traj.json,django,b2,19,django__django-11964:b2:tool9,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,5331,3,false,false,false,0.2565031051635742
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,1,django__django-11964:b3:tool0,"sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' testing/pkg/models.py
+sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' testing/pkg/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,97,0,false,false,false,0.2425708770751953
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,3,django__django-11964:b3:tool1,"sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' testbed/models.py
+sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' testbed/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,97,1,false,false,false,0.24588847160339355
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,5,django__django-11964:b3:tool2,"cd testbed && sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' models.py && sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,16,2,false,false,false,0.21667003631591797
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,7,django__django-11964:b3:tool3,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,901,3,false,false,false,0.24076247215270996
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,9,django__django-11964:b3:tool4,"cd tests && sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' models.py && sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,46,3,false,false,false,0.24155926704406738
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,11,django__django-11964:b3:tool5,"cd tests && sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' pkg/models.py && sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' pkg/models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,47,4,false,false,false,0.262037992477417
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,13,django__django-11964:b3:tool6,"cd tests/pkg && sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' models.py && sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,16,5,false,false,false,0.26859545707702637
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,15,django__django-11964:b3:tool7,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,5331,6,false,false,false,0.25525641441345215
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,17,django__django-11964:b3:tool8,"cd tests/pkg && sed -i '' 's/FIRST_CHOICE = ""first""/FIRST_CHOICE = ""first"", ""First Choice""/g' models.py && sed -i '' 's/SECOND_CHOICE = ""second""/SECOND_CHOICE = ""second"", ""Second Choice""/g' models.py",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,16,6,false,false,false,0.26826047897338867
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11964/rollout_3.traj.json,django,b3,19,django__django-11964:b3:tool9,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,5331,7,false,false,false,0.2279195785522461
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,1,django__django-11999:b0:tool0,ls -la models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,13,0,false,false,false,0.17705154418945312
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,3,django__django-11999:b0:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,901,1,false,false,false,0.18229198455810547
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,5,django__django-11999:b0:tool2,cd django && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,630,1,false,false,false,0.17580199241638184
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,7,django__django-11999:b0:tool3,cd core && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,1,false,false,false,0.16924238204956055
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,9,django__django-11999:b0:tool4,cd contrib && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,15,2,false,false,false,0.18145227432250977
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,11,django__django-11999:b0:tool5,cd tests && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,5331,3,false,false,false,0.17962431907653809
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,13,django__django-11999:b0:tool6,cd model_tests && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,16,3,false,false,false,0.17607355117797852
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,15,django__django-11999:b0:tool7,cd apps && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,15,4,false,false,false,0.18314242362976074
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,17,django__django-11999:b0:tool8,cd tests/models && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,5,false,false,false,0.1789686679840088
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_0.traj.json,django,b0,19,django__django-11999:b0:tool9,cd .. && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,777,6,false,false,false,0.18317604064941406
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,1,django__django-11999:b1:tool0,"grep -r ""def get_"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,2461,0,false,false,false,0.3538954257965088
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,3,django__django-11999:b1:tool1,"git log -p django/db/models/base.py | grep -i ""get_field_display"" -A 20",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,2318,0,false,false,false,0.4698772430419922
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,5,django__django-11999:b1:tool2,git checkout HEAD^ -- django/db/models/base.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)git\s+(commit|checkout|reset|merge|rebase|push|pull|apply|clean)\b,false,grep_search,0,15,0,false,false,false,0.19022130966186523
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,7,django__django-11999:b1:tool3,"echo ""from django.db import models\n\nclass FooBar(models.Model):\n    foo_bar = models.CharField(_('foo'), choices=[(1, 'foo'), (2, 'bar')])\n    def __str__(self):\n        return self.get_foo_bar_display()\n    def get_foo_bar_display(self):\n        return 'something'"" > test_model.py && python manage.py shell -c ""from test_model import FooBar; print(FooBar.objects.create(foo_bar=1).__str__())""",file_write,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,0,23,0,false,false,false,0.19952917098999023
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,9,django__django-11999:b1:tool4,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,930,1,false,false,false,0.18003559112548828
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,11,django__django-11999:b1:tool5,"cd tests && echo ""from django.test import TestCase\nfrom ..test_model import FooBar\n\nclass TestFooBar(TestCase):\n    def test_get_field_display(self):\n        instance = FooBar.objects.create(foo_bar=1)\n        self.assertEqual(instance.get_foo_bar_display(), 'something')"" > test_foobar.py && python manage.py test",file_write,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,24,1,false,false,false,0.19437098503112793
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,13,django__django-11999:b1:tool6,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,5418,2,false,false,false,0.18537616729736328
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,15,django__django-11999:b1:tool7,"echo ""from django.test import TestCase\nfrom ..test_model import FooBar\n\nclass TestFooBar(TestCase):\n    def test_get_field_display(self):\n        instance = FooBar.objects.create(foo_bar=1)\n        self.assertEqual(instance.get_foo_bar_display(), 'something')"" > tests/test_foobar.py && python tests/runtests.py",file_write,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,100,2,false,false,false,0.2150270938873291
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,17,django__django-11999:b1:tool8,source venv/bin/activate && python tests/runtests.py,shell_other,python_inspect,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,17,3,false,false,false,0.1839430332183838
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_1.traj.json,django,b1,19,django__django-11999:b1:tool9,virtualenv venv && source venv/bin/activate && pip install -r requirements.txt && python tests/runtests.py,shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,12,4,false,false,false,0.1832888126373291
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,1,django__django-11999:b2:tool0,"grep -r ""get_FIELD_display"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,79,0,false,false,false,0.35058045387268066
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,3,django__django-11999:b2:tool1,touch testbed/custom_widgets.py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,grep_search,0,16,0,false,false,false,0.1719341278076172
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,5,django__django-11999:b2:tool2,mkdir testbed && touch testbed/custom_widgets.py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,shell_other,1,15,1,false,false,false,0.18170642852783203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,7,django__django-11999:b2:tool3,"echo ""from django import forms
+
+class CustomDisplayWidget(forms.Widget):
+    def render(self, name, value, attrs=None):
+        if value == 1:
+            return forms.TextInput().render(name, 'foo', attrs)
+        elif value == 2:
+            return forms.TextInput().render(name, 'bar', attrs)
+        else:
+            return forms.TextInput().render(name, '', attrs)"" > testbed/custom_widgets.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,0,15,1,false,false,false,0.17497658729553223
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,9,django__django-11999:b2:tool4,"sed -i '/def __str__/a\    foo_bar_widget = CustomDisplayWidget()' testbed/models.py
+sed -i '/def __str__/a\    class Meta:\n        widgets = {\n            \'foo_bar\': foo_bar_widget,\n        }' testbed/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,0,49,1,false,false,false,0.18770051002502441
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,11,django__django-11999:b2:tool5,touch testbed/models.py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,file_read,2,15,2,false,false,false,0.17638826370239258
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,13,django__django-11999:b2:tool6,"echo ""from django.db import models
+from .custom_widgets import CustomDisplayWidget
+
+class FooBar(models.Model):
+    foo_bar = models.IntegerField(choices=[(1, 'foo'), (2, 'bar')])
+    
+    class Meta:
+        widgets = {
+            'foo_bar': CustomDisplayWidget(),
+        }
+    
+    def __str__(self):
+        return self.foo_bar.widget.render('foo_bar', self.foo_bar.value())[0]"" > testbed/models.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,0,15,2,false,false,false,0.1753833293914795
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,15,django__django-11999:b2:tool7,touch testbed/test_custom_widget.py,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,shell_other,0,15,2,false,false,false,0.1784508228302002
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,17,django__django-11999:b2:tool8,"echo ""import unittest
+from .models import FooBar
+
+class TestCustomWidget(unittest.TestCase):
+    def test_custom_widget_rendering(self):
+        foo_bar_instance = FooBar(foo_bar=1)
+        self.assertEqual(foo_bar_instance.__str__(), 'foo')
+        
+        foo_bar_instance = FooBar(foo_bar=2)
+        self.assertEqual(foo_bar_instance.__str__(), 'bar')
+
+if __name__ == '__main__':
+    unittest.main()"" > testbed/test_custom_widget.py",pytest,test,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,0,15,2,false,false,false,0.18960809707641602
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_2.traj.json,django,b2,19,django__django-11999:b2:tool9,pip install -q unittest,pytest,test,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,test,0,26,2,false,false,false,1.2118945121765137
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,1,django__django-11999:b3:tool0,"grep -r ""Breaking changes"" /path/to/django/docs/releases/2.2.txt",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,20,0,false,false,false,0.17830395698547363
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,3,django__django-11999:b3:tool1,"find /path/to/django/docs/releases -name ""*2.2*.txt""",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,2,15,1,false,false,false,0.1802959442138672
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,5,django__django-11999:b3:tool2,"find /path/to/django/docs -name ""*2.2*.txt""",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,14,2,false,false,false,0.18472886085510254
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,7,django__django-11999:b3:tool3,"curl -s https://docs.djangoproject.com/en/2.2/releases/2.2/ | grep ""Breaking changes""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,15,3,false,false,false,1.3352060317993164
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,9,django__django-11999:b3:tool4,"grep -r ""def get_"" /path/to/django/db/models/fields.py | grep ""2\.2""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,18,4,false,false,false,0.17890501022338867
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,11,django__django-11999:b3:tool5,"curl -s https://github.com/django/django/blob/main/django/db/models/fields.py | grep ""def get_""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,5,false,false,false,1.3164303302764893
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,13,django__django-11999:b3:tool6,"grep -r ""class FooBar"" /path/to/testbed/models.py",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,6,false,false,false,0.1881418228149414
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,15,django__django-11999:b3:tool7,"find /path/to/testbed -name ""*.py""",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,2,13,7,false,false,false,0.18212246894836426
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,17,django__django-11999:b3:tool8,"find /path/to/project -name ""*.py""",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,12,8,false,false,false,0.17149138450622559
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-11999/rollout_3.traj.json,django,b3,19,django__django-11999:b3:tool9,"curl -s https://github.com/username/repository/blob/main/models.py | grep ""class FooBar""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,15,9,false,false,false,1.2769598960876465
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,1,django__django-12125:b0:tool0,python manage.py makemigrations > migrations_output.txt,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,START,0,23,0,false,false,false,0.2717466354370117
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,3,django__django-12125:b0:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,930,1,false,false,false,0.2452857494354248
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,5,django__django-12125:b0:tool2,cd /testbed/django && python manage.py makemigrations > migrations_output.txt,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,25,1,false,false,false,0.26566100120544434
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,7,django__django-12125:b0:tool3,ls -la /testbed/django,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,658,2,false,false,false,0.2700657844543457
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,9,django__django-12125:b0:tool4,cd /testbed && python manage.py makemigrations > migrations_output.txt,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,23,2,false,false,false,0.2643239498138428
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,11,django__django-12125:b0:tool5,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,929,3,false,false,false,0.2480781078338623
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,13,django__django-12125:b0:tool6,cd /testbed && python manage.py makemigrations > migrations_output.txt,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,23,3,false,false,false,0.285991907119751
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,15,django__django-12125:b0:tool7,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,929,4,false,false,false,0.24172496795654297
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,17,django__django-12125:b0:tool8,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,929,4,false,false,false,0.24596571922302246
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_0.traj.json,django,b0,19,django__django-12125:b0:tool9,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,929,4,false,false,false,0.20829486846923828
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,1,django__django-12125:b1:tool0,"sed -i '/def create_model(self, name, fields, options=None, bases=None, managers=None, app_label=None, module_name=None, abstract=False, proxy=False, swappable=None, apps=None):/a\
+            if isinstance(fields[0][1], type) and hasattr(fields[0][1], ""__qualname__"") and ""."" not in fields[0][1].__qualname__:\
+                fields[0] = (fields[0][0], ""%s.%s"" % (self.module_name, fields[0][1].__qualname__))' /testbed/makemigrations.py",build,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,19,0,false,false,false,0.4028759002685547
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,3,django__django-12125:b1:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,902,1,false,false,false,0.38052797317504883
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,5,django__django-12125:b1:tool2,"sed -i '/def call_command(self, *args, **options):/a\
+        if args[0] == ""makemigrations"":\
+            from django.core.management.commands.makemigrations import Command as MakemigrationsCommand\
+            original_create_model = MakemigrationsCommand.create_model\
+            def patched_create_model(self, name, fields, options=None, bases=None, managers=None, app_label=None, module_name=None, abstract=False, proxy=False, swappable=None, apps=None):\
+                if isinstance(fields[0][1], type) and hasattr(fields[0][1], ""__qualname__"") and ""."" not in fields[0][1].__qualname__:\
+                    fields[0] = (fields[0][0], ""%s.%s"" % (self.module_name, fields[0][1].__qualname__))\
+                return original_create_model(self, name, fields, options, bases, managers, app_label, module_name, abstract, proxy, swappable, apps)\
+            MakemigrationsCommand.create_model = patched_create_model' /testbed/manage.py",build,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,17,1,false,false,false,0.37554144859313965
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,7,django__django-12125:b1:tool3,"sed -i '/def call_command(self, *args, **options):/a\
+        if args[0] == ""makemigrations"":\
+            from django.core.management.commands.makemigrations import Command as MakemigrationsCommand\
+            original_create_model = MakemigrationsCommand.create_model\
+            def patched_create_model(self, name, fields, options=None, bases=None, managers=None, app_label=None, module_name=None, abstract=False, proxy=False, swappable=None, apps=None):\
+                if isinstance(fields[0][1], type) and hasattr(fields[0][1], ""__qualname__"") and ""."" not in fields[0][1].__qualname__:\
+                    fields[0] = (fields[0][0], ""{}.{}"".format(self.module_name, fields[0][1].__qualname__))\
+                return original_create_model(self, name, fields, options, bases, managers, app_label, module_name, abstract, proxy, swappable, apps)\
+            MakemigrationsCommand.create_model = patched_create_model' /testbed/manage.py",build,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,1,17,2,false,false,false,0.2805771827697754
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,9,django__django-12125:b1:tool4,"cp /usr/local/lib/python3.x/site-packages/django/core/management/commands/makemigrations.py /testbed/custom_makemigrations.py
+echo ""from django.core.management.commands.makemigrations import Command as OriginalMakemigrationsCommand"" >> /testbed/custom_makemigrations.py
+echo """" >> /testbed/custom_makemigrations.py
+echo ""class Command(OriginalMakemigrationsCommand):"" >> /testbed/custom_makemigrations.py
+echo ""    def create_model(self, name, fields, options=None, bases=None, managers=None, app_label=None, module_name=None, abstract=False, proxy=False, swappable=None, apps=None):"" >> /testbed/custom_makemigrations.py
+echo ""        if isinstance(fields[0][1], type) and hasattr(fields[0][1], \""__qualname__\"") and \"".\"" not in fields[0][1].__qualname__:"" >> /testbed/custom_makemigrations.py
+echo ""            fields[0] = (fields[0][0], \""%s.%s\"" % (module_name, fields[0][1].__qualname__))"" >> /testbed/custom_makemigrations.py
+echo ""        return super().create_model(name, fields, options, bases, managers, app_label, module_name, abstract, proxy, swappable, apps)"" >> /testbed/custom_makemigrations.py",build,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)cp\s,false,file_read,1,31,3,false,false,false,0.41410255432128906
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,11,django__django-12125:b1:tool5,ls -la /usr/local/lib/python3.x/site-packages/django/core/management/commands/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,0,27,3,false,false,false,0.37596750259399414
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,13,django__django-12125:b1:tool6,ls -la /usr/local/lib/python3.x/site-packages/django/core/management/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,25,4,false,false,false,0.35505223274230957
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,15,django__django-12125:b1:tool7,ls -la /usr/local/lib/python3.x/site-packages/django/core/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,23,5,false,false,false,0.3877096176147461
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,17,django__django-12125:b1:tool8,ls -la /usr/local/lib/python3.x/site-packages/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,20,6,false,false,false,0.3521113395690918
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_1.traj.json,django,b1,19,django__django-12125:b1:tool9,ls -la /usr/local/lib/python3.x/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,2,18,7,false,false,false,0.37767672538757324
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,1,django__django-12125:b2:tool0,"find . -name ""*.py"" -exec sed -i 's/\(models\.\)\([^\.]*\)\(\.\)\([^\.]*\)/\1\2\3\1\4/g' {} +",shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,15,0,false,false,false,0.8265137672424316
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,3,django__django-12125:b2:tool1,python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,file_read,0,23,0,false,false,false,0.30077505111694336
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,5,django__django-12125:b2:tool2,cd /testbed && python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,23,1,false,false,false,0.2848019599914551
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,7,django__django-12125:b2:tool3,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,869,2,false,false,false,0.26073789596557617
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,9,django__django-12125:b2:tool4,"find / -name ""manage.py"" 2>/dev/null",file_write,list_find,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,11,2,false,false,false,1.2259845733642578
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,11,django__django-12125:b2:tool5,cd /testbed/tests/i18n/sampleproject && python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,252,2,false,false,false,0.4084913730621338
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,13,django__django-12125:b2:tool6,pip install asgiref,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,128,3,false,false,false,3.936257839202881
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,15,django__django-12125:b2:tool7,cd /testbed/tests/i18n/sampleproject && python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,shell_other,0,876,3,false,false,false,0.4622201919555664
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,17,django__django-12125:b2:tool8,pip install pytz,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,122,4,false,false,false,15.747071027755737
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_2.traj.json,django,b2,19,django__django-12125:b2:tool9,cd /testbed/tests/i18n/sampleproject && python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,shell_other,0,743,4,false,false,false,0.5145728588104248
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,1,django__django-12125:b3:tool0,"sed -i 's/get_inner_class_path(self):/get_inner_class_path(self):\n        return f""{self.model.__module__}.{self.model.__name__}.{self.name}""/' testbed/django/db/models/options.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,19,0,false,false,false,0.25614070892333984
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,3,django__django-12125:b3:tool1,"find . -name ""*Options.py"" | xargs grep -H ""class Options(""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,17,1,false,false,false,0.31610751152038574
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,5,django__django-12125:b3:tool2,"find . -name ""*.py"" | xargs grep -H ""class Options(""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,123,17,2,false,false,false,0.3211357593536377
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,7,django__django-12125:b3:tool3,"git clone https://github.com/django/django.git /tmp/django_source
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNKNOWN,not_whitelisted,false,grep_search,123,188,3,false,false,false,60.06621479988098
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,9,django__django-12125:b3:tool4,"git clone https://github.com/django/django.git /tmp/django_source
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNKNOWN,not_whitelisted,false,grep_search,-1,19,4,false,false,false,0.41765809059143066
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,11,django__django-12125:b3:tool5,"rm -rf /tmp/django_source
+git clone https://github.com/django/django.git /tmp/django_source
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)rm\s,false,grep_search,1,198,5,false,false,false,60.06041407585144
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,13,django__django-12125:b3:tool6,"git clone https://github.com/django/django.git /home/user/django_source
+cp -r /home/user/django_source /tmp/
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNKNOWN,not_whitelisted,false,grep_search,-1,203,6,false,false,false,60.06476879119873
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,15,django__django-12125:b3:tool7,"pip freeze | grep django && pip show django | grep Location && find $(pip show django | grep Location | awk '{print $2}') -name ""*.py"" | xargs grep -H ""inner_class""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,-1,15,7,false,false,false,0.49352025985717773
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,17,django__django-12125:b3:tool8,"git clone https://github.com/django/django.git /tmp/django_source
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNKNOWN,not_whitelisted,false,grep_search,1,188,8,false,false,false,60.06462836265564
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12125/rollout_3.traj.json,django,b3,19,django__django-12125:b3:tool9,"git clone https://github.com/django/django.git /home/user/django_source
+cp -r /home/user/django_source /tmp/
+cd /tmp/django_source
+grep -r ""inner_class"" .",grep_search,grep_search,UNKNOWN,not_whitelisted,false,grep_search,-1,20,9,false,false,false,1.6038284301757812
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,1,django__django-12308:b0:tool0,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.2535271644592285
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,3,django__django-12308:b0:tool1,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.27461743354797363
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,5,django__django-12308:b0:tool2,vi django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,2,false,false,false,0.25184059143066406
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,7,django__django-12308:b0:tool3,pico django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,12,3,false,false,false,0.23241829872131348
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,9,django__django-12308:b0:tool4,cp django/contrib/admin/utils.py django/contrib/admin/utils.py.bak && cat django/contrib/admin/utils.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)cp\s,false,shell_other,127,2152,4,false,false,false,0.25891900062561035
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,11,django__django-12308:b0:tool5,"sed -i '/def display_for_field/,/^$/s/.*return json.dumps\(value\).*/    return field.prepare_value\(value\)/' django/contrib/admin/utils.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,0,15,4,false,false,false,0.2568693161010742
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,13,django__django-12308:b0:tool6,git diff -- django/contrib/admin/utils.py > patch.txt,file_write,git_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,0,15,4,false,false,false,0.5394277572631836
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,15,django__django-12308:b0:tool7,cat patch.txt,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,git_read,0,15,4,false,false,false,0.281970739364624
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_0.traj.json,django,b0,17,django__django-12308:b0:tool8,echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT && cat patch.txt,shell_other,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,0,4,false,false,false,0.0
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,1,django__django-12308:b1:tool0,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.2565116882324219
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,3,django__django-12308:b1:tool1,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.2440166473388672
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,5,django__django-12308:b1:tool2,cat django/contrib/admin/utils.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2152,2,false,false,false,0.24625110626220703
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,7,django__django-12308:b1:tool3,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,2,false,false,false,0.2438526153564453
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,9,django__django-12308:b1:tool4,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,3,false,false,false,0.24030733108520508
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,11,django__django-12308:b1:tool5,cat django/contrib/admin/utils.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2152,4,false,false,false,0.26017260551452637
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,13,django__django-12308:b1:tool6,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,4,false,false,false,0.24432778358459473
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,15,django__django-12308:b1:tool7,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,5,false,false,false,0.26468324661254883
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,17,django__django-12308:b1:tool8,cat django/contrib/admin/utils.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2152,6,false,false,false,0.24338293075561523
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_1.traj.json,django,b1,19,django__django-12308:b1:tool9,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,6,false,false,false,0.23911356925964355
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,1,django__django-12308:b2:tool0,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.2982006072998047
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,3,django__django-12308:b2:tool1,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.2912747859954834
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,5,django__django-12308:b2:tool2,vi django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,2,false,false,false,0.2684040069580078
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,7,django__django-12308:b2:tool3,"sed -i '/def display_for_field(obj, field, has_change_permission):/,/^    return value$/ s|value = json.dumps(value)|value = field.prepare_value(value)|' django/contrib/admin/utils.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,15,3,false,false,false,0.24756169319152832
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,9,django__django-12308:b2:tool4,"python manage.py createsuperuser --noinput && python manage.py runserver &
+sleep 5 && curl -X GET http://localhost:8000/admin/ -u admin:admin | grep '{""foo"": ""bar""}'",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,file_read,0,170,3,false,false,false,5.280783176422119
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,11,django__django-12308:b2:tool5,"pip install -r requirements.txt && python manage.py migrate && python manage.py createsuperuser --noinput && python manage.py runserver &
+sleep 5 && curl -X GET http://localhost:8000/admin/ -u admin:admin | grep '{""foo"": ""bar""}'",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,grep_search,1,170,4,false,false,false,5.270530939102173
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,13,django__django-12308:b2:tool6,"touch requirements.txt && echo ""Django==3.2"" >> requirements.txt && pip install -r requirements.txt && python manage.py migrate && python manage.py createsuperuser --noinput && python manage.py runserver &
+sleep 5 && curl -X GET http://localhost:8000/admin/ -u admin:admin | grep '{""foo"": ""bar""}'",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)touch\s,false,grep_search,1,559,5,false,false,false,6.54485559463501
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,15,django__django-12308:b2:tool7,"django-admin startproject myproject . && python manage.py migrate && python manage.py createsuperuser --noinput && python manage.py runserver &
+sleep 5 && curl -X GET http://localhost:8000/admin/ -u admin:admin | grep '{""foo"": ""bar""}'",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,grep_search,1,466,6,false,false,false,5.270564079284668
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,17,django__django-12308:b2:tool8,"python manage.py createsuperuser --noinput --username admin --email admin@example.com && python manage.py runserver &
+sleep 5 && curl -X GET http://localhost:8000/admin/ -u admin:admin | grep '{""foo"": ""bar""}'",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,grep_search,1,174,7,false,false,false,7.293976545333862
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_2.traj.json,django,b2,19,django__django-12308:b2:tool9,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,1,11,8,false,false,false,0.2519526481628418
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,1,django__django-12308:b3:tool0,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.24907588958740234
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,3,django__django-12308:b3:tool1,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.23922276496887207
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,5,django__django-12308:b3:tool2,cat django/contrib/admin/utils.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2152,2,false,false,false,0.2424147129058838
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,7,django__django-12308:b3:tool3,vim django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,2,false,false,false,0.24592828750610352
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,9,django__django-12308:b3:tool4,apt-get update && apt-get install -y nano,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,1008,3,false,false,false,9.900899648666382
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,11,django__django-12308:b3:tool5,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,0,1161,3,false,false,false,1.613795518875122
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,13,django__django-12308:b3:tool6,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,1161,4,false,false,false,1.5937049388885498
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,15,django__django-12308:b3:tool7,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,1160,5,false,false,false,1.6289615631103516
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,17,django__django-12308:b3:tool8,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,1160,6,false,false,false,1.6529104709625244
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12308/rollout_3.traj.json,django,b3,19,django__django-12308:b3:tool9,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,1,1160,7,false,false,false,1.5633292198181152
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,1,django__django-12708:b0:tool0,nano migrations/000X_auto_YYYYMMDD_HHMMSS.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.2636721134185791
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,3,django__django-12708:b0:tool1,vim migrations/000X_auto_YYYYMMDD_HHMMSS.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.2549910545349121
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,5,django__django-12708:b0:tool2,vi migrations/000X_auto_YYYYMMDD_HHMMSS.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,2,false,false,false,0.2540581226348877
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,7,django__django-12708:b0:tool3,sed -i 's/index_together(unique_together)/unique_together/' migrations/000X_auto_YYYYMMDD_HHMMSS.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,27,3,false,false,false,0.25559234619140625
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,9,django__django-12708:b0:tool4,python manage.py makemigrations app_name,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,file_read,2,23,4,false,false,false,0.25989246368408203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,11,django__django-12708:b0:tool5,cd /path/to/project && python manage.py makemigrations app_name,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,18,5,false,false,false,0.25843334197998047
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,13,django__django-12708:b0:tool6,pwd && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,905,6,false,false,false,0.2347557544708252
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,15,django__django-12708:b0:tool7,cd django && pwd && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,635,6,false,false,false,0.22503018379211426
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_0.traj.json,django,b0,17,django__django-12708:b0:tool8,"echo ""from django.db import models\n\nclass MyModel(models.Model):\n    field1 = models.CharField(max_length=100)\n    field2 = models.IntegerField()"" > myapp/models.py
+python manage.py makemigrations myapp",build,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,list_find,0,40,6,false,false,false,0.29610276222229004
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,1,django__django-12708:b1:tool0,"find . -name ""*.py"" | grep migrations | xargs grep -n ""index_together"" -",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,1602,0,false,false,false,0.3755807876586914
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,3,django__django-12708:b1:tool1,nano django/db/migrations/operations/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.24557924270629883
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,5,django__django-12708:b1:tool2,vim django/db/migrations/operations/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.31719374656677246
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,7,django__django-12708:b1:tool3,cat django/db/migrations/operations/models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,2150,2,false,false,false,0.32314467430114746
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,9,django__django-12708:b1:tool4,"sed -i '/def state_forwards(self, app_label, state):/,/^$/ s/.*indexes = model_state.options\[self.option_name\]/indexes = [idx for idx in model_state.options[self.option_name] if idx.name != self.name]/' django/db/migrations/operations/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,0,15,2,false,false,false,0.2519354820251465
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,11,django__django-12708:b1:tool5,python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,file_read,0,23,2,false,false,false,0.2556955814361572
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,13,django__django-12708:b1:tool6,"cd ..
+python manage.py makemigrations",build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,21,3,false,false,false,0.25725364685058594
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,15,django__django-12708:b1:tool7,"pwd
+ls -la",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,904,4,false,false,false,0.24428009986877441
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,17,django__django-12708:b1:tool8,"cd ..
+python manage.py makemigrations",build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,21,4,false,false,false,0.26428890228271484
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_1.traj.json,django,b1,19,django__django-12708:b1:tool9,"pwd
+ls -la",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,904,5,false,false,false,0.23560261726379395
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,1,django__django-12708:b2:tool0,nano /testbed/migrations/0001_initial.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.24161767959594727
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,3,django__django-12708:b2:tool1,vim /testbed/migrations/0001_initial.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.25226831436157227
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,5,django__django-12708:b2:tool2,vi /testbed/migrations/0001_initial.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,2,false,false,false,0.23466086387634277
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,7,django__django-12708:b2:tool3,"echo '#!/usr/bin/env python3' > edit_migration.py
+echo 'import sys' >> edit_migration.py
+echo 'with open(sys.argv[1], ""r"") as file:' >> edit_migration.py
+echo '    lines = file.readlines()' >> edit_migration.py
+echo 'with open(sys.argv[1], ""w"") as file:' >> edit_migration.py
+echo '    for line in lines:' >> edit_migration.py
+echo '        if ""index_together"" not in line and ""unique_together"" not in line:' >> edit_migration.py
+echo '            file.write(line)' >> edit_migration.py
+chmod +x edit_migration.py
+./edit_migration.py /testbed/migrations/0001_initial.py",file_write,python_inspect,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,shell_other,127,78,3,false,false,false,0.27535462379455566
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,9,django__django-12708:b2:tool4,ls -la /testbed/migrations/,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,16,4,false,false,false,0.24336624145507812
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,11,django__django-12708:b2:tool5,"mkdir -p /testbed/migrations
+touch /testbed/migrations/0001_initial.py
+./edit_migration.py /testbed/migrations/0001_initial.py",shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mkdir\s,false,list_find,2,15,5,false,false,false,0.2836177349090576
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,13,django__django-12708:b2:tool6,cat /testbed/migrations/0001_initial.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,0,15,5,false,false,false,0.24109840393066406
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,15,django__django-12708:b2:tool7,nano /testbed/migrations/0001_initial.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,file_read,0,11,5,false,false,false,0.24214553833007812
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_2.traj.json,django,b2,17,django__django-12708:b2:tool8,vim /testbed/migrations/0001_initial.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,6,false,false,false,0.25840044021606445
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,1,django__django-12708:b3:tool0,"grep -r ""index_together"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,2525,0,false,false,false,0.4397139549255371
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,3,django__django-12708:b3:tool1,"grep -r ""AlterIndexTogether"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,754,0,false,false,false,0.4333806037902832
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,5,django__django-12708:b3:tool2,"sed -i '/class AlterIndexTogether(AlterTogetherOptionOperation):/,/^$/ s/^\s*pass$/\n        if not index_together:\n            # Remove any conflicting unique_together constraints\n            for constraint in model._meta.unique_together:\n                if set(constraint).issubset(set(old_index_together)):\n                    model._meta.unique_together.remove(constraint)\n/' ./django/db/migrations/operations/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,0,false,false,false,0.24810409545898438
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,7,django__django-12708:b3:tool3,"cp ./tests/schema/tests.py ./tests/schema/tests_backup.py
+echo ""from django.test import TestCase
+from django.db import migrations, models
+
+class TestIndexTogetherRemoval(TestCase):
+    def test_index_together_removal(self):
+        # Create a model with index_together and unique_together
+        class MyModel(models.Model):
+            name = models.CharField(max_length=100)
+            age = models.IntegerField()
+            bio = models.TextField()
+
+            class Meta:
+                index_together = [('name', 'age')]
+                unique_together = [('name', 'bio')]
+
+        # Create initial migration
+        with self.settings(MIGRATION_MODULES={'myapp': 'migrations'}):
+            call_command('makemigrations', 'myapp')
+
+        # Apply initial migration
+        call_command('migrate', 'myapp')
+
+        # Modify model to remove index_together
+        class MyModel(models.Model):
+            name = models.CharField(max_length=100)
+            age = models.IntegerField()
+            bio = models.TextField()
+
+            class Meta:
+                unique_together = [('name', 'bio')]
+
+        # Create migration to remove index_together
+        with self.settings(MIGRATION_MODULES={'myapp': 'migrations'}):
+            call_command('makemigrations', 'myapp')
+
+        # Apply migration to remove index_together
+        call_command('migrate', 'myapp')"" >> ./tests/schema/tests.py",build,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)cp\s,false,file_read,0,15,0,false,false,false,0.2512021064758301
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,9,django__django-12708:b3:tool4,python manage.py test schema,shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,shell_other,0,23,0,false,false,false,0.28809118270874023
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,11,django__django-12708:b3:tool5,"cd ..
+python manage.py test schema",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,21,1,false,false,false,0.27384042739868164
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,13,django__django-12708:b3:tool6,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,899,2,false,false,false,0.2720329761505127
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,15,django__django-12708:b3:tool7,python manage.py test schema,shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,2,false,false,false,0.290111780166626
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,17,django__django-12708:b3:tool8,"cd ..
+python manage.py test schema",shell_other,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,21,3,false,false,false,0.25127506256103516
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-12708/rollout_3.traj.json,django,b3,19,django__django-12708:b3:tool9,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,899,4,false,false,false,0.2449638843536377
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,1,django__django-13028:b0:tool0,"grep -r ""metadata_type"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,15,0,false,false,false,0.4762763977050781
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,3,django__django-13028:b0:tool1,"find . -type f -name ""*.py"" -exec grep -Hn ""metadata_type"" {} +",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,1,false,false,false,0.34839677810668945
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,5,django__django-13028:b0:tool2,nano /path/to/ProductMetaData.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,1,11,2,false,false,false,0.24302268028259277
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,7,django__django-13028:b0:tool3,vim /path/to/ProductMetaData.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,3,false,false,false,0.23703360557556152
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,9,django__django-13028:b0:tool4,ls /usr/bin | grep -E 'nano|vim',grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,15,4,false,false,false,0.25162339210510254
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,11,django__django-13028:b0:tool5,cat /path/to/ProductMetaData.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,14,5,false,false,false,0.24598312377929688
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,13,django__django-13028:b0:tool6,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,902,6,false,false,false,0.2676231861114502
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,15,django__django-13028:b0:tool7,"cd /path/to/correct/directory
+nano /path/to/ProductMetaData.py",shell_other,shell_other,UNKNOWN,not_whitelisted,false,list_find,0,33,6,false,false,false,0.2450413703918457
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,17,django__django-13028:b0:tool8,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,shell_other,127,902,7,false,false,false,0.24450206756591797
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_0.traj.json,django,b0,19,django__django-13028:b0:tool9,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,902,7,false,false,false,0.24731206893920898
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,1,django__django-13028:b1:tool0,"grep -r ""metadata_type"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,15,0,false,false,false,0.47795534133911133
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,3,django__django-13028:b1:tool1,"grep -r ""ProductMetaDataType"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,15,1,false,false,false,0.43803954124450684
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,5,django__django-13028:b1:tool2,"grep -r ""CustomManager"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,957,2,false,false,false,0.4232521057128906
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,7,django__django-13028:b1:tool3,cat tests/custom_managers/models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,0,1379,2,false,false,false,0.26152586936950684
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,9,django__django-13028:b1:tool4,"sed -i '/def filter(self, *args, **kwargs):/,+4d' tests/custom_managers/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,0,17,2,false,false,false,0.24135947227478027
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,11,django__django-13028:b1:tool5,"sed -i '/def filter\(self, \*args, \*\*kwargs\):/,+4d' tests/custom_managers/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,1,15,3,false,false,false,0.25130772590637207
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,13,django__django-13028:b1:tool6,python -m unittest discover -s tests,pytest,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bpytest\b|\btox\b|\bunittest\b|\bnox\b,false,file_read,0,2525,3,false,false,false,4.151378154754639
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,15,django__django-13028:b1:tool7,pip install asgiref,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,128,4,false,false,false,4.731964111328125
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,17,django__django-13028:b1:tool8,python -m unittest discover -s tests,pytest,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bpytest\b|\btox\b|\bunittest\b|\bnox\b,false,shell_other,0,2693,4,false,false,false,4.272660255432129
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_1.traj.json,django,b1,19,django__django-13028:b1:tool9,pip install pytz,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,122,5,false,false,false,2.226280927658081
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,1,django__django-13028:b2:tool0,"grep -r ""NotSupportedError"" /usr/local/lib/python3.8/site-packages/django/",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,20,0,false,false,false,0.28046131134033203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,3,django__django-13028:b2:tool1,"pip install django==3.0.7 && grep -r ""NotSupportedError"" $(python -c ""import django; print(django.__path__)"")",grep_search,grep_search,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,grep_search,2,374,1,false,false,false,10.389447927474976
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,5,django__django-13028:b2:tool2,"cd /usr/local/lib/python3.8/site-packages/django && grep -r ""NotSupportedError"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,2,26,2,false,false,false,0.26220130920410156
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,7,django__django-13028:b2:tool3,"find /usr/local/lib/python3.8/site-packages -name ""*django*"" | xargs grep -r ""NotSupportedError""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,2163,3,false,false,false,0.476743221282959
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,9,django__django-13028:b2:tool4,nano /testbed/adminpricing/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,3,false,false,false,0.23940706253051758
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,11,django__django-13028:b2:tool5,vim /testbed/adminpricing/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,4,false,false,false,0.24550938606262207
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,13,django__django-13028:b2:tool6,"echo ""from django.db import models\n\nclass CustomProductMetaDataTypeManager(models.Manager):\n    def get_queryset(self):\n        return super().get_queryset().filter(filterable=True)\n\nclass ProductMetaDataType(models.Model):\n    label = models.CharField(max_length=255, unique=True, blank=False, null=False)\n    filterable = models.BooleanField(default=False, verbose_name=_('filterable'))\n    objects = CustomProductMetaDataTypeManager()\n\n    class Meta:\n        app_label = \""adminpricing\""\n        verbose_name = _('product meta data type')\n        verbose_name_plural = _('product meta data types')\n\n    def __str__(self):\n        return self.label"" > /testbed/adminpricing/models.py.tmp && mv /testbed/adminpricing/models.py.tmp /testbed/adminpricing/models.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mv\s,false,shell_other,127,20,5,false,false,false,0.37258100509643555
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,15,django__django-13028:b2:tool7,"touch /testbed/adminpricing/models.py.tmp && echo ""from django.db import models\n\nclass CustomProductMetaDataTypeManager(models.Manager):\n    def get_queryset(self):\n        return super().get_queryset().filter(filterable=True)\n\nclass ProductMetaDataType(models.Model):\n    label = models.CharField(max_length=255, unique=True, blank=False, null=False)\n    filterable = models.BooleanField(default=False, verbose_name=_('filterable'))\n    objects = CustomProductMetaDataTypeManager()\n\n    class Meta:\n        app_label = \""adminpricing\""\n        verbose_name = _('product meta data type')\n        verbose_name_plural = _('product meta data types')\n\n    def __str__(self):\n        return self.label"" > /testbed/adminpricing/models.py.tmp && mv /testbed/adminpricing/models.py.tmp /testbed/adminpricing/models.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mv\s,false,shell_other,1,18,6,false,false,false,0.36825990676879883
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,17,django__django-13028:b2:tool8,"mkdir -p /testbed/adminpricing && touch /testbed/adminpricing/models.py.tmp && echo ""from django.db import models\n\nclass CustomProductMetaDataTypeManager(models.Manager):\n    def get_queryset(self):\n        return super().get_queryset().filter(filterable=True)\n\nclass ProductMetaDataType(models.Model):\n    label = models.CharField(max_length=255, unique=True, blank=False, null=False)\n    filterable = models.BooleanField(default=False, verbose_name=_('filterable'))\n    objects = CustomProductMetaDataTypeManager()\n\n    class Meta:\n        app_label = \""adminpricing\""\n        verbose_name = _('product meta data type')\n        verbose_name_plural = _('product meta data types')\n\n    def __str__(self):\n        return self.label"" > /testbed/adminpricing/models.py.tmp && mv /testbed/adminpricing/models.py.tmp /testbed/adminpricing/models.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mv\s,false,shell_other,1,15,7,false,false,false,0.25783562660217285
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_2.traj.json,django,b2,19,django__django-13028:b2:tool9,"python manage.py shell -c ""from adminpricing.models import ProductMetaData, ProductMetaDataType; ProductMetaData.objects.filter(value='Dark Vador', metadata_type=ProductMetaDataType.objects.get(label='Some Label'))""",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,shell_other,0,23,7,false,false,false,0.251401424407959
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,1,django__django-13028:b3:tool0,"grep -r ""filterable"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,370,0,false,false,false,0.4700906276702881
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,3,django__django-13028:b3:tool1,nano django/db/models/sql/query.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.3770332336425781
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,5,django__django-13028:b3:tool2,vim django/db/models/sql/query.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,1,false,false,false,0.38594746589660645
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,7,django__django-13028:b3:tool3,"sed -i '/def check_filterable(self, expression):/,/if not getattr(expression, \'filterable\', True):/ s/check_filterable\(.*\)/if getattr(expression, \'filterable\', True): \1/' django/db/models/sql/query.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,80,2,false,false,false,0.3616664409637451
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,9,django__django-13028:b3:tool4,"sed -i '/def check_filterable(self, expression):/,/if not getattr(expression, \'filterable\', True):/ s/check_filterable\(.*\)/if getattr(expression, \'filterable\', True): \1/' django/db/models/sql/query.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,80,3,false,false,false,0.35925865173339844
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,11,django__django-13028:b3:tool5,"sed -i '/def check_filterable(self, expression):/,/if not getattr(expression, \'filterable\', True):/ {s/check_filterable\(.*\)/if getattr(expression, \'filterable\', True): \1/}' django/db/models/sql/query.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,82,4,false,false,false,0.3509852886199951
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,13,django__django-13028:b3:tool6,"awk '/def check_filterable(self, expression):/,/if not getattr(expression, \'filterable\', True):/{if ($0 ~ /check_filterable/) $0=""if getattr(expression, 'filterable', True): ""substr($0, index($0,""check_filterable"")+1); print > ""temp.sql""} END{system(""mv temp.sql django/db/models/sql/query.py"")}' django/db/models/sql/query.py",file_write,shell_other,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,file_read,2,115,5,false,false,false,0.34165239334106445
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,15,django__django-13028:b3:tool7,vi django/db/models/sql/query.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,2,11,6,false,false,false,0.35444045066833496
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13028/rollout_3.traj.json,django,b3,17,django__django-13028:b3:tool8,"sed -i '/def check_filterable(self, expression):/,/if not getattr(expression, \'filterable\', True):/ s/check_filterable\(.*\)/if getattr(expression, \'filterable\', True): \1/' django/db/models/sql/query.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,80,7,false,false,false,0.2496049404144287
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,1,django__django-13033:b0:tool0,cat models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,10,0,false,false,false,0.17843127250671387
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,3,django__django-13033:b0:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,902,1,false,false,false,0.1766970157623291
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,5,django__django-13033:b0:tool2,cd django && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,630,1,false,false,false,0.1949152946472168
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,7,django__django-13033:b0:tool3,cd apps && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,1,false,false,false,0.18415141105651855
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,9,django__django-13033:b0:tool4,cd core && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,15,2,false,false,false,0.20651984214782715
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,11,django__django-13033:b0:tool5,cd tests && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,5331,3,false,false,false,0.1839296817779541
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,13,django__django-13033:b0:tool6,cd django/contrib && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,517,3,false,false,false,0.20526623725891113
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,15,django__django-13033:b0:tool7,cd ../core && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,16,3,false,false,false,0.1800522804260254
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,17,django__django-13033:b0:tool8,cd ../db && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,4,false,false,false,0.17096662521362305
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_0.traj.json,django,b0,19,django__django-13033:b0:tool9,cd ../dispatch && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,5,false,false,false,0.17255640029907227
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,1,django__django-13033:b1:tool0,cat models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,10,0,false,false,false,0.1790311336517334
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,3,django__django-13033:b1:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,902,1,false,false,false,0.17656540870666504
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,5,django__django-13033:b1:tool2,cd django && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,630,1,false,false,false,0.1813828945159912
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,7,django__django-13033:b1:tool3,cd apps && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,1,false,false,false,0.17509055137634277
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,9,django__django-13033:b1:tool4,cd ../contrib && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,2,false,false,false,0.18581247329711914
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,11,django__django-13033:b1:tool5,cd ../core && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,3,false,false,false,0.17862725257873535
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,13,django__django-13033:b1:tool6,cd ../db && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,4,false,false,false,0.18072509765625
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,15,django__django-13033:b1:tool7,cd ../dispatch && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,5,false,false,false,0.17251205444335938
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,17,django__django-13033:b1:tool8,cd ../forms && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,6,false,false,false,0.16923093795776367
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_1.traj.json,django,b1,19,django__django-13033:b1:tool9,cd ../http && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,16,7,false,false,false,0.178879976272583
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,1,django__django-13033:b2:tool0,"python manage.py shell -c 'from orion.models import TwoModel; qs = TwoModel.objects.filter(record__oneval__in=[1,2,3]).order_by(""record__root_id""); print(qs.query)'",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,START,0,23,0,false,false,false,0.32128453254699707
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,3,django__django-13033:b2:tool1,"cd /path/to/project/root && python manage.py shell -c 'from orion.models import TwoModel; qs = TwoModel.objects.filter(record__oneval__in=[1,2,3]).order_by(""record__root_id""); print(qs.query)'",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,python_inspect,2,19,1,false,false,false,0.19097590446472168
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,5,django__django-13033:b2:tool2,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,902,2,false,false,false,0.20245027542114258
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,7,django__django-13033:b2:tool3,find . -name manage.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,10,2,false,false,false,0.23968791961669922
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,9,django__django-13033:b2:tool4,"cd ./tests/i18n/sampleproject && python manage.py shell -c 'from orion.models import TwoModel; qs = TwoModel.objects.filter(record__oneval__in=[1,2,3]).order_by(""record__root_id""); print(qs.query)'",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,list_find,0,214,2,false,false,false,0.3343989849090576
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,11,django__django-13033:b2:tool5,pip install asgiref,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,128,3,false,false,false,1.816089153289795
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,13,django__django-13033:b2:tool6,"python manage.py shell -c 'from orion.models import TwoModel; qs = TwoModel.objects.filter(record__oneval__in=[1,2,3]).order_by(""record__root_id""); print(qs.query)'",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,shell_other,0,23,3,false,false,false,0.2108631134033203
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,15,django__django-13033:b2:tool7,"cd /path/to/project/root && python manage.py shell -c 'from orion.models import TwoModel; qs = TwoModel.objects.filter(record__oneval__in=[1,2,3]).order_by(""record__root_id""); print(qs.query)'",shell_other,python_inspect,SAFE_READ_ONLY,django_shell_inspection,true,python_inspect,2,19,4,false,false,false,0.1772162914276123
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,17,django__django-13033:b2:tool8,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,901,5,false,false,false,0.18220758438110352
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_2.traj.json,django,b2,19,django__django-13033:b2:tool9,find . -name manage.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,10,5,false,false,false,0.21938657760620117
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,1,django__django-13033:b3:tool0,cat models.py,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,10,0,false,false,false,0.17867445945739746
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,3,django__django-13033:b3:tool1,"find . -name ""models.py""",shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,1688,1,false,false,false,0.23416972160339355
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,5,django__django-13033:b3:tool2,"grep -r ""ForeignKey"" . | grep ""\bself\b""",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,2396,1,false,false,false,0.32224607467651367
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,7,django__django-13033:b3:tool3,nano tests/introspection/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,1,false,false,false,0.18395328521728516
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,9,django__django-13033:b3:tool4,vim tests/introspection/models.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,shell_other,127,11,2,false,false,false,0.18260836601257324
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,11,django__django-13033:b3:tool5,sed -i 's/^class ResponseTo(models.Model):/# class ResponseTo(models.Model):/' tests/introspection/models.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,15,3,false,false,false,0.19000935554504395
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,13,django__django-13033:b3:tool6,python manage.py shell,shell_other,python_inspect,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,23,3,false,false,false,0.19394230842590332
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,15,django__django-13033:b3:tool7,"cd /path/to/correct/directory
+python manage.py shell",shell_other,python_inspect,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,45,4,false,false,false,0.2098698616027832
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,17,django__django-13033:b3:tool8,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,899,5,false,false,false,0.17633581161499023
+data/raw_trajs/mini_swe_lite10_r4_timed/django__django-13033/rollout_3.traj.json,django,b3,19,django__django-13033:b3:tool9,"cd tests
+python manage.py shell",shell_other,python_inspect,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,24,5,false,false,false,0.1938183307647705
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,1,django__django-11848:b0:tool0,"grep -r ""def parse_http_date"" .",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,START,0,23,0,false,false,false,0.3535933494567871
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,3,django__django-11848:b0:tool1,nano django/utils/http.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,grep_search,0,11,0,false,false,false,0.17542791366577148
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,5,django__django-11848:b0:tool2,"sed -i '/def parse_http_date/,/^$/ s/0-69/1900-1969/; /def parse_http_date/,/^$/ s/70-99/2000-2099/' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,15,1,false,false,false,0.2066972255706787
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,7,django__django-11848:b0:tool3,"python -c ""from django.utils.http import parse_http_date; print(parse_http_date('Sun, 06 Nov 94 08:49:37 GMT'))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,file_read,0,92,1,false,false,false,0.3281550407409668
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,9,django__django-11848:b0:tool4,grep -A 10 'def parse_http_date' django/utils/http.py,grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,174,2,false,false,false,0.1826767921447754
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,11,django__django-11848:b0:tool5,"sed -i '/def parse_http_date/,/^$/ s/return int(time.mktime(parsedate(date)))/return int(time.mktime(parsedate_rfc850(date))) if parsedate_rfc850(date) else int(time.mktime(parsedate(date)))/' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,2,false,false,false,0.18335676193237305
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,13,django__django-11848:b0:tool6,"python -c ""from django.utils.http import parse_http_date; print(parse_http_date('Sun, 06 Nov 94 08:49:37 GMT'))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,file_read,0,92,2,false,false,false,0.29440832138061523
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,15,django__django-11848:b0:tool7,grep -A 20 'def parse_http_date' django/utils/http.py,grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,365,3,false,false,false,0.1806352138519287
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,17,django__django-11848:b0:tool8,"sed -i '/def parse_http_date/,/^$/ s/year = int(m.group('year'))/if year < 100: year += 2000 if 1900 <= year + 2000 <= 2099 else 1900 + year/' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,3,false,false,false,0.18884062767028809
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,19,django__django-11848:b0:tool9,"python -c ""from django.utils.http import parse_http_date; print(parse_http_date('Sun, 06 Nov 94 08:49:37 GMT'))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,file_read,0,92,3,false,false,false,0.28914356231689453
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,21,django__django-11848:b0:tool10,grep -A 20 'def parse_http_date' django/utils/http.py,grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,365,4,false,false,false,0.17647433280944824
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,23,django__django-11848:b0:tool11,"sed -i '/def parse_http_date/,/^$/ s/year = int(m.group('year'))/if year < 100: year += 2000 if 1900 <= year + 2000 <= 2099 else 1900 + year/' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,4,false,false,false,0.17951059341430664
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,25,django__django-11848:b0:tool12,"python -c ""from django.utils.http import parse_http_date; print(parse_http_date('Sun, 06 Nov 94 08:49:37 GMT'))""",shell_other,python_inspect,SAFE_READ_ONLY,python_inspection_conservative,true,file_read,0,92,4,false,false,false,0.28863954544067383
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,27,django__django-11848:b0:tool13,grep -A 20 'def parse_http_date' django/utils/http.py,grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,1,365,5,false,false,false,0.1750020980834961
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11848/rollout_0.traj.json,django,b0,29,django__django-11848:b0:tool14,"sed -i '/def parse_http_date/,/^$/ s/year = int(m.group('year'))/if year < 100: year += 2000 if 1900 <= year + 2000 <= 2099 else 1900 + year/' django/utils/http.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,grep_search,0,15,5,false,false,false,0.17836713790893555
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,1,django__django-11964:b0:tool0,"sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' testing/pkg/models.py
+sed -i '/def __str__/c\    def __str__(self):\n        return self.value' testing/pkg/models.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,31,0,false,false,false,0.17461848258972168
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,3,django__django-11964:b0:tool1,cd /path/to/correct/directory && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' testing/pkg/models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' testing/pkg/models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,file_read,2,21,1,false,false,false,0.1759631633758545
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,5,django__django-11964:b0:tool2,find . -name models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,1688,2,false,false,false,0.23465752601623535
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,7,django__django-11964:b0:tool3,find testbed -name models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,11,2,false,false,false,0.1820659637451172
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,9,django__django-11964:b0:tool4,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,1,901,3,false,false,false,0.18004107475280762
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,11,django__django-11964:b0:tool5,cd tests && find . -name models.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,1311,3,false,false,false,0.18531203269958496
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,13,django__django-11964:b0:tool6,cd tests/pkg && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,16,3,false,false,false,0.17803597450256348
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,15,django__django-11964:b0:tool7,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,5331,4,false,false,false,0.18327736854553223
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,17,django__django-11964:b0:tool8,cd tests && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,13,4,false,false,false,0.17606043815612793
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,19,django__django-11964:b0:tool9,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,5331,5,false,false,false,0.18146514892578125
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,21,django__django-11964:b0:tool10,cd tests && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,13,5,false,false,false,0.17879915237426758
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,23,django__django-11964:b0:tool11,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,5331,6,false,false,false,0.1756000518798828
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,25,django__django-11964:b0:tool12,cd tests && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,13,6,false,false,false,0.17947006225585938
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,27,django__django-11964:b0:tool13,ls -la tests,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,5331,7,false,false,false,0.19596028327941895
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-11964/rollout_0.traj.json,django,b0,29,django__django-11964:b0:tool14,cd tests && sed -i 's/my_str_value = models.CharField/max_str_value = models.CharField/g' models.py && sed -i '/def __str__/c\    def __str__(self):\n        return self.value' models.py,shell_other,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,13,7,false,false,false,0.1839313507080078
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,1,django__django-12308:b0:tool0,nano django/contrib/admin/utils.py,shell_other,shell_other,UNKNOWN,not_whitelisted,false,START,0,11,0,false,false,false,0.18648433685302734
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,3,django__django-12308:b0:tool1,"sed -i '/def display_for_field/,/^    return/a\
+elif isinstance(field, models.JSONField):\
+    if value is None:\
+        return """"\
+    elif field.readonly:\n        return json.dumps(value, indent=None, separators=("","", "":""))\
+    else:\n        return json.dumps(value, indent=4)' django/contrib/admin/utils.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,shell_other,127,15,1,false,false,false,0.17779111862182617
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,5,django__django-12308:b0:tool2,grep -A 10 'def display_for_field' django/contrib/admin/utils.py,grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,0,93,1,false,false,false,0.17983174324035645
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,7,django__django-12308:b0:tool3,"python - <<'PY'
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,grep_search,0,191,1,false,false,false,0.32009315490722656
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,9,django__django-12308:b0:tool4,pip install asgiref,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,128,2,false,false,false,2.1799981594085693
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,11,django__django-12308:b0:tool5,"python - <<'PY'
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,shell_other,0,592,2,false,false,false,0.38843250274658203
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,13,django__django-12308:b0:tool6,pip install pytz,shell_other,shell_other,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)pip\s+install\b,false,python_inspect,1,122,3,false,false,false,1.8913660049438477
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,15,django__django-12308:b0:tool7,"python - <<'PY'
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,shell_other,0,297,3,false,false,false,0.5570125579833984
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,17,django__django-12308:b0:tool8,"cat <<'EOF' > temp_settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+SECRET_KEY = 'dummy_secret_key'
+DEBUG = True
+ALLOWED_HOSTS = []
+ROOT_URLCONF = 'myproject.urls'
+WSGI_APPLICATION = 'myproject.wsgi.application'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
+}
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+STATIC_URL = '/static/'
+EOF
+
+export DJANGO_SETTINGS_MODULE=temp_settings.py
+python - <<'PY'
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:>\s*[^&],false,python_inspect,1,395,4,false,false,false,0.3820805549621582
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,19,django__django-12308:b0:tool9,"mv temp_settings.py .
+export DJANGO_SETTINGS_MODULE=temp_settings
+python - <<'PY'
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,UNSAFE_SIDE_EFFECT,matched:(^|[;&|]\s*)mv\s,false,file_read,1,235,5,false,false,false,0.4147517681121826
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,21,django__django-12308:b0:tool10,"export DJANGO_SETTINGS_MODULE=temp_settings
+python - <<'PY'
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'temp_settings')
+
+import django
+django.setup()
+
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,python_inspect,1,494,6,false,false,false,0.4716532230377197
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,23,django__django-12308:b0:tool11,sed -i '381s/^/    /' django/contrib/admin/utils.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,python_inspect,1,15,7,false,false,false,0.18184757232666016
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,25,django__django-12308:b0:tool12,"export DJANGO_SETTINGS_MODULE=temp_settings
+python - <<'PY'
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'temp_settings')
+
+import django
+django.setup()
+
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,file_read,0,484,7,false,false,false,0.40629029273986816
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,27,django__django-12308:b0:tool13,sed -i '381s/^/    /' django/contrib/admin/utils.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,python_inspect,1,15,8,false,false,false,0.1848008632659912
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12308/rollout_0.traj.json,django,b0,29,django__django-12308:b0:tool14,"export DJANGO_SETTINGS_MODULE=temp_settings
+python - <<'PY'
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'temp_settings')
+
+import django
+django.setup()
+
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.db import models
+
+class MyModel(models.Model):
+    data = models.JSONField()
+
+site = AdminSite(name='admin')
+admin_class = type('MyModelAdmin', (ModelAdmin,), {})
+site.register(MyModel, admin_class)
+
+user = User.objects.create_superuser(username='admin', password='password', email='admin@example.com')
+content_type = ContentType.objects.get_for_model(MyModel)
+obj = MyModel(data={""foo"": ""bar""})
+obj.save()
+site.login(user)
+response = site._build_app_index(request=user, model_admin=admin_class(content_type.model_class(), site))
+print(response.content.decode())
+PY",file_write,python_inspect,SAFE_READ_ONLY,python_heredoc_inspection,true,file_read,0,484,8,false,false,false,0.40093040466308594
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,1,django__django-12708:b0:tool0,"sed -i '/_delete_composed_index()/,/return True/a\        self._delete_unique_constraint(model, fields)' path/to/django/db/backends/base/schema.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,21,0,false,false,false,0.1857590675354004
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,3,django__django-12708:b0:tool1,ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,902,1,false,false,false,0.18345880508422852
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,5,django__django-12708:b0:tool2,"sed -i '/_delete_composed_index()/,/return True/a\        self._delete_unique_constraint(model, fields)' django/db/backends/base/schema.py",file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,list_find,0,15,1,false,false,false,0.17568588256835938
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,7,django__django-12708:b0:tool3,python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,file_read,0,23,1,false,false,false,0.18820929527282715
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,9,django__django-12708:b0:tool4,cd /testbed && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,901,2,false,false,false,0.20809650421142578
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,11,django__django-12708:b0:tool5,cd /testbed && python manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,2,false,false,false,0.19120478630065918
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,13,django__django-12708:b0:tool6,cd /testbed && python /testbed/manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,python_inspect,2,23,3,false,false,false,0.1905076503753662
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,15,django__django-12708:b0:tool7,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,901,4,false,false,false,0.17818832397460938
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,17,django__django-12708:b0:tool8,cd /testbed && python /testbed/manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,4,false,false,false,0.18858766555786133
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,19,django__django-12708:b0:tool9,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,901,5,false,false,false,0.17157268524169922
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,21,django__django-12708:b0:tool10,cd /testbed && python /testbed/manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,5,false,false,false,0.19862914085388184
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,23,django__django-12708:b0:tool11,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,901,6,false,false,false,0.17673015594482422
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,25,django__django-12708:b0:tool12,cd /testbed && python /testbed/manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,6,false,false,false,0.1881253719329834
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,27,django__django-12708:b0:tool13,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,python_inspect,2,901,7,false,false,false,0.17874479293823242
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-12708/rollout_0.traj.json,django,b0,29,django__django-12708:b0:tool14,cd /testbed && python /testbed/manage.py makemigrations,build,python_inspect,UNSAFE_SIDE_EFFECT,matched:\bmanage\.py\s+(makemigrations|migrate|test|runserver|createsuperuser)\b,false,list_find,0,23,7,false,false,false,0.19626474380493164
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,1,django__django-13028:b0:tool0,sed -i 's/filterable/filterable_test/g' productmetadatatype.py,file_read,file_read,UNSAFE_SIDE_EFFECT,matched:\bsed\s+-i\b,false,START,0,16,0,false,false,false,0.20160961151123047
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,3,django__django-13028:b0:tool1,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,2,902,1,false,false,false,0.17478489875793457
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,5,django__django-13028:b0:tool2,cd /testbed/tests && ls -la,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,5331,1,false,false,false,0.17808127403259277
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,7,django__django-13028:b0:tool3,find /testbed -name productmetadatatype.py,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,1,false,false,false,0.23638463020324707
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,9,django__django-13028:b0:tool4,cat /path/to/pr_description.md,file_read,file_read,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,14,1,false,false,false,0.18566012382507324
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,11,django__django-13028:b0:tool5,"grep -r ""NotSupportedError when RHS has filterable=False attribute"" /testbed",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,file_read,1,15,2,false,false,false,0.3287851810455322
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,13,django__django-13028:b0:tool6,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,902,3,false,false,false,0.18478775024414062
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,15,django__django-13028:b0:tool7,"grep -r ""NotSupportedError when RHS has filterable=False attribute"" /testbed",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,3,false,false,false,0.3194713592529297
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,17,django__django-13028:b0:tool8,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,902,4,false,false,false,0.17884135246276855
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,19,django__django-13028:b0:tool9,"grep -r ""NotSupportedError when RHS has filterable=False attribute"" /testbed",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,4,false,false,false,0.3239326477050781
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,21,django__django-13028:b0:tool10,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,902,5,false,false,false,0.1841721534729004
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,23,django__django-13028:b0:tool11,"grep -r ""NotSupportedError when RHS has filterable=False attribute"" /testbed",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,5,false,false,false,0.3219332695007324
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,25,django__django-13028:b0:tool12,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,902,6,false,false,false,0.17507600784301758
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,27,django__django-13028:b0:tool13,"grep -r ""NotSupportedError when RHS has filterable=False attribute"" /testbed",grep_search,grep_search,SAFE_READ_ONLY,readonly_shell_chain,true,list_find,0,15,6,false,false,false,0.31751418113708496
+data/raw_trajs/mini_swe_lite5_patchcap/django__django-13028/rollout_0.traj.json,django,b0,29,django__django-13028:b0:tool14,ls -la /testbed,shell_other,list_find,SAFE_READ_ONLY,readonly_shell_chain,true,grep_search,1,902,7,false,false,false,0.1764380931854248
