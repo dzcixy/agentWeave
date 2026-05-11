@@ -238,6 +238,26 @@ Outputs:
 
 The selector does not use validation labels, future JCT, or future tool completion at runtime. If it loses to the strongest non-oracle baseline, that loss is reported.
 
+## PR4-v8 TAPS-C Cost-Model Policy Compiler
+
+PR4-v8 corrects the portfolio evaluation methodology: the per-configuration oracle envelope is no longer treated as a deployable baseline. The primary comparison is against the best fixed policy selected on the train split, with oracle reported only as regret.
+
+```bash
+SIZE=medium bash scripts/run_pr4_algo_v8.sh
+```
+
+Outputs:
+
+- `data/results/pr4_v8_evaluation_methodology.md`
+- `data/results/aligned_policy_grid_pr4_v8.csv`
+- `data/results/taps_cost_model_training_pr4_v8.csv`
+- `data/results/taps_cost_model_validation_pr4_v8.csv`
+- `data/results/taps_compiler_validation_pr4_v8.csv`
+- `data/results/taps_compiler_objectives_pr4_v8.csv`
+- `data/results/pr4_algo_v8_report.md`
+
+`TAPS-C` uses train-derived cost-model predictions to choose among fixed deployable policies. Validation labels are used only for reporting. The oracle envelope is an upper bound, not a baseline.
+
 ## ASTRA-Sim Bridge Skeleton
 
 AgentWeaver can export trace DAGs to a Chakra-style intermediate JSON format for future ASTRA-sim validation:
@@ -256,7 +276,7 @@ Outputs:
 - `data/results/astra_export_mini_swe_report.md`
 - `data/results/astra_run_report.md`
 
-This is an intermediate exporter only. It does not claim ASTRA-sim cycles unless a real ASTRA command is provided through `ASTRA_RUN_CMD`.
+The exporter also writes a policy-aware intermediate trace under `data/astra_traces/policy_aware_smoke/`, where cached local context, remote context movement, and reduced prefill compute are represented separately. This is still an intermediate exporter only. It does not claim ASTRA-sim cycles unless a real ASTRA command is provided through `ASTRA_RUN_CMD`.
 
 The official SWE-bench harness can be attached by running the agent externally, preserving generated patches/test results in `.traj`, then converting with the adapters.
 

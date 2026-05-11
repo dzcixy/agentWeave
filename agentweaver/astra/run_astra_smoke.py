@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from agentweaver.astra.export_chakra import ChakraExporter, export_trace_to_chakra_json
+from agentweaver.astra.export_chakra import ChakraExporter, export_policy_aware_trace_to_chakra_json, export_trace_to_chakra_json
 from agentweaver.astra.export_configs import write_smoke_configs
 from agentweaver.profiling.latency_model import LatencyModel
 from agentweaver.tracing.trace_schema import ContextSegmentRef, Event, Trace
@@ -119,10 +119,61 @@ def export_one_real(
     return payload
 
 
+def export_policy_aware_smoke(
+    trace_dir: str | Path = "data/traces/mini_swe_lite10_r4_timed",
+    model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
+    policy: str = "acd_nisp",
+) -> dict | None:
+    traces = sorted(Path(trace_dir).glob("*.jsonl"))
+    if not traces:
+        _write_report(
+            "data/results/astra_policy_aware_export_report.md",
+            "ASTRA Policy-Aware Export Report",
+            {"stats": {}},
+            {"TRACE_FOUND": "false", "POLICY_USED": policy, "ASTRA_POLICY_AWARE_EXPORT": "FAIL"},
+        )
+        return None
+    raw_payload = export_trace_to_chakra_json(
+        traces[0],
+        "data/astra_traces/policy_aware_smoke/raw_reference.0.et.json",
+        model_json,
+        16,
+    )
+    aware_payload = export_policy_aware_trace_to_chakra_json(
+        traces[0],
+        "data/astra_traces/policy_aware_smoke/agentweaver_policy_aware.0.et.json",
+        model_json,
+        16,
+        policy,
+    )
+    raw_remote = float(raw_payload.get("stats", {}).get("estimated_communication_bytes", 0))
+    aware_remote = float(aware_payload.get("stats", {}).get("remote_communication_bytes", 0))
+    reduction = (raw_remote - aware_remote) / max(1.0, raw_remote)
+    _write_report(
+        "data/results/astra_policy_aware_export_report.md",
+        "ASTRA Policy-Aware Export Report",
+        aware_payload,
+        {
+            "TRACE_FOUND": "true",
+            "POLICY_USED": policy,
+            "RAW_REMOTE_COMMUNICATION_BYTES": int(raw_remote),
+            "POLICY_AWARE_REMOTE_COMMUNICATION_BYTES": int(aware_remote),
+            "REMOTE_COMMUNICATION_REDUCTION": f"{reduction:.6f}",
+            "ASTRA_POLICY_AWARE_EXPORT": "PASS" if aware_remote < raw_remote else "WARNING",
+        },
+    )
+    return aware_payload
+
+
 def run_all() -> dict:
     smoke = export_smoke()
     real = export_one_real()
-    return {"smoke_nodes": len(smoke.get("nodes", [])), "real_nodes": len(real.get("nodes", [])) if real else 0}
+    aware = export_policy_aware_smoke()
+    return {
+        "smoke_nodes": len(smoke.get("nodes", [])),
+        "real_nodes": len(real.get("nodes", [])) if real else 0,
+        "policy_aware_nodes": len(aware.get("nodes", [])) if aware else 0,
+    }
 
 
 def main() -> None:
@@ -132,9 +183,9 @@ def main() -> None:
     args = ap.parse_args()
     smoke = export_smoke(args.model_json)
     real = export_one_real(args.trace_dir, args.model_json)
-    print(json.dumps({"smoke_nodes": len(smoke.get("nodes", [])), "real_nodes": len(real.get("nodes", [])) if real else 0}, indent=2, sort_keys=True))
+    aware = export_policy_aware_smoke(args.trace_dir, args.model_json)
+    print(json.dumps({"smoke_nodes": len(smoke.get("nodes", [])), "real_nodes": len(real.get("nodes", [])) if real else 0, "policy_aware_nodes": len(aware.get("nodes", [])) if aware else 0}, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
     main()
-
