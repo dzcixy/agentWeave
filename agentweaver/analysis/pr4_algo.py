@@ -11,14 +11,15 @@ import matplotlib.pyplot as plt
 
 from agentweaver.analysis.context_segment_graph import process_trace_dir
 from agentweaver.profiling.pr2_v2 import real_policy_comparison
-from agentweaver.simulator.context_domain_factorization import compare_context_reuse
+from agentweaver.simulator.context_domain_factorization import compare_context_reuse, compare_strict_prefix_reuse
 from agentweaver.simulator.multisession_replay import run_multisession
-from agentweaver.simulator.progress_aware_branch_budgeting import run_pabb
+from agentweaver.simulator.progress_aware_branch_budgeting import run_pabb, run_pabb_online
 from agentweaver.simulator.replay import replay
 from agentweaver.utils.io import ensure_dir, write_csv
 
 
 CDF_POLICIES = ["naive_wafer", "acd_only", "acd_cdf", "acd_nisp", "acd_cdf_nisp", "full_agentweaver_cdf"]
+STRICT_CDF_POLICIES = ["acd_only", "acd_strict", "acd_cdf_strict", "acd_cdf_strict_nisp", "full_agentweaver_v2"]
 
 
 def _read_csv(path: str | Path) -> list[dict[str, str]]:
@@ -69,6 +70,52 @@ def run_cdf_policy_replay(
     return rows
 
 
+def run_strict_cdf_policy_replay(
+    trace_dir: str | Path = "data/traces/mini_swe_lite10_r4_timed",
+    model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
+    wafer_config: str | Path = "configs/wafer_6x6.yaml",
+    processed_dir: str | Path = "data/processed/mini_swe_lite10_r4_timed_pr4_v2_cdf",
+    out_csv: str | Path = "data/results/mini_swe_lite10_r4_timed_cdf_strict_policy_comparison_pr4_v2.csv",
+) -> list[dict[str, Any]]:
+    processed = ensure_dir(processed_dir)
+    process_trace_dir(trace_dir, processed, "configs/default.yaml")
+    shutil.copyfile(model_json, processed / "h100_latency_model.json")
+    tmp = ensure_dir(Path("data/results/.tmp_pr4_v2_cdf_replay"))
+    rows: list[dict[str, Any]] = []
+    fields: list[str] = []
+    for policy in STRICT_CDF_POLICIES:
+        policy_rows = replay(processed, wafer_config, policy, tmp / f"{policy}.csv", run_id="pr4_algo_v2_cdf")
+        agg = dict(_aggregate(policy_rows))
+        agg["status"] = "ok"
+        rows.append(agg)
+        for key in agg:
+            if key not in fields:
+                fields.append(key)
+    write_csv(out_csv, rows, fields)
+    shutil.rmtree(tmp, ignore_errors=True)
+    plot_strict_cdf_policy(rows)
+    return rows
+
+
+def plot_strict_cdf_policy(rows: list[dict[str, Any]], out: str | Path = "data/plots/cdf_strict_policy_pr4_v2.pdf") -> None:
+    ensure_dir(Path(out).parent)
+    labels = [str(r.get("policy")) for r in rows]
+    jct = [_f(r, "jct") for r in rows]
+    avoided = [_f(r, "prefill_tokens_avoided") for r in rows]
+    cdf_added = [_f(r, "cdf_added_kv_hit_tokens") for r in rows]
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 3.8), constrained_layout=True)
+    axes[0].bar(labels, jct)
+    axes[0].set_ylabel("simulated JCT (s)")
+    axes[0].tick_params(axis="x", rotation=25)
+    axes[1].bar([i - 0.18 for i in range(len(labels))], avoided, width=0.36, label="total avoided")
+    axes[1].bar([i + 0.18 for i in range(len(labels))], cdf_added, width=0.36, label="CDF added")
+    axes[1].set_xticks(range(len(labels)), labels, rotation=25, ha="right")
+    axes[1].set_ylabel("tokens")
+    axes[1].legend(fontsize=8)
+    fig.savefig(out)
+    plt.close(fig)
+
+
 def write_mechanism_positioning(out: str | Path = "data/results/mechanism_positioning_pr4_algo.md") -> None:
     text = """# PR4 Algorithm Mechanism Positioning
 
@@ -86,6 +133,29 @@ Deprecated or folded into PABB. It is not used as the real mini-SWE main-result 
 
 Real mini-SWE main result:
 Attribute real-trace gains to ACD/CDF/NISP/TAPS and report PABB only as branch-budget/progress control. Do not attribute real mini-SWE gains to old BES.
+"""
+    p = Path(out)
+    ensure_dir(p.parent)
+    p.write_text(text, encoding="utf-8")
+
+
+def write_mechanism_positioning_v2(out: str | Path = "data/results/mechanism_positioning_pr4_algo_v2.md") -> None:
+    text = """# PR4 Algorithm v2 Mechanism Positioning
+
+CDF:
+CDF now uses strict-prefix accounting. Natural reuse is counted only as a continuous prefix from token/block position 0. Because raw token ids are unavailable in the mini-SWE traces, PR4-v2 uses block-prefix mode over ordered context segment token hashes and lengths. Segment reuse away from position 0 is reported as potential only and is not counted as KV-safe without CDF canonical rendering.
+
+TAPS:
+The main TAPS result uses predictive tool latency. The predictor is trained from observed tool events with leave-one-instance-out medians by tool type and command class, plus previous latency from the same session when already observed. taps_oracle is retained only as an upper bound and is not reported as the online algorithm.
+
+PABB:
+The main PABB result uses online signals only. patch_candidate_seen, duplicate_patch_seen_so_far, pytest_seen, return codes, and verifier status become visible only after the corresponding trace prefix has executed. pabb_oracle_upper_bound is retained only as an upper bound.
+
+Old BES:
+Deprecated. It is not restored as a main mechanism and is not used for real mini-SWE main-result attribution.
+
+Real mini-SWE attribution:
+Only non-oracle evidence should be used for real mini-SWE gains. Unknown verifier results remain unknown and no solved rate is reported without official harness evaluation.
 """
     p = Path(out)
     ensure_dir(p.parent)
@@ -246,6 +316,122 @@ def write_pr4_report(
     return fields
 
 
+def _field(rows: list[dict[str, str]], policy: str, metric: str) -> float:
+    row = next((r for r in rows if r.get("policy") == policy), None)
+    return _f(row, metric)
+
+
+def _v2_pabb_gains(rows: list[dict[str, str]]) -> tuple[float, float, float]:
+    fcfs = {
+        (r.get("instance_id"), r.get("max_active_branches"), r.get("max_steps_per_branch")): r
+        for r in rows
+        if r.get("policy") == "fcfs_budget"
+    }
+    oracle = {
+        (r.get("instance_id"), r.get("max_active_branches"), r.get("max_steps_per_branch")): r
+        for r in rows
+        if r.get("policy") == "pabb_oracle_upper_bound"
+    }
+    gains: list[float] = []
+    token_gains: list[float] = []
+    gaps: list[float] = []
+    for row in rows:
+        if row.get("policy") != "pabb_online":
+            continue
+        key = (row.get("instance_id"), row.get("max_active_branches"), row.get("max_steps_per_branch"))
+        online_cost = _f(row, "cost_to_first_nonempty_patch", float("nan"))
+        online_tokens = _f(row, "tokens_to_first_nonempty_patch", float("nan"))
+        base_cost = _f(fcfs.get(key), "cost_to_first_nonempty_patch", float("nan"))
+        base_tokens = _f(fcfs.get(key), "tokens_to_first_nonempty_patch", float("nan"))
+        oracle_cost = _f(oracle.get(key), "cost_to_first_nonempty_patch", float("nan"))
+        if online_cost == online_cost:
+            if base_cost != base_cost:
+                gains.append(1.0)
+            elif base_cost > 0:
+                gains.append((base_cost - online_cost) / base_cost)
+            if oracle_cost == oracle_cost and online_cost > 0:
+                gaps.append(max(0.0, (online_cost - oracle_cost) / online_cost))
+        if online_tokens == online_tokens:
+            if base_tokens != base_tokens:
+                token_gains.append(1.0)
+            elif base_tokens > 0:
+                token_gains.append((base_tokens - online_tokens) / base_tokens)
+    return (
+        sum(gains) / len(gains) if gains else 0.0,
+        sum(token_gains) / len(token_gains) if token_gains else 0.0,
+        sum(gaps) / len(gaps) if gaps else 0.0,
+    )
+
+
+def write_pr4_v2_report(
+    out: str | Path = "data/results/pr4_algo_v2_report.md",
+    strict_cdf_csv: str | Path = "data/results/cdf_strict_prefix_comparison_pr4_v2.csv",
+    strict_policy_csv: str | Path = "data/results/mini_swe_lite10_r4_timed_cdf_strict_policy_comparison_pr4_v2.csv",
+    taps_csv: str | Path = "data/results/multisession_taps_predictive_pr4_v2.csv",
+    pabb_csv: str | Path = "data/results/pabb_online_branch_budget_pr4_v2.csv",
+    positioning: str | Path = "data/results/mechanism_positioning_pr4_algo_v2.md",
+) -> dict[str, str]:
+    cdf = _read_csv(strict_cdf_csv)
+    strict_policy = _read_csv(strict_policy_csv)
+    taps = _read_csv(taps_csv)
+    pabb = _read_csv(pabb_csv)
+    cdf_added = sum(_f(r, "cdf_added_reusable_tokens") for r in cdf)
+    cdf_saved = sum(_f(r, "estimated_prefill_saved") for r in cdf)
+    cdf_speedup = _ratio(cdf_saved, _field(strict_policy, "acd_strict", "jct"))
+    taps8 = {r.get("policy"): r for r in taps if str(r.get("sessions")) == "8"}
+    pred_gain = _f(taps8.get("taps_predictive"), "taps_predictive_gain_vs_acd_nisp")
+    oracle_gap = _f(taps8.get("taps_predictive"), "taps_oracle_gap")
+    pred_err = _f(taps8.get("taps_predictive"), "predictor_median_abs_error")
+    pabb_gain, pabb_token_gain, pabb_gap = _v2_pabb_gains(pabb)
+    required = [
+        Path(strict_cdf_csv),
+        Path(strict_policy_csv),
+        Path(taps_csv),
+        Path(pabb_csv),
+        Path(positioning),
+        Path("data/plots/cdf_strict_prefix_pr4_v2.pdf"),
+        Path("data/plots/cdf_strict_policy_pr4_v2.pdf"),
+        Path("data/plots/multisession_taps_predictive_throughput_pr4_v2.pdf"),
+        Path("data/plots/pabb_online_branch_budget_pr4_v2.pdf"),
+    ]
+    ready = all(p.exists() for p in required)
+    taps_status = "OBSERVED" if pred_gain > 0.01 else ("WEAK" if pred_gain > 0 else "NOT_OBSERVED")
+    pabb_status = "OBSERVED" if pabb_gain > 0.05 or pabb_token_gain > 0.05 else ("WEAK" if pabb_gain > 0 or pabb_token_gain > 0 else "NOT_OBSERVED")
+    fields = {
+        "PR4_ALGO_V2_GATE": "PASS" if ready else "FAIL",
+        "STRICT_CDF_IMPLEMENTED": str(Path(strict_cdf_csv).exists()).lower(),
+        "CDF_GAIN": "OBSERVED" if cdf_added > 0 else "NOT_OBSERVED",
+        "CDF_ADDED_REUSABLE_TOKENS": str(int(cdf_added)),
+        "CDF_MODEL_SIDE_SPEEDUP": f"{cdf_speedup:.6f}",
+        "TAPS_PREDICTIVE_IMPLEMENTED": str(Path(taps_csv).exists()).lower(),
+        "TAPS_PREDICTIVE_GAIN": taps_status,
+        "TAPS_ORACLE_GAP": f"{oracle_gap:.6f}",
+        "TOOL_LATENCY_PREDICTOR_MEDIAN_ERROR": f"{pred_err:.6f}",
+        "PABB_ONLINE_IMPLEMENTED": str(Path(pabb_csv).exists()).lower(),
+        "PABB_ONLINE_GAIN": pabb_status,
+        "PABB_ORACLE_GAP": f"{pabb_gap:.6f}",
+        "BES_DEPRECATED": "true",
+        "READY_FOR_PR4_SCALE": str(ready).lower(),
+    }
+    lines = ["# PR4 Algorithm v2 Report", ""]
+    lines.extend(f"{k} = {v}" for k, v in fields.items())
+    lines.extend(
+        [
+            "",
+            "## Notes",
+            "- CDF strict-prefix accounting uses block_prefix mode because raw token ids are unavailable in the trace.",
+            "- Segment reuse potential is not counted as KV hit unless the CDF canonical prefix makes it continuous from position 0.",
+            "- TAPS predictive is the main online result; taps_oracle is only an upper bound.",
+            "- PABB online uses only executed-prefix progress signals; pabb_oracle_upper_bound is only an upper bound.",
+            "- No solved rate is reported from unknown verifier results.",
+        ]
+    )
+    p = Path(out)
+    ensure_dir(p.parent)
+    p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return fields
+
+
 def run_all() -> dict[str, Any]:
     cdf_rows = compare_context_reuse()
     cdf_policy = run_cdf_policy_replay()
@@ -263,17 +449,42 @@ def run_all() -> dict[str, Any]:
     }
 
 
+def run_v2() -> dict[str, Any]:
+    cdf = compare_strict_prefix_reuse()
+    strict_policy = run_strict_cdf_policy_replay()
+    taps = run_multisession(
+        out_csv="data/results/multisession_taps_predictive_pr4_v2.csv",
+        run_id="pr4_algo_v2",
+        plot_prefix="data/plots/multisession_taps_predictive",
+        plot_suffix="pr4_v2",
+    )
+    pabb = run_pabb_online()
+    write_mechanism_positioning_v2()
+    report = write_pr4_v2_report()
+    return {
+        "strict_cdf_rows": len(cdf),
+        "strict_policy_rows": len(strict_policy),
+        "taps_rows": len(taps),
+        "pabb_rows": len(pabb),
+        "report": report,
+    }
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("run-all")
+    sub.add_parser("run-v2")
     sub.add_parser("cdf-policy")
     sub.add_parser("positioning")
     sub.add_parser("progression-plot")
     sub.add_parser("report")
+    sub.add_parser("report-v2")
     args = ap.parse_args()
     if args.cmd == "run-all":
         print(json.dumps(run_all(), indent=2))
+    elif args.cmd == "run-v2":
+        print(json.dumps(run_v2(), indent=2))
     elif args.cmd == "cdf-policy":
         print(json.dumps({"rows": len(run_cdf_policy_replay())}, indent=2))
     elif args.cmd == "positioning":
@@ -288,6 +499,8 @@ def main() -> None:
         print(json.dumps({"out": "data/plots/agentweaver_progression_pr4_algo.pdf"}, indent=2))
     elif args.cmd == "report":
         print(json.dumps(write_pr4_report(), indent=2))
+    elif args.cmd == "report-v2":
+        print(json.dumps(write_pr4_v2_report(), indent=2))
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ from agentweaver.profiling.latency_model import LatencyModel
 from agentweaver.simulator.acd_mapping import branch_key, run_mapping
 from agentweaver.simulator.bes_scheduler import BESScheduler
 from agentweaver.simulator.context_arena import ContextArena
-from agentweaver.simulator.context_domain_factorization import selected_segment_ids
+from agentweaver.simulator.context_domain_factorization import selected_segment_ids, strict_prefix_lookup
 from agentweaver.simulator.metrics import percentile
 from agentweaver.simulator.nisp import BranchKVState, NISP, NISPDecision
 from agentweaver.simulator.wafer_config import WaferConfig
@@ -33,16 +33,35 @@ POLICIES = {
     "acd_cdf",
     "acd_cdf_nisp",
     "full_agentweaver_cdf",
+    "acd_strict",
+    "acd_cdf_strict",
+    "acd_cdf_strict_nisp",
+    "full_agentweaver_v2",
 }
 
 
 def _policy_flags(policy: str) -> dict[str, bool]:
     return {
-        "acd": policy in {"acd_only", "acd_bes", "acd_nisp", "full_agentweaver", "acd_cdf", "acd_cdf_nisp", "full_agentweaver_cdf"},
+        "acd": policy
+        in {
+            "acd_only",
+            "acd_bes",
+            "acd_nisp",
+            "full_agentweaver",
+            "acd_cdf",
+            "acd_cdf_nisp",
+            "full_agentweaver_cdf",
+            "acd_strict",
+            "acd_cdf_strict",
+            "acd_cdf_strict_nisp",
+            "full_agentweaver_v2",
+        },
         "cdf": policy in {"acd_cdf", "acd_cdf_nisp", "full_agentweaver_cdf"},
+        "strict": policy in {"acd_strict", "acd_cdf_strict", "acd_cdf_strict_nisp", "full_agentweaver_v2"},
+        "cdf_strict": policy in {"acd_cdf_strict", "acd_cdf_strict_nisp", "full_agentweaver_v2"},
         "bes": policy in {"acd_bes", "full_agentweaver"},
-        "nisp": policy in {"acd_nisp", "full_agentweaver", "acd_cdf_nisp", "full_agentweaver_cdf"},
-        "cancel": policy in {"full_agentweaver", "full_agentweaver_cdf"},
+        "nisp": policy in {"acd_nisp", "full_agentweaver", "acd_cdf_nisp", "full_agentweaver_cdf", "acd_cdf_strict_nisp", "full_agentweaver_v2"},
+        "cancel": policy in {"full_agentweaver", "full_agentweaver_cdf", "full_agentweaver_v2"},
         "static": policy == "static_branch_pinning",
         "release_on_tool": policy not in {"static_branch_pinning"},
     }
@@ -101,6 +120,7 @@ class EventDrivenReplay:
         self.nisp = NISP(latency_model, mesh=self.mesh)
         self.scheduler = BESScheduler(latency_model, self.arena, free_regions=self.free_regions)
         self.cdf_selected_segments = selected_segment_ids(self.events, latency_model) if self.flags["cdf"] else set()
+        self.strict_natural_hits, self.strict_cdf_added_hits = strict_prefix_lookup(self.events) if self.flags["strict"] else ({}, {})
         self.cdf_seen_segments: set[str] = set()
         cdf_segment_sizes: dict[str, int] = {}
         for ev in self.events:
@@ -249,12 +269,35 @@ class EventDrivenReplay:
         return max(cached, ev.input_tokens - resume), resume
 
     def _start_llm(self, ev: Event, now: float, region: Coord) -> None:
-        cached, delta = self._nisp_restore_cached(ev)
-        if self.flags["acd"] and cached == 0:
+        cdf_added = 0
+        if self.flags["strict"]:
+            natural_raw = min(ev.input_tokens, int(self.strict_natural_hits.get(ev.event_id, 0)))
+            natural = min(natural_raw, self.arena.match(ev.context_segments))
+            cdf_added = min(max(0, ev.input_tokens - natural), int(self.strict_cdf_added_hits.get(ev.event_id, 0))) if self.flags["cdf_strict"] else 0
+            strict_cached = natural + cdf_added
+            decision = self.nisp.restore_state(ev.branch_id) if self.flags["nisp"] and ev.step_id >= 3 else None
+            if decision is not None:
+                nisp_cached = min(ev.input_tokens, decision.cached_tokens)
+                if nisp_cached > strict_cached:
+                    cached = nisp_cached
+                    delta = min(ev.input_tokens, decision.resume_prefill_tokens)
+                    cdf_added = 0
+                else:
+                    cached = strict_cached
+                    delta = max(0, ev.input_tokens - cached)
+            else:
+                cached = strict_cached
+                delta = max(0, ev.input_tokens - cached)
+            if cdf_added:
+                self.cdf_added_kv_hit_tokens += cdf_added
+                self.cdf_prefill_tokens_avoided += cdf_added
+                self.cdf_model_side_time_saved += self.latency_model.predict_prefill(cdf_added)
+        else:
+            cached, delta = self._nisp_restore_cached(ev)
+        if (not self.flags["strict"]) and self.flags["acd"] and cached == 0:
             cached = self.arena.match(ev.context_segments)
             delta = max(0, ev.input_tokens - cached)
-        cdf_added = 0
-        if self.flags["cdf"] and self.cdf_selected_segments:
+        if (not self.flags["strict"]) and self.flags["cdf"] and self.cdf_selected_segments:
             cdf_refs = [seg for seg in ev.context_segments if seg.segment_id in self.cdf_selected_segments and seg.segment_id in self.cdf_seen_segments]
             if cdf_refs:
                 cdf_eligible = sum(seg.length for seg in cdf_refs)
@@ -281,7 +324,10 @@ class EventDrivenReplay:
         self.prefill_tokens_avoided += cached
         self.kv_hit_tokens += cached
         self.kv_miss_tokens += delta
-        self.natural_kv_hit_tokens += max(0, cached - cdf_added)
+        if self.flags["strict"]:
+            self.natural_kv_hit_tokens += max(0, cached - cdf_added)
+        else:
+            self.natural_kv_hit_tokens += max(0, cached - cdf_added)
         if ev.step_id >= 3:
             self.resume_prefill_tokens += delta
         self.running[ev.branch_id] = RunningLLM(ev, region, now, duration, cached, delta, fetch_latency)

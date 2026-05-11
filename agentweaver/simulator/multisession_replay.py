@@ -4,7 +4,7 @@ import argparse
 import heapq
 import json
 import math
-from collections import deque
+from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -19,7 +19,7 @@ from agentweaver.tracing.trace_schema import ContextSegmentRef, Event, Trace, lo
 from agentweaver.utils.io import ensure_dir, write_csv
 
 
-POLICIES = ["naive_wafer", "acd_nisp", "acd_cdf_nisp", "taps"]
+POLICIES = ["naive_wafer", "acd_nisp", "acd_cdf_nisp", "taps", "taps_oracle", "taps_predictive"]
 
 
 @dataclass(order=True)
@@ -42,8 +42,81 @@ class SessionState:
     next_index: int = 0
     done_time: float = 0.0
     last_tool_return_time: float = 0.0
+    predicted_tool_return_time: float = 0.0
+    previous_tool_latency: float | None = None
     parked_cached_tokens: int = 0
     parked_resume_tokens: int = 0
+
+
+def command_class(command: str | None) -> str:
+    cmd = (command or "").strip().lower()
+    if not cmd:
+        return "none"
+    if any(x in cmd for x in ("pytest", "tox", "manage.py test", "unittest")):
+        return "test"
+    if any(x in cmd for x in ("sed ", "python - <<", "cat >", "perl ", "apply_patch")):
+        return "file_write"
+    if any(x in cmd for x in ("cat ", "grep", "rg ", "sed -n", "ls ", "find ")):
+        return "file_read"
+    if any(x in cmd for x in ("git diff", "git status", "git ")):
+        return "git"
+    return "shell_other"
+
+
+class ToolLatencyPredictor:
+    def __init__(self) -> None:
+        self.records: list[tuple[str, str, str, float]] = []
+        self.global_median = 0.0
+
+    @staticmethod
+    def _median(vals: list[float]) -> float:
+        vals = sorted(v for v in vals if v >= 0)
+        if not vals:
+            return 0.0
+        return vals[len(vals) // 2]
+
+    def train(self, events: list[Event]) -> None:
+        self.records = []
+        for ev in events:
+            if ev.node_type != "tool":
+                continue
+            lat = ev.tool_latency if ev.tool_latency is not None else ev.latency
+            if lat is None:
+                continue
+            self.records.append((ev.instance_id, ev.tool_type or "shell_other", command_class(ev.command), max(0.0, float(lat))))
+        self.global_median = self._median([r[3] for r in self.records])
+
+    def predict(self, ev: Event | None, previous_latency: float | None = None) -> float:
+        if ev is None:
+            return self.global_median
+        inst = ev.instance_id
+        typ = ev.tool_type or "shell_other"
+        cls = command_class(ev.command)
+        candidates = [lat for i, t, c, lat in self.records if i != inst and t == typ and c == cls]
+        if not candidates:
+            candidates = [lat for i, t, _, lat in self.records if i != inst and t == typ]
+        if not candidates:
+            candidates = [lat for i, _, c, lat in self.records if i != inst and c == cls]
+        pred = self._median(candidates) if candidates else self.global_median
+        if previous_latency is not None and previous_latency >= 0:
+            pred = 0.7 * pred + 0.3 * previous_latency
+        return max(0.0, pred)
+
+    def error_summary(self, events: list[Event]) -> tuple[float, float]:
+        errs: list[float] = []
+        prev_by_session: dict[str, float] = {}
+        for ev in sorted([e for e in events if e.node_type == "tool"], key=lambda e: (e.session_id, e.timestamp_start or e.timestamp_ready or 0.0)):
+            actual = ev.tool_latency if ev.tool_latency is not None else ev.latency
+            if actual is None:
+                continue
+            pred = self.predict(ev, prev_by_session.get(ev.session_id))
+            errs.append(abs(pred - max(0.0, float(actual))))
+            prev_by_session[ev.session_id] = max(0.0, float(actual))
+        if not errs:
+            return 0.0, 0.0
+        errs = sorted(errs)
+        p95_idx = min(len(errs) - 1, max(0, int(round(0.95 * (len(errs) - 1)))))
+        return errs[len(errs) // 2], errs[p95_idx]
 
 
 class MultiSessionReplay:
@@ -77,6 +150,9 @@ class MultiSessionReplay:
         self.sessions: dict[str, SessionState] = {}
         self.arena_resident: set[str] = set()
         self.cdf_selected = selected_segment_ids([ev for tr in traces for ev in tr.events], latency_model)
+        self.predictor = ToolLatencyPredictor()
+        self.predictor.train([ev for tr in traces for ev in tr.events])
+        self.predictor_median_abs_error, self.predictor_p95_abs_error = self.predictor.error_summary([ev for tr in traces for ev in tr.events])
         self.cdf_seen: set[str] = set()
         self.llm_busy_time = 0.0
         self.model_side_latency = 0.0
@@ -138,13 +214,13 @@ class MultiSessionReplay:
     def _cached_tokens(self, st: SessionState, ev: Event) -> tuple[int, int, int]:
         natural = self._resident_match(ev.context_segments) if self.policy in {"acd_nisp", "acd_cdf_nisp", "taps"} else 0
         cdf_added = 0
-        if self.policy in {"acd_cdf_nisp", "taps"}:
+        if self.policy in {"acd_cdf_nisp", "taps", "taps_oracle", "taps_predictive"}:
             cdf_refs = [ref for ref in ev.context_segments if ref.segment_id in self.cdf_selected and ref.segment_id in self.cdf_seen]
             eligible = sum(ref.length for ref in cdf_refs)
             resident = self._resident_match(cdf_refs)
             cdf_added = max(0, eligible - resident)
         nisp_cached = 0
-        if self.policy in {"acd_nisp", "acd_cdf_nisp", "taps"} and st.parked_cached_tokens:
+        if self.policy in {"acd_nisp", "acd_cdf_nisp", "taps", "taps_oracle", "taps_predictive"} and st.parked_cached_tokens:
             nisp_cached = st.parked_cached_tokens
             st.parked_cached_tokens = 0
             self.resume_prefill_tokens += st.parked_resume_tokens
@@ -170,7 +246,8 @@ class MultiSessionReplay:
     def _score(self, now: float, st: SessionState, ev: Event) -> float:
         cached = self._resident_match(ev.context_segments)
         locality_gain = self.lm.predict_prefill(cached)
-        resume_urgency = 1.0 / (1.0 + max(0.0, st.last_tool_return_time - now)) if st.last_tool_return_time else 0.0
+        return_time = st.predicted_tool_return_time if self.policy in {"taps_predictive", "taps"} else st.last_tool_return_time
+        resume_urgency = 1.0 / (1.0 + max(0.0, return_time - now)) if return_time else 0.0
         remaining = max(1, sum(1 for e in st.events[st.next_index :] if e.node_type in {"llm", "tool", "verifier"}))
         criticality = 1.0 / (1.0 + remaining)
         age = now - self.ready_since.get((st.session_id, ev.event_id), now)
@@ -182,7 +259,7 @@ class MultiSessionReplay:
 
     def _try_schedule(self, now: float) -> None:
         while self.ready and self.free_regions:
-            if self.policy == "taps":
+            if self.policy in {"taps", "taps_oracle", "taps_predictive"}:
                 selected = max(self.ready, key=lambda pair: self._score(now, self.sessions[pair[0]], pair[1]))
             else:
                 selected = self.ready[0]
@@ -248,14 +325,17 @@ class MultiSessionReplay:
                     next_llm = self._peek_next_node(st)
                     if next_llm and next_llm.node_type == "llm":
                         shared, private = self._shared_private_tokens(next_llm)
-                        if self.policy == "taps":
+                        if self.policy in {"taps", "taps_oracle", "taps_predictive"}:
                             st.parked_cached_tokens = shared + private
                             st.parked_resume_tokens = event.event.observation_tokens if event.event else 0
                             self.state_prefetch_bytes += shared * self.bpt
                         else:
                             st.parked_cached_tokens = shared
                             st.parked_resume_tokens = private + (event.event.observation_tokens if event.event else 0)
+                    predicted_latency = latency if self.policy == "taps_oracle" else self.predictor.predict(event.event, st.previous_tool_latency)
+                    st.predicted_tool_return_time = now + predicted_latency
                     st.last_tool_return_time = now + latency
+                    st.previous_tool_latency = latency
                     self._push(now + latency, "TOOL_DONE", event.session_id, event.event, None)
                     self._try_schedule(now)
             elif event.kind == "TOOL_DONE":
@@ -290,6 +370,8 @@ class MultiSessionReplay:
             "state_prefetch_bytes": self.state_prefetch_bytes,
             "exposed_state_migration_latency": self.exposed_state_migration_latency,
             "completed_sessions": len(completed),
+            "predictor_median_abs_error": self.predictor_median_abs_error,
+            "predictor_p95_abs_error": self.predictor_p95_abs_error,
         }
 
 
@@ -301,6 +383,8 @@ def run_multisession(
     effective_regions: int = 4,
     arrival_pattern: str = "closed_loop",
     run_id: str = "pr4_algo",
+    plot_prefix: str = "data/plots/multisession_taps",
+    plot_suffix: str = "pr4_algo",
 ) -> list[dict[str, Any]]:
     sessions_list = sessions_list or [1, 2, 4, 8, 16]
     traces = load_trace_dir(trace_dir)
@@ -309,9 +393,27 @@ def run_multisession(
     for sessions in sessions_list:
         for policy in POLICIES:
             rows.append(MultiSessionReplay(traces, sessions, policy, lm, effective_regions, arrival_pattern, run_id).run())
+    _enrich_predictive_metrics(rows)
     write_csv(out_csv, rows)
-    plot_multisession(rows)
+    plot_multisession(rows, plot_prefix=plot_prefix, plot_suffix=plot_suffix)
     return rows
+
+
+def _enrich_predictive_metrics(rows: list[dict[str, Any]]) -> None:
+    for sessions in sorted({int(r["sessions"]) for r in rows}):
+        by_policy = {r["policy"]: r for r in rows if int(r["sessions"]) == sessions}
+        base = by_policy.get("acd_nisp", {})
+        pred = by_policy.get("taps_predictive", {})
+        oracle = by_policy.get("taps_oracle", {})
+        base_thr = float(base.get("throughput_sessions_per_sec", 0.0) or 0.0)
+        pred_thr = float(pred.get("throughput_sessions_per_sec", 0.0) or 0.0)
+        oracle_thr = float(oracle.get("throughput_sessions_per_sec", 0.0) or 0.0)
+        gain = (pred_thr - base_thr) / base_thr if base_thr > 0 else 0.0
+        gap = (oracle_thr - pred_thr) / oracle_thr if oracle_thr > 0 else 0.0
+        for row in rows:
+            if int(row["sessions"]) == sessions:
+                row["taps_predictive_gain_vs_acd_nisp"] = gain
+                row["taps_oracle_gap"] = gap
 
 
 def _series(rows: list[dict[str, Any]], metric: str) -> tuple[list[int], dict[str, list[float]]]:
@@ -339,10 +441,10 @@ def _line_plot(rows: list[dict[str, Any]], metric: str, ylabel: str, out: str | 
     plt.close()
 
 
-def plot_multisession(rows: list[dict[str, Any]]) -> None:
-    _line_plot(rows, "throughput_sessions_per_sec", "throughput (sessions/s)", "data/plots/multisession_taps_throughput_pr4_algo.pdf")
-    _line_plot(rows, "p95_jct", "p95 JCT (s)", "data/plots/multisession_taps_p95_jct_pr4_algo.pdf")
-    _line_plot(rows, "region_utilization", "region utilization", "data/plots/multisession_taps_region_util_pr4_algo.pdf")
+def plot_multisession(rows: list[dict[str, Any]], plot_prefix: str = "data/plots/multisession_taps", plot_suffix: str = "pr4_algo") -> None:
+    _line_plot(rows, "throughput_sessions_per_sec", "throughput (sessions/s)", f"{plot_prefix}_throughput_{plot_suffix}.pdf")
+    _line_plot(rows, "p95_jct", "p95 JCT (s)", f"{plot_prefix}_p95_jct_{plot_suffix}.pdf")
+    _line_plot(rows, "region_utilization", "region utilization", f"{plot_prefix}_region_util_{plot_suffix}.pdf")
 
 
 def main() -> None:
@@ -354,6 +456,8 @@ def main() -> None:
     ap.add_argument("--effective-regions", type=int, default=4)
     ap.add_argument("--arrival-pattern", choices=("closed_loop", "poisson"), default="closed_loop")
     ap.add_argument("--run-id", default="pr4_algo")
+    ap.add_argument("--plot-prefix", default="data/plots/multisession_taps")
+    ap.add_argument("--plot-suffix", default="pr4_algo")
     args = ap.parse_args()
     rows = run_multisession(
         args.trace_dir,
@@ -363,6 +467,8 @@ def main() -> None:
         args.effective_regions,
         args.arrival_pattern,
         args.run_id,
+        args.plot_prefix,
+        args.plot_suffix,
     )
     print(json.dumps({"rows": len(rows), "out": args.out}, indent=2))
 

@@ -12,13 +12,26 @@ import matplotlib.pyplot as plt
 
 from agentweaver.analysis.context_segment_graph import kv_bytes_per_token
 from agentweaver.profiling.latency_model import LatencyModel
-from agentweaver.tracing.trace_schema import ContextSegment, Event, Trace, load_trace_dir
+from agentweaver.tracing.trace_schema import ContextSegment, ContextSegmentRef, Event, Trace, load_trace_dir
 from agentweaver.utils.io import ensure_dir, write_csv, write_json
 
 
 SHARED_INVARIANT = {"system", "tool_schema", "task", "repo"}
 SHARED_APPENDABLE = {"history"}
 BRANCH_DELTA = {"observation", "patch", "test_log", "branch_suffix", "scratchpad"}
+CANONICAL_ORDER = {
+    "system": 0,
+    "tool_schema": 1,
+    "task": 2,
+    "repo": 3,
+    "history": 5,
+    "branch_suffix": 6,
+    "observation": 7,
+    "test_log": 8,
+    "patch": 9,
+    "scratchpad": 10,
+    "unknown": 99,
+}
 
 
 @dataclass
@@ -42,6 +55,15 @@ class CDFSegment:
     resident_score: float
     cdf_selected: bool
     context_domain_id: str
+
+
+@dataclass(frozen=True)
+class PromptBlock:
+    key: str
+    length: int
+    segment_type: str
+    start_pos: int
+    safe_shared: bool
 
 
 def segment_class(segment_type: str, mutable: bool = False) -> str:
@@ -146,6 +168,154 @@ def analyze_events(
 def selected_segment_ids(events: list[Event], latency_model: LatencyModel | None = None, threshold: float = 1.0e-13) -> set[str]:
     _, selected = analyze_events(events, latency_model=latency_model, threshold=threshold)
     return set(selected)
+
+
+def _segment_def_map(ev: Event) -> dict[str, ContextSegment]:
+    return {seg.segment_id: seg for seg in ev.context_segment_defs}
+
+
+def _block_key(ref: ContextSegmentRef, defs: dict[str, ContextSegment]) -> str:
+    seg = defs.get(ref.segment_id)
+    token_hash = seg.token_hash if seg and seg.token_hash else ref.segment_id
+    return f"{ref.segment_type}:{token_hash}:{ref.length}"
+
+
+def prompt_blocks(ev: Event) -> list[PromptBlock]:
+    defs = _segment_def_map(ev)
+    refs = sorted(ev.context_segments, key=lambda r: (r.start_pos, r.segment_id))
+    blocks: list[PromptBlock] = []
+    for ref in refs:
+        safe_shared = ref.segment_type in (SHARED_INVARIANT | SHARED_APPENDABLE)
+        blocks.append(PromptBlock(_block_key(ref, defs), int(ref.length), ref.segment_type, int(ref.start_pos), safe_shared))
+    return blocks
+
+
+def canonical_prompt_blocks(ev: Event) -> list[PromptBlock]:
+    blocks = prompt_blocks(ev)
+    return sorted(blocks, key=lambda b: (CANONICAL_ORDER.get(b.segment_type, 99), b.key, b.start_pos))
+
+
+def _strict_prefix_hits(block_sequences: list[list[PromptBlock]]) -> tuple[list[int], int]:
+    previous: list[list[PromptBlock]] = []
+    hits: list[int] = []
+    for seq in block_sequences:
+        best = 0
+        for old in previous:
+            matched = 0
+            for a, b in zip(seq, old):
+                if a.key != b.key:
+                    break
+                matched += a.length
+            if matched > best:
+                best = matched
+        hits.append(best)
+        previous.append(seq)
+    return hits, sum(hits)
+
+
+def _segment_reuse_potential(block_sequences: list[list[PromptBlock]]) -> int:
+    seen: set[str] = set()
+    total = 0
+    for seq in block_sequences:
+        for block in seq:
+            if block.safe_shared and block.key in seen:
+                total += block.length
+            if block.safe_shared:
+                seen.add(block.key)
+    return total
+
+
+def strict_prefix_rows(
+    events: list[Event],
+    latency_model: LatencyModel | None = None,
+) -> list[dict[str, Any]]:
+    lm = latency_model or LatencyModel()
+    by_instance: dict[str, list[Event]] = defaultdict(list)
+    for ev in events:
+        if ev.node_type == "llm":
+            by_instance[ev.instance_id].append(ev)
+    rows: list[dict[str, Any]] = []
+    for instance_id, llm_events in sorted(by_instance.items()):
+        llm_events = sorted(llm_events, key=lambda e: (e.timestamp_start or e.timestamp_ready or 0.0, e.branch_id, e.step_id, e.node_id))
+        natural_sequences = [prompt_blocks(ev) for ev in llm_events]
+        canonical_sequences = [canonical_prompt_blocks(ev) for ev in llm_events]
+        natural_per_event, natural_hits = _strict_prefix_hits(natural_sequences)
+        canonical_per_event, raw_canonical_hits = _strict_prefix_hits(canonical_sequences)
+        segment_potential = _segment_reuse_potential(natural_sequences)
+        total_prompt_tokens = sum(sum(block.length for block in seq) for seq in natural_sequences[1:])
+        added = sum(max(0, can - nat) for nat, can in zip(natural_per_event, canonical_per_event))
+        canonical_hits = natural_hits + added
+        rows.append(
+            {
+                "instance_id": instance_id,
+                "natural_strict_prefix_reusable_tokens": natural_hits,
+                "segment_reuse_potential_tokens": segment_potential,
+                "cdf_canonical_prefix_reusable_tokens": canonical_hits,
+                "raw_cdf_canonical_prefix_reusable_tokens": raw_canonical_hits,
+                "cdf_added_reusable_tokens": added,
+                "natural_reusable_ratio": natural_hits / max(1, total_prompt_tokens),
+                "cdf_reusable_ratio": canonical_hits / max(1, total_prompt_tokens),
+                "block_prefix_mode": "true",
+                "estimated_prefill_saved": lm.predict_prefill(added) if added > 0 else 0.0,
+                "num_llm_events": len(llm_events),
+                "total_prompt_tokens_after_first": total_prompt_tokens,
+            }
+        )
+    return rows
+
+
+def strict_prefix_lookup(events: list[Event]) -> tuple[dict[str, int], dict[str, int]]:
+    natural: dict[str, int] = {}
+    cdf_added: dict[str, int] = {}
+    by_instance: dict[str, list[Event]] = defaultdict(list)
+    for ev in events:
+        if ev.node_type == "llm":
+            by_instance[ev.instance_id].append(ev)
+    for _, llm_events in by_instance.items():
+        llm_events = sorted(llm_events, key=lambda e: (e.timestamp_start or e.timestamp_ready or 0.0, e.branch_id, e.step_id, e.node_id))
+        natural_hits, _ = _strict_prefix_hits([prompt_blocks(ev) for ev in llm_events])
+        canonical_hits, _ = _strict_prefix_hits([canonical_prompt_blocks(ev) for ev in llm_events])
+        for ev, nat, can in zip(llm_events, natural_hits, canonical_hits):
+            natural[ev.event_id] = min(ev.input_tokens, nat)
+            cdf_added[ev.event_id] = min(max(0, ev.input_tokens - natural[ev.event_id]), max(0, can - nat))
+    return natural, cdf_added
+
+
+def compare_strict_prefix_reuse(
+    trace_dir: str | Path = "data/traces/mini_swe_lite10_r4_timed",
+    model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
+    out_csv: str | Path = "data/results/cdf_strict_prefix_comparison_pr4_v2.csv",
+    plot_out: str | Path = "data/plots/cdf_strict_prefix_pr4_v2.pdf",
+) -> list[dict[str, Any]]:
+    traces = load_trace_dir(trace_dir)
+    events = [ev for tr in traces for ev in tr.events]
+    rows = strict_prefix_rows(events, LatencyModel.load(model_json))
+    write_csv(out_csv, rows)
+    plot_strict_prefix(rows, plot_out)
+    return rows
+
+
+def plot_strict_prefix(rows: list[dict[str, Any]], out: str | Path) -> None:
+    ensure_dir(Path(out).parent)
+    labels = [str(r["instance_id"])[:18] for r in rows]
+    natural = [float(r["natural_strict_prefix_reusable_tokens"]) for r in rows]
+    added = [float(r["cdf_added_reusable_tokens"]) for r in rows]
+    before = [float(r["natural_reusable_ratio"]) for r in rows]
+    after = [float(r["cdf_reusable_ratio"]) for r in rows]
+    x = list(range(len(rows)))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
+    axes[0].bar([i - 0.18 for i in x], natural, width=0.36, label="natural strict-prefix")
+    axes[0].bar([i + 0.18 for i in x], added, width=0.36, label="CDF added")
+    axes[0].set_xticks(x, labels, rotation=35, ha="right")
+    axes[0].set_ylabel("tokens")
+    axes[0].legend(fontsize=8)
+    axes[1].plot(x, before, marker="o", label="natural")
+    axes[1].plot(x, after, marker="o", label="CDF canonical")
+    axes[1].set_xticks(x, labels, rotation=35, ha="right")
+    axes[1].set_ylabel("strict-prefix reusable ratio")
+    axes[1].legend(fontsize=8)
+    fig.savefig(out)
+    plt.close(fig)
 
 
 def _aggregate_rows(segments: list[CDFSegment], run_id: str) -> list[dict[str, Any]]:
@@ -300,8 +470,12 @@ def main() -> None:
     ap.add_argument("--out", default="data/results/cdf_context_reuse_comparison.csv")
     ap.add_argument("--detail-json", default="data/results/cdf_context_domains_pr4_algo.json")
     ap.add_argument("--plot-out", default="data/plots/cdf_context_reuse_pr4_algo.pdf")
+    ap.add_argument("--strict-prefix", action="store_true")
     args = ap.parse_args()
-    rows = compare_context_reuse(args.trace_dir, args.model_json, args.run_id, args.out, args.detail_json, args.plot_out)
+    if args.strict_prefix:
+        rows = compare_strict_prefix_reuse(args.trace_dir, args.model_json, args.out, args.plot_out)
+    else:
+        rows = compare_context_reuse(args.trace_dir, args.model_json, args.run_id, args.out, args.detail_json, args.plot_out)
     total_added = sum(int(r.get("cdf_added_reusable_tokens", 0)) for r in rows)
     print(json.dumps({"rows": len(rows), "cdf_added_reusable_tokens": total_added}, indent=2))
 

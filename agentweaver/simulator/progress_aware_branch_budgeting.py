@@ -5,7 +5,7 @@ import hashlib
 import json
 import math
 from collections import Counter, defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +17,7 @@ from agentweaver.utils.io import ensure_dir, read_yaml, write_csv
 
 
 BUDGET_POLICIES = ["launch_all", "fcfs_budget", "pabb_budget"]
+ONLINE_POLICIES = ["launch_all", "fcfs_budget", "pabb_online", "pabb_oracle_upper_bound"]
 
 
 @dataclass
@@ -44,6 +45,35 @@ class BranchSignals:
     official_verifier_result: str
 
 
+@dataclass
+class BranchProgressState:
+    branch_id: str
+    events: list[Event]
+    next_index: int = 0
+    steps_executed: int = 0
+    llm_tokens_seen: int = 0
+    tool_outputs_seen: int = 0
+    pytest_seen: bool = False
+    latest_returncode: int | None = None
+    error_count_seen: int = 0
+    file_modification_seen: bool = False
+    patch_candidate_seen: bool = False
+    patch_hash_seen: str = ""
+    official_verifier_seen: str = "unknown"
+    duplicate_patch_seen_so_far: bool = False
+    no_progress_steps: int = 0
+    age: int = 0
+    model_side_time: float = 0.0
+    tool_time: float = 0.0
+    observation_tokens: int = 0
+
+    def done(self) -> bool:
+        return self.next_index >= len(self.events)
+
+    def next_event(self) -> Event | None:
+        return None if self.done() else self.events[self.next_index]
+
+
 def _event_time(ev: Event) -> float:
     return ev.timestamp_start or ev.timestamp_ready or 0.0
 
@@ -55,6 +85,11 @@ def _event_end(ev: Event) -> float:
 def _contains_test_command(command: str) -> bool:
     s = command.lower()
     return any(x in s for x in ("pytest", "tox", " runtests", " test ", " manage.py test", "unittest"))
+
+
+def _looks_like_file_write(command: str | None) -> bool:
+    s = (command or "").lower()
+    return any(x in s for x in ("sed -i", "cat >", "python - <<", "perl -", "apply_patch", "tee ", "mv ", "cp "))
 
 
 def _error_count(command: str) -> int:
@@ -73,6 +108,16 @@ def _patch_hash_from_events(events: list[Event]) -> tuple[str, int]:
                 payload = f"{ev.instance_id}:{ev.branch_id}:{seg.segment_id}:{seg.length}"
                 return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16], seg.length
     return "", 0
+
+
+def _event_has_patch(ev: Event) -> tuple[bool, str]:
+    if ev.patch_hash:
+        return True, ev.patch_hash
+    for seg in ev.context_segments:
+        if seg.segment_type == "patch" and seg.length > 0:
+            payload = f"{ev.instance_id}:{ev.branch_id}:{seg.segment_id}:{seg.length}"
+            return True, hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+    return False, ""
 
 
 def _first_patch_point(events: list[Event]) -> tuple[float | None, int | None, float | None]:
@@ -248,6 +293,224 @@ def run_pabb(
     return rows
 
 
+def _branch_events_from_dirs(trace_dirs: list[str | Path]) -> dict[str, dict[str, list[Event]]]:
+    by_instance: dict[str, dict[str, list[Event]]] = defaultdict(lambda: defaultdict(list))
+    for trace_dir in trace_dirs:
+        for trace in load_trace_dir(trace_dir):
+            source = Path(str(trace.metadata.get("source", trace.metadata.get("source_trace_dir", trace_dir)))).stem
+            for ev in trace.events:
+                if ev.branch_id == "root" or ev.node_type not in {"llm", "tool", "verifier"}:
+                    continue
+                branch_key = f"{ev.branch_id}:{source}"
+                by_instance[ev.instance_id][branch_key].append(ev)
+    for branches in by_instance.values():
+        for key, events in branches.items():
+            branches[key] = sorted(events, key=lambda e: (e.step_id, _event_time(e), e.node_id))
+    return by_instance
+
+
+def _online_utility(st: BranchProgressState, weights: dict[str, float], max_tokens: int) -> float:
+    return (
+        weights["patch_nonempty"] * float(st.patch_candidate_seen)
+        + weights["pytest_command_seen"] * float(st.pytest_seen)
+        + weights["tool_returncode_success_or_progress"] * float(st.latest_returncode == 0 or st.file_modification_seen)
+        - weights["duplicate_patch_hash"] * float(st.duplicate_patch_seen_so_far)
+        - weights["no_file_modification"] * float(st.no_progress_steps > 2 and not st.file_modification_seen and not st.patch_candidate_seen)
+        - weights["normalized_token_cost"] * (st.llm_tokens_seen / max(1, max_tokens))
+        - weights.get("repeated_failure", 1.0) * st.error_count_seen
+        + 0.05 * st.age
+    )
+
+
+def _oracle_branch_value(events: list[Event]) -> tuple[int, int]:
+    patch_hash, patch_tokens = _patch_hash_from_events(events)
+    has_patch = 1 if patch_hash or patch_tokens > 0 else 0
+    tokens = sum(e.input_tokens + e.output_tokens for e in events if e.node_type == "llm")
+    return has_patch, -tokens
+
+
+def _select_active(
+    branches: dict[str, list[Event]],
+    policy: str,
+    max_active: int,
+) -> dict[str, BranchProgressState]:
+    items = sorted(branches.items())
+    if policy == "launch_all":
+        selected = items
+    elif policy == "pabb_oracle_upper_bound":
+        selected = sorted(items, key=lambda kv: _oracle_branch_value(kv[1]), reverse=True)[:max_active]
+    else:
+        selected = items[:max_active]
+    return {branch_id: BranchProgressState(branch_id, events) for branch_id, events in selected}
+
+
+def _choose_branch(
+    states: dict[str, BranchProgressState],
+    policy: str,
+    weights: dict[str, float],
+    max_tokens: int,
+    max_steps: int,
+) -> BranchProgressState | None:
+    ready = [st for st in states.values() if not st.done() and st.steps_executed < max_steps]
+    if not ready:
+        return None
+    if policy in {"launch_all", "fcfs_budget"}:
+        return sorted(ready, key=lambda st: st.branch_id)[0]
+    if policy == "pabb_oracle_upper_bound":
+        return max(ready, key=lambda st: _oracle_branch_value(st.events[st.next_index :]))
+    return max(ready, key=lambda st: _online_utility(st, weights, max_tokens))
+
+
+def _update_state(
+    st: BranchProgressState,
+    ev: Event,
+    lm: LatencyModel,
+    seen_patch_hashes: set[str],
+) -> tuple[bool, str]:
+    st.next_index += 1
+    made_progress = False
+    if ev.node_type in {"llm", "tool"}:
+        st.steps_executed += 1
+    if ev.node_type == "llm":
+        st.llm_tokens_seen += ev.input_tokens + ev.output_tokens
+        st.model_side_time += lm.predict_prefill(ev.input_tokens) + lm.predict_decode(ev.context_length or ev.input_tokens, ev.output_tokens)
+        made_progress = ev.output_tokens > 0
+    elif ev.node_type == "tool":
+        command = ev.command or ""
+        st.tool_outputs_seen += 1
+        st.observation_tokens += ev.observation_tokens or 0
+        st.pytest_seen = st.pytest_seen or _contains_test_command(command)
+        st.latest_returncode = ev.exit_code
+        st.error_count_seen += _error_count(command)
+        st.file_modification_seen = st.file_modification_seen or (_looks_like_file_write(command) and ev.exit_code in {0, None})
+        st.tool_time += float(ev.tool_latency if ev.tool_latency is not None else ev.latency or 0.0)
+        made_progress = st.latest_returncode == 0 or st.file_modification_seen or st.pytest_seen
+    elif ev.node_type == "verifier":
+        if ev.verifier_result in {"pass", "fail"}:
+            st.official_verifier_seen = ev.verifier_result
+    has_patch, patch_hash = _event_has_patch(ev)
+    if has_patch:
+        st.patch_candidate_seen = True
+        st.patch_hash_seen = patch_hash
+        st.duplicate_patch_seen_so_far = patch_hash in seen_patch_hashes if patch_hash else False
+        if patch_hash:
+            seen_patch_hashes.add(patch_hash)
+        made_progress = True
+    if made_progress:
+        st.no_progress_steps = 0
+    else:
+        st.no_progress_steps += 1
+    return has_patch, patch_hash
+
+
+def run_pabb_online(
+    trace_dirs: list[str | Path] | None = None,
+    model_json: str | Path = "data/profiles/h100_latency_model_pr2_v2.json",
+    weights_yaml: str | Path = "configs/pabb_weights.yaml",
+    out_csv: str | Path = "data/results/pabb_online_branch_budget_pr4_v2.csv",
+    plot_out: str | Path = "data/plots/pabb_online_branch_budget_pr4_v2.pdf",
+) -> list[dict[str, Any]]:
+    trace_dirs = trace_dirs or ["data/traces/mini_swe_lite10_r4_timed", "data/traces/mini_swe_lite5_patchcap_verified"]
+    lm = LatencyModel.load(model_json)
+    weights = _weights(weights_yaml)
+    by_instance = _branch_events_from_dirs(trace_dirs)
+    rows: list[dict[str, Any]] = []
+    for instance_id, branches in sorted(by_instance.items()):
+        max_tokens = max(
+            [sum(e.input_tokens + e.output_tokens for e in events if e.node_type == "llm") for events in branches.values()] or [1]
+        )
+        for policy in ONLINE_POLICIES:
+            for max_active in [1, 2, 4]:
+                for max_steps in [5, 10, 15]:
+                    states = _select_active(branches, policy, max_active)
+                    seen_patch_hashes: set[str] = set()
+                    elapsed = 0.0
+                    total_tokens = 0
+                    first_patch: tuple[float, int, float] | None = None
+                    while True:
+                        for state in states.values():
+                            state.age += 1
+                        st = _choose_branch(states, policy, weights, max_tokens, max_steps)
+                        if st is None:
+                            break
+                        ev = st.next_event()
+                        if ev is None:
+                            break
+                        before_cost = st.model_side_time + st.tool_time
+                        has_patch, _ = _update_state(st, ev, lm, seen_patch_hashes)
+                        step_cost = max(0.0, st.model_side_time + st.tool_time - before_cost)
+                        elapsed += step_cost
+                        total_tokens = sum(s.llm_tokens_seen for s in states.values())
+                        if has_patch and first_patch is None:
+                            first_patch = (elapsed, total_tokens, sum(s.model_side_time + s.tool_time for s in states.values()))
+                            break
+                    selected = list(states.values())
+                    official = next((s.official_verifier_seen for s in selected if s.official_verifier_seen in {"pass", "fail"}), "unknown")
+                    patch_hashes = [s.patch_hash_seen for s in selected if s.patch_hash_seen]
+                    duplicate_rate = (len(patch_hashes) - len(set(patch_hashes))) / max(1, len(patch_hashes))
+                    rows.append(
+                        {
+                            "instance_id": instance_id,
+                            "policy": policy,
+                            "max_active_branches": max_active,
+                            "max_steps_per_branch": max_steps,
+                            "time_to_first_nonempty_patch": "" if first_patch is None else first_patch[0],
+                            "tokens_to_first_nonempty_patch": "" if first_patch is None else first_patch[1],
+                            "cost_to_first_nonempty_patch": "" if first_patch is None else first_patch[2],
+                            "branches_pruned": max(0, len(branches) - len(selected)),
+                            "duplicate_patch_rate": duplicate_rate,
+                            "official_success_if_available": official,
+                            "verifier_unknown_count": sum(1 for s in selected if s.official_verifier_seen == "unknown"),
+                            "total_tokens_used": sum(s.llm_tokens_seen for s in selected),
+                            "total_tool_time": sum(s.tool_time for s in selected),
+                            "model_side_time": sum(s.model_side_time for s in selected),
+                            "online_oracle_gap": "",
+                        }
+                    )
+    _fill_oracle_gap(rows)
+    write_csv(out_csv, rows)
+    plot_pabb_online(rows, plot_out)
+    return rows
+
+
+def _fill_oracle_gap(rows: list[dict[str, Any]]) -> None:
+    oracle = {
+        (r["instance_id"], r["max_active_branches"], r["max_steps_per_branch"]): r
+        for r in rows
+        if r["policy"] == "pabb_oracle_upper_bound"
+    }
+    for row in rows:
+        key = (row["instance_id"], row["max_active_branches"], row["max_steps_per_branch"])
+        o = oracle.get(key)
+        online = _metric(row, "cost_to_first_nonempty_patch")
+        upper = _metric(o or {}, "cost_to_first_nonempty_patch")
+        if online is not None and upper is not None and online > 0:
+            row["online_oracle_gap"] = max(0.0, (online - upper) / online)
+
+
+def plot_pabb_online(rows: list[dict[str, Any]], out: str | Path) -> None:
+    ensure_dir(Path(out).parent)
+    policies = ONLINE_POLICIES
+    cost = {p: [] for p in policies}
+    tokens = {p: [] for p in policies}
+    for row in rows:
+        c = _metric(row, "cost_to_first_nonempty_patch")
+        t = _metric(row, "tokens_to_first_nonempty_patch")
+        if c is not None:
+            cost[row["policy"]].append(c)
+        if t is not None:
+            tokens[row["policy"]].append(t)
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), constrained_layout=True)
+    axes[0].bar(policies, [sum(cost[p]) / len(cost[p]) if cost[p] else 0.0 for p in policies])
+    axes[0].set_ylabel("online cost to non-empty patch")
+    axes[0].tick_params(axis="x", rotation=25)
+    axes[1].bar(policies, [sum(tokens[p]) / len(tokens[p]) if tokens[p] else 0.0 for p in policies])
+    axes[1].set_ylabel("online tokens to non-empty patch")
+    axes[1].tick_params(axis="x", rotation=25)
+    fig.savefig(out)
+    plt.close(fig)
+
+
 def _metric(row: dict[str, Any], key: str) -> float | None:
     value = row.get(key, "")
     if value in ("", None):
@@ -303,8 +566,13 @@ def main() -> None:
     ap.add_argument("--model-json", default="data/profiles/h100_latency_model_pr2_v2.json")
     ap.add_argument("--weights-yaml", default="configs/pabb_weights.yaml")
     ap.add_argument("--out", default="data/results/pabb_branch_budget_pr4_algo.csv")
+    ap.add_argument("--online", action="store_true")
+    ap.add_argument("--plot-out", default="data/plots/pabb_online_branch_budget_pr4_v2.pdf")
     args = ap.parse_args()
-    rows = run_pabb([x for x in args.trace_dirs.split(",") if x.strip()], args.model_json, args.weights_yaml, args.out)
+    if args.online:
+        rows = run_pabb_online([x for x in args.trace_dirs.split(",") if x.strip()], args.model_json, args.weights_yaml, args.out, args.plot_out)
+    else:
+        rows = run_pabb([x for x in args.trace_dirs.split(",") if x.strip()], args.model_json, args.weights_yaml, args.out)
     print(json.dumps({"rows": len(rows), "out": args.out}, indent=2))
 
 
