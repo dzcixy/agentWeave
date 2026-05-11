@@ -1,0 +1,244 @@
+{
+  "astra_export_format": "intermediate_json",
+  "format": "agentweaver_chakra_intermediate_json",
+  "nodes": [
+    {
+      "deps": [],
+      "duration_cycles": 100293230,
+      "id": 1014,
+      "metadata": {
+        "cached_tokens": 0,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm0",
+        "input_tokens": 1837,
+        "mapping": "schedule LLM prefill",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm0:prefill",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1014
+      ],
+      "duration_cycles": 1238052960,
+      "id": 1015,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "26788e55e4c5d0a1",
+        "event_id": "django__django-11964:b3:llm0",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 139,
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11964:b3:llm0:decode",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1488
+      ],
+      "duration_cycles": 721101,
+      "id": 1489,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "mapping": "schedule remote context",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:remote_context",
+      "npu_id": 15,
+      "size_bytes": 144220160,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1489
+      ],
+      "duration_cycles": 28983342,
+      "id": 1490,
+      "metadata": {
+        "cached_tokens": 2515,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "input_tokens": 2515,
+        "mapping": "schedule LLM prefill",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:prefill",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1490
+      ],
+      "duration_cycles": 1088333163,
+      "id": 1491,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "db32ffc70cf7e1f8",
+        "event_id": "astropy__astropy-12907:b3:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 122,
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "astropy__astropy-12907:b3:llm5:decode",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1797
+      ],
+      "duration_cycles": 539894,
+      "id": 1798,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b0:llm2",
+        "mapping": "schedule remote context",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b0:llm2:remote_context",
+      "npu_id": 15,
+      "size_bytes": 107978752,
+      "type": "communication"
+    },
+    {
+      "deps": [
+        1798
+      ],
+      "duration_cycles": 28983342,
+      "id": 1799,
+      "metadata": {
+        "cached_tokens": 1883,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b0:llm2",
+        "input_tokens": 1883,
+        "mapping": "schedule LLM prefill",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b0:llm2:prefill",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        1799
+      ],
+      "duration_cycles": 1247091919,
+      "id": 1800,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "516f8285a51242f0",
+        "event_id": "django__django-11815:b0:llm2",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 140,
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-11815:b0:llm2:decode",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2011
+      ],
+      "duration_cycles": 513516,
+      "id": 2012,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "4717ccc60a8a85b7",
+        "event_id": "django__django-13028:b0:llm5",
+        "mapping": "schedule local cached context",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13028:b0:llm5:local_context",
+      "npu_id": 15,
+      "size_bytes": 513515520,
+      "type": "memory"
+    },
+    {
+      "deps": [
+        2012
+      ],
+      "duration_cycles": 28983342,
+      "id": 2013,
+      "metadata": {
+        "cached_tokens": 8955,
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "4717ccc60a8a85b7",
+        "event_id": "django__django-13028:b0:llm5",
+        "input_tokens": 8955,
+        "mapping": "schedule LLM prefill",
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13028:b0:llm5:prefill",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    },
+    {
+      "deps": [
+        2013
+      ],
+      "duration_cycles": 850969527,
+      "id": 2014,
+      "metadata": {
+        "config_id": "aligned_v10_stratified:ts128:al16:er16:arrbursty:mem64",
+        "context_domain_id": "4717ccc60a8a85b7",
+        "event_id": "django__django-13028:b0:llm5",
+        "mapping": "schedule LLM decode",
+        "output_tokens": 94,
+        "policy": "STP-AE",
+        "run_id": "pr4_v12_stp_ae_aligned_v10_stratified_ts128_al16_er16_arrbursty_mem64",
+        "schedule_source": "provided_schedule"
+      },
+      "name": "django__django-13028:b0:llm5:decode",
+      "npu_id": 15,
+      "size_bytes": 0,
+      "type": "compute"
+    }
+  ],
+  "npu_id": 15,
+  "stats": {
+    "communication_nodes": 2,
+    "compute_nodes": 8,
+    "delay_nodes": 0,
+    "memory_nodes": 1,
+    "node_count": 11
+  }
+}
